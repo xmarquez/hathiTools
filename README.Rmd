@@ -1,0 +1,182 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# hathiTools
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+This package allows you to interact with the HathiTrust [Bookworm](https://bookworm.htrc.illinois.edu/develop/), a similar tool to the [Google ngram viewer](https://books.google.com/ngrams), as well as to download and process  [HathiTrust Extracted Features](https://analytics.hathitrust.org/datasets) files on which the Bookworm viewer is based. (The HathiTrust collection contains over 13 million digitised books, including many of those originally digitised by Google for its Google Books project). 
+
+## Installation
+
+This package is not yet on CRAN. Install from GitHub as follows:
+
+``` r
+remotes::install("xmarquez/hathiTools")
+```
+
+## Downloading word frequencies
+
+The simplest task to use the package for is to download word frequencies from the HathiTrust [Bookworm](https://bookworm.htrc.illinois.edu/develop/):
+
+```{r example}
+library(hathiTools)
+library(tidyverse)
+
+result <- query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000), counttype = c("WordsPerMillion", "TextPercent"))
+
+result
+
+result %>%
+  pivot_longer(democracy:monarchy, names_to = "word") %>%
+  group_by(word, counttype) %>%
+  mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
+  ggplot(aes(x = date_year, color = word)) +
+  geom_line(aes(y = value), alpha = 0.3) +
+  geom_line(aes(x = date_year, y = rolling_avg)) +
+  facet_wrap(~counttype) +
+  labs(x = "Year", y = "", subtitle = "10 year rolling average, books published between 1760-2000",
+       title = "Frequency of 'democracy' and 'monarchy' in the HathiTrust corpus") +
+  theme_bw()
+
+```
+
+It is also possible to do more complex queries, for example to look at the relative frequency of a term across book classifications from the Library of Congress system:
+
+```{r example2}
+result2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"),
+                          lims = c(1900,2000))
+
+result2
+
+result2 %>%
+  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(class, 40), WordsPerMillion))) +
+  geom_tile(aes(fill = WordsPerMillion)) +
+  facet_wrap(~word) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(y = "", x = "Year", title = "Frequency of 'democracy' \nacross library of congress classifications",
+       fill = "Words per million") +
+  theme(legend.position = "bottom")
+  
+
+```
+
+Or across literary forms:
+
+```{r example3}
+result3 <- query_bookworm(word = "democracy", groups = c("date_year", "literary_form"),
+                          lims = c(1900,2000))
+
+result3 %>%
+  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(literary_form, 40), WordsPerMillion))) +
+  geom_tile(aes(fill = WordsPerMillion)) +
+  facet_wrap(~word) +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(y = "", x = "Year", title = "Frequency of 'democracy' \nacross literary forms",
+       fill = "Words per million") +
+  theme(legend.position = "bottom")
+```
+
+It is also possible to further limit the query to, e.g., books published in a particular language. (Find available fields by using `method = "returnAvailableFields`). For example, this gives the number of English-language texts that use the word "democracy" per year from 1760-2000. 
+
+```{r example4}
+result4 <- query_bookworm(word = c("democracy"), lims = c(1760, 2000), counttype = c("TotalTexts"), language = "English")
+
+result4 
+```
+
+
+One can use `method = "returnPossibleFields"` to return the fields available for grouping:
+
+```{r example5}
+result5 <- query_bookworm(word = "", method = "returnPossibleFields")
+
+result5
+```
+
+We can also get a sample of the book titles and links for a particular year. For example, suppose we're interested in why so many books in the category "Education" mention the word "democracy" in 1941, as appears in the second graph above. This query pulls the first 100 books in the catalog for 1941 in the category "education":
+
+```{r example6}
+
+result2 %>% filter(class == "Education", WordsPerMillion == max(WordsPerMillion))
+
+result6 <- query_bookworm(word = "democracy", groups = "date_year",
+                          date_year = "1941", class = "Education", method = "search_results")
+
+result6 %>%
+  head(10) %>%
+  knitr::kable()
+
+```
+
+We can download the Extracted Features file associated with any of these HathiTrust IDs:
+
+```{r example7}
+
+tmp <- tempdir() 
+
+result6$htid[2] %>%
+  download_hathi(dir = tmp)
+
+extracted_features <- get_hathi_counts(result6$htid[2], dir = tmp)
+
+extracted_features
+```
+
+And we can extract the metadata:
+
+```{r example8}
+meta <- get_metadata(result6$htid[2], dir = tmp)
+
+meta
+```
+
+
+One can get info about the corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key.
+
+```{r example9, warning = FALSE}
+result7 <- query_bookworm(counttype = c("TotalTexts"), groups = c("date_year", "language"),
+                          lims = c(1500,2000))
+
+result7 %>%
+  summarise(TotalTexts = sum(TotalTexts))
+
+library(ggrepel)
+
+result7 %>%
+  mutate(language = fct_lump_n(language, 10, w = TotalTexts)) %>%
+  group_by(date_year, language) %>%
+  summarise(TotalTexts = sum(TotalTexts)) %>%
+  group_by(language) %>%
+  mutate(label = ifelse(date_year == max(date_year), as.character(language), NA_character_)) %>%
+  group_by(language) %>%
+  mutate(rolling_avg = slider::slide_dbl(TotalTexts, mean, .before = 10, .after = 10)) %>%
+  ggplot() +
+  geom_line(aes(x = date_year, y = rolling_avg, color = language), show.legend = FALSE) +
+  geom_line(aes(x = date_year, y = TotalTexts, color = language), show.legend = FALSE, alpha = 0.3) +
+  geom_text_repel(aes(x = date_year, y = TotalTexts, label = label, color = language), show.legend = FALSE) +
+  scale_y_log10() +
+  theme_bw() +
+  labs(title = "Total texts per language in the HathiTrust bookworm", subtitle = "Log scale. Less common languages grouped as 'other'. 10 year rolling average.", x = "Year", y = "")
+```
+
+Note that the accessible HathiTrust Bookworm database is the 2016 version. A more current version of the database exists (with some 17 million digitized texts), but is not publically accessible yet, I think. 
+
+## Credits
+
+This package includes some code from the [hathidy](https://github.com/HumanitiesDataAnalysis/hathidy) and [edinburgh](https://github.com/bmschmidt/edinburgh/) repos by @bmschmidt.
