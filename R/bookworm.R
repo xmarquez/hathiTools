@@ -50,7 +50,7 @@ build_json_query <- function(word, groups,
 
   # message(query)
 
-  query <- URLencode(query, reserved = TRUE)
+  query <- utils::URLencode(query, reserved = TRUE)
 
   query <- paste0("https://bookworm.htrc.illinois.edu/cgi-bin/dbbindings.py?query=",query)
 
@@ -137,6 +137,7 @@ build_json_query <- function(word, groups,
 #' @param ... Additional parameters passed to `build_json_query`
 #'
 #' @return A [tibble] whenver possible, otherwise json-formatted text.
+#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
@@ -158,6 +159,8 @@ query_bookworm <- function(word, groups = "date_year",
                            method = "return_json",
                            lims = c(1920, 2000),
                            as_json = FALSE, ...) {
+
+  date_year <- links <- htid <- title <- NULL
 
   if(missing(word)) {
     word = ""
@@ -197,17 +200,22 @@ query_bookworm <- function(word, groups = "date_year",
     data <- data %>%
       purrr::map_df(tibble::as_tibble, .id = "date_year", .name_repair = ~word) %>%
       dplyr::mutate(date_year = as.integer(date_year)) %>%
-        dplyr::mutate(counttype = rep(counttype, nrow(.)/length(counttype)))
+        dplyr::mutate(counttype = rep(counttype, dplyr::n()/length(counttype)))
 
   }
 
   if(length(word) >= 1 & length(groups) == 2 & method == "return_json" & length(counttype) == 1) {
+
     data <- data %>%
-      purrr::map_df(as_tibble, .id = groups[1], .name_repair = ~(ifelse(.x == "", "N/A", .x))) %>%
-      dplyr::mutate(word = rep(word, nrow(.)/length(word))) %>%
+      purrr::map_df(tibble::as_tibble, .id = groups[1], .name_repair = ~(ifelse(.x == "", "N/A", .x)))
+
+    num_cols <- ncol(data)
+
+    data <- data %>%
+      dplyr::mutate(word = rep(word, dplyr::n()/length(word))) %>%
       tidyr::unnest(dplyr::everything()) %>%
-      tidyr::pivot_longer(2:(ncol(.)-1), names_to = groups[2], values_to = counttype) %>%
-      dplyr::filter(dplyr::across({{ counttype }}, ~!is.na(.)))
+      tidyr::pivot_longer(2:num_cols, names_to = groups[2], values_to = counttype) %>%
+      dplyr::filter(dplyr::across({{ counttype }}, ~!is.na(.x)))
 
     if("date_year" %in% names(data)) {
       data <- data %>%

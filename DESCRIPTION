@@ -1,6 +1,6 @@
 Package: hathiTools
 Title: Functions to Interact with the HathiTrust Bookworm and EF files
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: 
     person(given = "Xavier",
            family = "Marquez",
@@ -20,4 +20,6 @@ Imports:
     dplyr,
     stringr,
     tidyr,
-    purrr
+    purrr,
+    readr,
+    rlang

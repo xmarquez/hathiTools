@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # hathiTools
 
 <!-- badges: start -->
+[![Travis build status](https://travis-ci.com/xmarquez/hathiTools.svg?branch=master)](https://travis-ci.com/xmarquez/hathiTools)
 <!-- badges: end -->
 
 This package allows you to interact with the HathiTrust [Bookworm](https://bookworm.htrc.illinois.edu/develop/), a similar tool to the [Google ngram viewer](https://books.google.com/ngrams), as well as to download and process  [HathiTrust Extracted Features](https://analytics.hathitrust.org/datasets) files on which the Bookworm viewer is based. (The HathiTrust collection contains over 13 million digitised books, including many of those originally digitised by Google for its Google Books project). 
@@ -92,7 +93,7 @@ result3 %>%
   theme(legend.position = "bottom")
 ```
 
-It is also possible to further limit the query to, e.g., books published in a particular language. (Find available fields by using `method = "returnAvailableFields`). For example, this gives the number of English-language texts that use the word "democracy" per year from 1760-2000. 
+It is also possible to further limit the query to, e.g., books published in a particular language. For example, this gives the number of English-language texts that use the word "democracy" per year from 1760-2000. 
 
 ```{r example4}
 result4 <- query_bookworm(word = c("democracy"), lims = c(1760, 2000), counttype = c("TotalTexts"), language = "English")

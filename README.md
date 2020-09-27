@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![Travis build
+status](https://travis-ci.com/xmarquez/hathiTools.svg?branch=master)](https://travis-ci.com/xmarquez/hathiTools)
 <!-- badges: end -->
 
 This package allows you to interact with the HathiTrust
@@ -33,12 +35,12 @@ from the HathiTrust
 ``` r
 library(hathiTools)
 library(tidyverse)
-#> -- Attaching packages --------------------------------------------------------------------------------- tidyverse 1.3.0 --
+#> -- Attaching packages -------------------------------------------------------------------------------- tidyverse 1.3.0 --
 #> v ggplot2 3.3.2     v purrr   0.3.4
 #> v tibble  3.0.3     v dplyr   1.0.2
 #> v tidyr   1.1.1     v stringr 1.4.0
 #> v readr   1.3.1     v forcats 0.5.0
-#> -- Conflicts ------------------------------------------------------------------------------------ tidyverse_conflicts() --
+#> -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 
@@ -135,8 +137,7 @@ result3 %>%
 <img src="man/figures/README-example3-1.png" width="100%" />
 
 It is also possible to further limit the query to, e.g., books published
-in a particular language. (Find available fields by using `method =
-"returnAvailableFields`). For example, this gives the number of
+in a particular language. For example, this gives the number of
 English-language texts that use the word “democracy” per year from
 1760-2000.
 
@@ -234,20 +235,20 @@ result6$htid[2] %>%
 extracted_features <- get_hathi_counts(result6$htid[2], dir = tmp)
 
 extracted_features
-#> # A tibble: 18,482 x 6
-#>    htid        token       POS   count section  page
-#>    <chr>       <chr>       <chr> <int> <chr>   <int>
-#>  1 uc1.$b67929 COMMISSION  NNP       1 body        1
-#>  2 uc1.$b67929 in          IN        1 body        1
-#>  3 uc1.$b67929 Free        NNP       1 body        1
-#>  4 uc1.$b67929 Men         NNP       1 body        1
-#>  5 uc1.$b67929 Democracy   NNP       1 body        1
-#>  6 uc1.$b67929 School      NNP       1 body        1
-#>  7 uc1.$b67929 POLICIES    NNP       1 body        1
-#>  8 uc1.$b67929 National    NNP       1 body        1
-#>  9 uc1.$b67929 The         DT        1 body        1
-#> 10 uc1.$b67929 Association NNP       2 body        1
-#> # ... with 18,472 more rows
+#> # A tibble: 18,763 x 6
+#>    htid        token      POS   count section  page
+#>    <chr>       <chr>      <chr> <int> <chr>   <int>
+#>  1 uc1.$b67929 COMMISSION NNP       1 body        1
+#>  2 uc1.$b67929 N35        CD        1 body        1
+#>  3 uc1.$b67929 in         IN        1 body        1
+#>  4 uc1.$b67929 uc-male    JJ        1 body        1
+#>  5 uc1.$b67929 *          SYM       1 body        1
+#>  6 uc1.$b67929 .          .         1 body        1
+#>  7 uc1.$b67929 Free       NNP       1 body        1
+#>  8 uc1.$b67929 Men        NNP       1 body        1
+#>  9 uc1.$b67929 Democracy  NNP       1 body        1
+#> 10 uc1.$b67929 School     NNP       1 body        1
+#> # ... with 18,753 more rows
 ```
 
 And we can extract the metadata:
@@ -256,18 +257,20 @@ And we can extract the metadata:
 meta <- get_metadata(result6$htid[2], dir = tmp)
 
 meta
-#> # A tibble: 2 x 27
-#>   schemaVersion dateCreated volumeIdentifier accessProfile rightsAttributes
-#>   <chr>         <chr>       <chr>            <chr>         <chr>           
-#> 1 1.3           2016-06-17~ uc1.$b67929      google        pd              
-#> 2 1.3           2016-06-17~ uc1.$b67929      google        pd              
-#> # ... with 22 more variables: hathitrustRecordNumber <chr>,
-#> #   enumerationChronology <chr>, sourceInstitution <chr>,
-#> #   sourceInstitutionRecordNumber <chr>, oclc <chr>, lccn <chr>, title <chr>,
-#> #   imprint <chr>, lastUpdateDate <chr>, governmentDocument <lgl>,
-#> #   pubDate <chr>, pubPlace <chr>, language <chr>, bibliographicFormat <chr>,
-#> #   genre <chr>, issuance <chr>, typeOfResource <chr>, classification <chr>,
-#> #   names <chr>, htBibUrl <chr>, handleUrl <chr>, htid <chr>
+#> # A tibble: 35 x 3
+#>    field        value                                                  htid     
+#>    <chr>        <chr>                                                  <chr>    
+#>  1 schemaVersi~ https://schemas.hathitrust.org/EF_Schema_MetadataSubS~ uc1.$b67~
+#>  2 id           http://hdl.handle.net/2027/uc1.$b67929                 uc1.$b67~
+#>  3 type         DataFeedItem                                           uc1.$b67~
+#>  4 type         Book                                                   uc1.$b67~
+#>  5 dateCreated  20200209                                               uc1.$b67~
+#>  6 title        The education of free men in American democracy.       uc1.$b67~
+#>  7 contributor  http://www.viaf.org/viaf/144709713                     uc1.$b67~
+#>  8 contributor  http://id.loc.gov/ontologies/bibframe/Organization     uc1.$b67~
+#>  9 contributor  Educational Policies Commission.                       uc1.$b67~
+#> 10 contributor  http://www.viaf.org/viaf/136691592                     uc1.$b67~
+#> # ... with 25 more rows
 ```
 
 One can get info about the corpus itself by using `counttype =

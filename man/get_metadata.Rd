@@ -22,11 +22,11 @@ Reads the metadata of a downloaded Hathi Trust extracted features file
 }
 \examples{
 \dontrun{
-# Download the 1863 version of "Democracy in America" by Tocqueville
+# Download the 1862 version of "Democracy in America" by Tocqueville
 
 tmp <- tempdir()
-download_hathi("miun.aew4744.0001.001", dir = tmp)
+download_hathi("mdp.39015001796443", dir = tmp)
 
-get_metadata("miun.aew4744.0001.001", dir = tmp)
+get_metadata("mdp.39015001796443", dir = tmp)
 }
 }

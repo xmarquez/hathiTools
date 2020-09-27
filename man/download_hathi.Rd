@@ -23,7 +23,7 @@ Downloads a Hathi Trust Extracted Features file for a given Hathi Trust id
 \examples{
 \dontrun{
 
-# Download the 1863 version of "Democracy in America" by Tocqueville
-download_hathi("miun.aew4744.0001.001", dir = tempdir())
+# Download the 1862 version of "Democracy in America" by Tocqueville
+download_hathi("mdp.39015001796443", dir = tempdir())
 }
 }
