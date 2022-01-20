@@ -1,12 +1,12 @@
 Package: hathiTools
-Title: Functions to Interact with the HathiTrust Bookworm and EF files
+Title: IAccess the Hathi Trust Bookworm and Extracted Features Files from R
 Version: 0.0.0.9001
 Authors@R: 
     person(given = "Xavier",
            family = "Marquez",
            role = c("aut", "cre"),
            email = "marquez.x@gmail.com")
-Description: What the package does (one paragraph).
+Description: The package allows one to query the Hathi Trust Digital Library Bookworm and Workset Builder, as well as to download the "extracted features" and metadata files for more than 17 million digitized volumes.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -28,3 +28,4 @@ Imports:
     digest
 Depends: 
     R (>= 2.10)
+URL: https://xmarquez.github.io/hathiTools
