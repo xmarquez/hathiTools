@@ -16,10 +16,10 @@ knitr::opts_chunk$set(
 # hathiTools
 
 <!-- badges: start -->
-[![Travis build status](https://travis-ci.com/xmarquez/hathiTools.svg?branch=master)](https://travis-ci.com/xmarquez/hathiTools)
+[![R-CMD-check](https://github.com/xmarquez/hathiTools/workflows/R-CMD-check/badge.svg)](https://github.com/xmarquez/hathiTools/actions)
 <!-- badges: end -->
 
-This package allows you to interact with the HathiTrust [Bookworm](https://bookworm.htrc.illinois.edu/develop/), a similar tool to the [Google ngram viewer](https://books.google.com/ngrams), as well as to download and process  [HathiTrust Extracted Features](https://analytics.hathitrust.org/datasets) files on which the Bookworm viewer is based. (The HathiTrust collection contains over 13 million digitised books, including many of those originally digitised by Google for its Google Books project). 
+This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust [Bookworm](https://bookworm.htrc.illinois.edu/develop/), a tool similar to the [Google ngram viewer](https://books.google.com/ngrams) and the Hathi Trust [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/). You can also download and process the [Hathi Trust Extracted Features](https://analytics.hathitrust.org/datasets) files on which the Bookworm viewer is based. The Hathi Trust collection contains over 17 million digitised books, including many of those originally digitised by Google for its Google Books project. 
 
 ## Installation
 
@@ -31,7 +31,7 @@ remotes::install("xmarquez/hathiTools")
 
 ## Downloading word frequencies
 
-The simplest task to use the package for is to download word frequencies from the HathiTrust [Bookworm](https://bookworm.htrc.illinois.edu/develop/):
+The simplest task to use the package for is to download word frequencies from the Hathi Trust [Bookworm](https://bookworm.htrc.illinois.edu/develop/):
 
 ```{r example}
 library(hathiTools)
@@ -73,7 +73,6 @@ result2 %>%
        fill = "Words per million") +
   theme(legend.position = "bottom")
   
-
 ```
 
 Or across literary forms:
@@ -119,10 +118,7 @@ result2 %>% filter(class == "Education", WordsPerMillion == max(WordsPerMillion)
 result6 <- query_bookworm(word = "democracy", groups = "date_year",
                           date_year = "1941", class = "Education", method = "search_results")
 
-result6 %>%
-  head(10) %>%
-  knitr::kable()
-
+result6 
 ```
 
 We can download the Extracted Features file associated with any of these HathiTrust IDs:
@@ -132,7 +128,7 @@ We can download the Extracted Features file associated with any of these HathiTr
 tmp <- tempdir() 
 
 result6$htid[2] %>%
-  download_hathi(dir = tmp)
+  download_hathi_ef(dir = tmp)
 
 extracted_features <- get_hathi_counts(result6$htid[2], dir = tmp)
 
@@ -146,8 +142,13 @@ meta <- get_metadata(result6$htid[2], dir = tmp)
 
 meta
 ```
+We can also get the metadata for all of these books at the same time:
 
+```{r}
+meta <- get_workset_meta(result6$htid, metadata_dir = tmp)
 
+meta
+```
 One can get info about the corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key.
 
 ```{r example9, warning = FALSE}
@@ -176,7 +177,40 @@ result7 %>%
   labs(title = "Total texts per language in the HathiTrust bookworm", subtitle = "Log scale. Less common languages grouped as 'other'. 10 year rolling average.", x = "Year", y = "")
 ```
 
-Note that the accessible HathiTrust Bookworm database is the 2016 version. A more current version of the database exists (with some 17 million digitized texts), but is not publically accessible yet, I think. 
+Note that the accessible Hathi Trust Bookworm database is the 2016 version. A more current version of the database exists (with some 17 million digitized texts), but is not publicly accessible yet, I think. 
+
+It is also possible to build a workset of Hathi Trust IDs for further analysis. Here, for example, we find all the volumes that contain the term "democracy" and have genre strings that include "dictionary" and "biography".
+
+```{r}
+result8 <- workset_builder(token = "democracy", genre = c("dictionary", "biography"))
+
+result8 
+```
+
+Here's the metadata for the first six of these results.
+
+```{r}
+meta <- get_workset_meta(head(result8)) 
+
+meta
+```
+
+One can also turn the workset into a list of htids for downloading via rsync:
+
+```{r}
+tmp <- tempfile()
+
+htid_to_rsync(result8$htid, tmp)
+```
+There's a convenience function that will attempt to do this for you in one command.
+
+```{r}
+rsync_from_hathi(head(result8$htid))
+```
+
+(This requires having rsync installed; see the vignette on using worksets in this website).
+
+It is also possible to download the big "[hathifile](https://www.hathitrust.org/hathifiles)" to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.
 
 ## Credits
 

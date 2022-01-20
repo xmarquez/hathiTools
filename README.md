@@ -5,8 +5,7 @@
 
 <!-- badges: start -->
 
-[![Travis build
-status](https://travis-ci.com/xmarquez/hathiTools.svg?branch=master)](https://travis-ci.com/xmarquez/hathiTools)
+[![R-CMD-check](https://github.com/xmarquez/hathiTools/workflows/R-CMD-check/badge.svg)](https://github.com/xmarquez/hathiTools/actions)
 <!-- badges: end -->
 
 This package allows you to interact with the HathiTrust
@@ -14,9 +13,11 @@ This package allows you to interact with the HathiTrust
 to the [Google ngram viewer](https://books.google.com/ngrams), as well
 as to download and process [HathiTrust Extracted
 Features](https://analytics.hathitrust.org/datasets) files on which the
-Bookworm viewer is based. (The HathiTrust collection contains over 13
-million digitised books, including many of those originally digitised by
-Google for its Google Books project).
+Bookworm viewer is based, and to build worksets of Hathi Trust IDs by
+querying the [Workset Builder
+2.0](https://solr2.htrc.illinois.edu/solr-ef/). (The HathiTrust
+collection contains over 13 million digitised books, including many of
+those originally digitised by Google for its Google Books project).
 
 ## Installation
 
@@ -35,12 +36,12 @@ from the HathiTrust
 ``` r
 library(hathiTools)
 library(tidyverse)
-#> -- Attaching packages -------------------------------------------------------------------------------- tidyverse 1.3.0 --
-#> v ggplot2 3.3.2     v purrr   0.3.4
-#> v tibble  3.0.3     v dplyr   1.0.2
-#> v tidyr   1.1.1     v stringr 1.4.0
-#> v readr   1.3.1     v forcats 0.5.0
-#> -- Conflicts ----------------------------------------------------------------------------------- tidyverse_conflicts() --
+#> -- Attaching packages --------------------------------------- tidyverse 1.3.1 --
+#> v ggplot2 3.3.5     v purrr   0.3.4
+#> v tibble  3.1.4     v dplyr   1.0.7
+#> v tidyr   1.1.3     v stringr 1.4.0
+#> v readr   2.0.1     v forcats 0.5.1
+#> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
 
@@ -89,18 +90,18 @@ result2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"),
 
 result2
 #> # A tibble: 2,121 x 4
-#>    date_year word     class                                      WordsPerMillion
-#>        <int> <chr>    <chr>                                                <dbl>
-#>  1      1900 democra~ N/A                                                  4.03 
-#>  2      1900 democra~ Agriculture                                          0.769
-#>  3      1900 democra~ Education                                            9.56 
-#>  4      1900 democra~ World History And History Of Europe, Asia~           5.50 
-#>  5      1900 democra~ History Of The Americas                             15.7  
-#>  6      1900 democra~ Fine Arts                                            0.816
-#>  7      1900 democra~ Science                                              0.146
-#>  8      1900 democra~ General Works                                       14.6  
-#>  9      1900 democra~ Military Science                                     0.962
-#> 10      1900 democra~ Geography.  Anthropology.  Recreation                0.691
+#>    date_year word      class                                     WordsPerMillion
+#>        <int> <chr>     <chr>                                               <dbl>
+#>  1      1900 democracy N/A                                                 4.03 
+#>  2      1900 democracy Agriculture                                         0.769
+#>  3      1900 democracy Education                                           9.56 
+#>  4      1900 democracy World History And History Of Europe, Asi~           5.50 
+#>  5      1900 democracy History Of The Americas                            15.7  
+#>  6      1900 democracy Fine Arts                                           0.816
+#>  7      1900 democracy Science                                             0.146
+#>  8      1900 democracy General Works                                      14.6  
+#>  9      1900 democracy Military Science                                    0.962
+#> 10      1900 democracy Geography.  Anthropology.  Recreation               0.691
 #> # ... with 2,111 more rows
 
 result2 %>%
@@ -171,18 +172,18 @@ result5 <- query_bookworm(word = "", method = "returnPossibleFields")
 
 result5
 #> # A tibble: 21 x 6
-#>    name           tablename            dbname         type    anchor description
-#>    <chr>          <chr>                <chr>          <chr>   <chr>  <chr>      
-#>  1 language       languageLookup       language       charac~ bookid ""         
-#>  2 publication_c~ publication_country~ publication_c~ charac~ bookid ""         
-#>  3 publication_s~ publication_stateLo~ publication_s~ charac~ bookid ""         
-#>  4 subclass       subclassLookup       subclass       charac~ bookid ""         
-#>  5 narrow_class   narrow_classLookup   narrow_class   charac~ bookid ""         
-#>  6 class          classLookup          class          charac~ bookid ""         
-#>  7 resource_type  resource_typeLookup  resource_type  charac~ bookid ""         
-#>  8 target_audien~ target_audienceLook~ target_audien~ charac~ bookid ""         
-#>  9 scanner        scannerLookup        scanner        charac~ bookid ""         
-#> 10 first_author_~ first_author_birthL~ first_author_~ charac~ bookid ""         
+#>    name                tablename                 dbname type  anchor description
+#>    <chr>               <chr>                     <chr>  <chr> <chr>  <chr>      
+#>  1 language            languageLookup            langu~ char~ bookid ""         
+#>  2 publication_country publication_countryLookup publi~ char~ bookid ""         
+#>  3 publication_state   publication_stateLookup   publi~ char~ bookid ""         
+#>  4 subclass            subclassLookup            subcl~ char~ bookid ""         
+#>  5 narrow_class        narrow_classLookup        narro~ char~ bookid ""         
+#>  6 class               classLookup               class  char~ bookid ""         
+#>  7 resource_type       resource_typeLookup       resou~ char~ bookid ""         
+#>  8 target_audience     target_audienceLookup     targe~ char~ bookid ""         
+#>  9 scanner             scannerLookup             scann~ char~ bookid ""         
+#> 10 first_author_birth  first_author_birthLookup  first~ char~ bookid ""         
 #> # ... with 11 more rows
 ```
 
@@ -193,7 +194,6 @@ the second graph above. This query pulls the first 100 books in the
 catalog for 1941 in the category “education”:
 
 ``` r
-
 result2 %>% filter(class == "Education", WordsPerMillion == max(WordsPerMillion))
 #> # A tibble: 1 x 4
 #>   date_year word      class     WordsPerMillion
@@ -204,29 +204,27 @@ result6 <- query_bookworm(word = "democracy", groups = "date_year",
                           date_year = "1941", class = "Education", method = "search_results")
 #> No encoding supplied: defaulting to UTF-8.
 
-result6 %>%
-  head(10) %>%
-  knitr::kable()
+result6 
+#> # A tibble: 100 x 3
+#>    htid                      title                       url                    
+#>    <chr>                     <chr>                       <chr>                  
+#>  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the ~ https://babel.hathitru~
+#>  2 uc1.$b67929               The education of free men ~ https://babel.hathitru~
+#>  3 mdp.39015062763720        The education of free men ~ https://babel.hathitru~
+#>  4 mdp.39015068297905        The education of free men ~ https://babel.hathitru~
+#>  5 uc1.$b67873               Pennsylvania bill of right~ https://babel.hathitru~
+#>  6 mdp.39015035886111        Education in a world of fe~ https://babel.hathitru~
+#>  7 mdp.39015031665543        Education and the morale o~ https://babel.hathitru~
+#>  8 uc1.$b67928               Education and the morale o~ https://babel.hathitru~
+#>  9 uiug.30112108068831       Proceedings of the convent~ https://babel.hathitru~
+#> 10 uc1.b4305220              Guidance in democratic liv~ https://babel.hathitru~
+#> # ... with 90 more rows
 ```
-
-| htid                                                                                                                                           | title                                                           | url                                                                |
-| :--------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------- | :----------------------------------------------------------------- |
-| nc01.ark:/13960/t2v41mn4r                                                                                                                      | Teaching democracy in the North Carolina public schools /— 1941 | <https://babel.hathitrust.org/cgi/pt?id=nc01.ark:/13960/t2v41mn4r> |
-| uc1.\(b67929 |The education of free men in American democracy. |https://babel.hathitrust.org/cgi/pt?id=uc1.\)b67929                            |                                                                 |                                                                    |
-| mdp.39015062763720                                                                                                                             | The education of free men in American democracy.                | <https://babel.hathitrust.org/cgi/pt?id=mdp.39015062763720>        |
-| mdp.39015068297905                                                                                                                             | The education of free men in American democracy.— suppl.        | <https://babel.hathitrust.org/cgi/pt?id=mdp.39015068297905>        |
-| uc1.\(b67873 |Pennsylvania bill of rights week. Recommendations for school observance ... |https://babel.hathitrust.org/cgi/pt?id=uc1.\)b67873 |                                                                 |                                                                    |
-| mdp.39015035886111                                                                                                                             | Education in a world of fear,                                   | <https://babel.hathitrust.org/cgi/pt?id=mdp.39015035886111>        |
-| mdp.39015031665543                                                                                                                             | Education and the morale of a free people.                      | <https://babel.hathitrust.org/cgi/pt?id=mdp.39015031665543>        |
-| uc1.\(b67928 |Education and the morale of a free people. |https://babel.hathitrust.org/cgi/pt?id=uc1.\)b67928                                  |                                                                 |                                                                    |
-| uiug.30112108068831                                                                                                                            | Proceedings of the convention.— 19 1941                         | <https://babel.hathitrust.org/cgi/pt?id=uiug.30112108068831>       |
-| uc1.b4305220                                                                                                                                   | Guidance in democratic living,— copy D11                        | <https://babel.hathitrust.org/cgi/pt?id=uc1.b4305220>              |
 
 We can download the Extracted Features file associated with any of these
 HathiTrust IDs:
 
 ``` r
-
 tmp <- tempdir() 
 
 result6$htid[2] %>%
@@ -258,23 +256,24 @@ meta <- get_metadata(result6$htid[2], dir = tmp)
 
 meta
 #> # A tibble: 35 x 3
-#>    field        value                                                  htid     
-#>    <chr>        <chr>                                                  <chr>    
-#>  1 schemaVersi~ https://schemas.hathitrust.org/EF_Schema_MetadataSubS~ uc1.$b67~
-#>  2 id           http://hdl.handle.net/2027/uc1.$b67929                 uc1.$b67~
-#>  3 type         DataFeedItem                                           uc1.$b67~
-#>  4 type         Book                                                   uc1.$b67~
-#>  5 dateCreated  20200209                                               uc1.$b67~
-#>  6 title        The education of free men in American democracy.       uc1.$b67~
-#>  7 contributor  http://www.viaf.org/viaf/144709713                     uc1.$b67~
-#>  8 contributor  http://id.loc.gov/ontologies/bibframe/Organization     uc1.$b67~
-#>  9 contributor  Educational Policies Commission.                       uc1.$b67~
-#> 10 contributor  http://www.viaf.org/viaf/136691592                     uc1.$b67~
+#>    field         value                                                 htid     
+#>    <chr>         <chr>                                                 <chr>    
+#>  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_MetadataSub~ uc1.$b67~
+#>  2 id            http://hdl.handle.net/2027/uc1.$b67929                uc1.$b67~
+#>  3 type          DataFeedItem                                          uc1.$b67~
+#>  4 type          Book                                                  uc1.$b67~
+#>  5 dateCreated   20200209                                              uc1.$b67~
+#>  6 title         The education of free men in American democracy.      uc1.$b67~
+#>  7 contributor   http://www.viaf.org/viaf/144709713                    uc1.$b67~
+#>  8 contributor   http://id.loc.gov/ontologies/bibframe/Organization    uc1.$b67~
+#>  9 contributor   Educational Policies Commission.                      uc1.$b67~
+#> 10 contributor   http://www.viaf.org/viaf/136691592                    uc1.$b67~
 #> # ... with 25 more rows
 ```
 
-One can get info about the corpus itself by using `counttype =
-"TotalWords"` or `counttype = "TotalTexts"` and omitting the word key.
+One can get info about the corpus itself by using
+`counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting
+the word key.
 
 ``` r
 result7 <- query_bookworm(counttype = c("TotalTexts"), groups = c("date_year", "language"),
@@ -305,14 +304,74 @@ result7 %>%
   scale_y_log10() +
   theme_bw() +
   labs(title = "Total texts per language in the HathiTrust bookworm", subtitle = "Log scale. Less common languages grouped as 'other'. 10 year rolling average.", x = "Year", y = "")
-#> `summarise()` regrouping output by 'date_year' (override with `.groups` argument)
+#> `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.
 ```
 
 <img src="man/figures/README-example9-1.png" width="100%" />
 
 Note that the accessible HathiTrust Bookworm database is the 2016
 version. A more current version of the database exists (with some 17
-million digitized texts), but is not publically accessible yet, I think.
+million digitized texts), but is not publicly accessible yet, I think.
+
+It is also possible to build a workset of Hathi Trust IDs for further
+analysis. Here, for example, we find all the volumes that contain the
+term “democracy” and have genre strings that include “dictionary” and
+“biography”.
+
+``` r
+result8 <- workset_builder(token = "democracy", genre = c("dictionary", "biography"))
+
+result8 
+#> # A tibble: 1,129 x 2
+#>    htid                         n
+#>    <chr>                    <int>
+#>  1 aeu.ark:/13960/t39030j16     3
+#>  2 aeu.ark:/13960/t9z040f1s     1
+#>  3 chi.090377798               25
+#>  4 chi.097697911                2
+#>  5 chi.098306000                1
+#>  6 chi.23017470                 2
+#>  7 chi.73090523                 3
+#>  8 coo.31924022643799           1
+#>  9 coo.31924081662029           1
+#> 10 coo.31924086013368           1
+#> # ... with 1,119 more rows
+```
+
+Here’s the metadata for the first of these results.
+
+``` r
+tmp <- tempdir() 
+
+result8$htid[1] %>%
+  download_hathi(dir = tmp)
+
+get_metadata(result8$htid[1], tmp) 
+#> # A tibble: 31 x 3
+#>    field         value                                           htid           
+#>    <chr>         <chr>                                           <chr>          
+#>  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Metad~ aeu.ark:/13960~
+#>  2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t390~ aeu.ark:/13960~
+#>  3 type          DataFeedItem                                    aeu.ark:/13960~
+#>  4 type          Book                                            aeu.ark:/13960~
+#>  5 dateCreated   20200209                                        aeu.ark:/13960~
+#>  6 title         An American biographical and historical dictio~ aeu.ark:/13960~
+#>  7 contributor   http://www.viaf.org/viaf/75398636               aeu.ark:/13960~
+#>  8 contributor   http://id.loc.gov/ontologies/bibframe/Person    aeu.ark:/13960~
+#>  9 contributor   Allen, William, 1784-1868.                      aeu.ark:/13960~
+#> 10 pubDate       1832                                            aeu.ark:/13960~
+#> # ... with 21 more rows
+```
+
+One can also turn the workset into a list of htids for downloading via
+rsync:
+
+``` r
+tmp <- tempfile()
+
+htid_to_rsync(result8$htid, tmp)
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwlzUmS\file7f747bd4008 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+```
 
 ## Credits
 
