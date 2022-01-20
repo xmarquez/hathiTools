@@ -1,4 +1,4 @@
-#' Fiction Indicator
+#' Fiction Dataset
 #'
 #' A dataset containing the HTIDs of the volumes classified as "fiction" in Ted
 #' Underwood, Boris Capitanu, Peter Organisciak, Sayan Bhattacharyya, Loretta
@@ -28,7 +28,7 @@
 #'
 "fiction"
 
-#' Drama Indicator
+#' Drama Dataset
 #'
 #' A dataset containing the HTIDs of the volumes classified as "drama" in Ted
 #' Underwood, Boris Capitanu, Peter Organisciak, Sayan Bhattacharyya, Loretta
@@ -57,7 +57,7 @@
 #'
 "drama"
 
-#' Poetry Indicator
+#' Poetry Dataset
 #'
 #' A dataset containing the HTIDs of the volumes classified as "poetry" in Ted
 #' Underwood, Boris Capitanu, Peter Organisciak, Sayan Bhattacharyya, Loretta
