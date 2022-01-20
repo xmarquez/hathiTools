@@ -31,4 +31,5 @@ test_that("Imputed date is properly calculated", {
     dplyr::select(-htid)
   expect_snapshot(hf_imputed)
 })
+unlink(dir, recursive = TRUE, force = TRUE)
 unlink(dir)
