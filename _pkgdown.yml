@@ -1,0 +1,44 @@
+url: https://xmarquez.github.io/hathiTools
+
+reference:
+- title: "Connecting to the Hathi Trust Bookworm"
+  desc: >
+    Functions for connecting to the Hathi Trust Bookworm at
+    https://bookworm.htrc.illinois.edu/develop/ and downloading word frequency
+    data.
+  contents:
+  - query_bookworm
+- title: "Building Worksets using the Workset Builder 2.0"
+  desc: >
+    Functions for connecting to the Hathi Trust Workset Builder 2.0 at
+    https://solr2.htrc.illinois.edu/solr-ef/ and downloading Hathi Trust IDs
+    matching specific criteria and their metadata.
+  contents:
+  - matches("workset")
+- title: "Syncing Hathi Trust Extracted Features files"
+  desc: >
+    Functions for syncing selected Extracted Features files to your local
+    machine from the Hathi Trust rsync server and caching them in a
+    fast-loading format.
+  contents:
+  - matches("rsync")
+  - cache_all
+- title: "Downloading and working with a big hathifile"
+  desc: >
+    Functions for downloading and working with one of the big 'hathifiles'
+    (metadata for over 17 million records) at
+    https://www.hathitrust.org/hathifiles.
+  contents:
+  - matches("hathifile")
+  - add_imputed_date
+- title: "Working with a single Hathi Trust Extracted Features file"
+  desc: >
+    Functions for downloading and working with the Extracted Features file for a
+    single Hathi Trust volume.
+  contents:
+  - matches("_hathi_")
+- title: "Datasets"
+  contents:
+  - fiction
+  - drama
+  - poetry
