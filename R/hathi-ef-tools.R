@@ -18,7 +18,7 @@
 #'   cache types are: compressed csv (the default), "none" (no local caching of
 #'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
 #'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
-#'   package [text2vec]).
+#'   package [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return A [tibble::tibble] with the extracted features.
 #' @export
@@ -75,7 +75,7 @@ download_hathi_ef <- function(htid,
 #'   cache types are: compressed csv (the default), "none" (no local caching of
 #'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
 #'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
-#'   package [text2vec]).
+#'   package [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return a [tibble] with the extracted features.
 #' @export
@@ -177,6 +177,8 @@ cache_all <- function(dir = getOption("hathiTools.ef.dir"),
                       cache_type = getOption("hathiTools.cachetype"),
                       keep_json = TRUE) {
 
+  page <- count <- NULL
+
   cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
 
@@ -223,17 +225,20 @@ read_cached_ef_file <- function(filename, cache_type) {
   if(cache_type %in% c("rds")) {
     res <- readRDS(filename)
   }
-  if(cache_type %in% c("feather")) {
-    res <- arrow::read_feather(filename)
-  }
+  # if(cache_type %in% c("feather")) {
+  #   res <- arrow::read_feather(filename)
+  # }
   res
 }
 
 cache_ef_file <- function(ef, filename, cache_type) {
+
+  section <- page <- token <- count <- POS <- NULL
+
   if(stringr::str_detect(cache_type, "text2vec")) {
 
     ef <- ef %>%
-      dplyr::group_by(htid, section, page) %>%
+      dplyr::group_by(section, page) %>%
       dplyr::summarise(token = stringr::str_c(rep(token, count), "_", rep(POS, count), collapse = " "),
                        .groups = "drop")
 

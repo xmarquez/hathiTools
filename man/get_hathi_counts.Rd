@@ -24,7 +24,7 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 cache types are: compressed csv (the default), "none" (no local caching of
 JSON download; only JSON file kept), "rds", "feather", file (suitable for
 use with \link{arrow}), or "text2vec.csv" (a csv suitable for use with the
-package \link{text2vec}).}
+package \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
 \value{
 a \link{tibble} with the extracted features.
