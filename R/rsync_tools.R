@@ -92,3 +92,64 @@ htid_to_rsync <- function(htids, file) {
   invisible(rel_paths)
 
 }
+
+#' Caches all downloaded JSON Extracted Features files
+#'
+#' It is useful to run this function after running [rsync_from_hathi]; this way,
+#' you can cache all your slow-to-load JSON Extracted Features files to a faster
+#' to load format (e.g., feather or csv).
+#'
+#' @inheritParams get_hathi_counts
+#' @param keep_json Whether to keep the downloaded json files. Default is
+#'   `TRUE`; if false, it only keeps the local cached files (e.g., the csv
+#'   files). This can save space.
+#'
+#' @export
+#'
+cache_all <- function(dir = getOption("hathiTools.ef.dir"),
+                      cache_type = getOption("hathiTools.cachetype"),
+                      keep_json = TRUE) {
+
+  page <- count <- NULL
+
+  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+                                        "feather", "text2vec.csv"))
+
+
+  if(cache_type == "none") {
+    return()
+  }
+
+  json_files <- fs::dir_ls(path = dir, recurse = TRUE, glob = "*.json*")
+  cached_filenames <- stringr::str_replace(json_files,
+                                           "\\.json.+",
+                                           paste0(".", cache_type))
+
+  if(length(json_files) < 1) {
+    stop("No JSON extracted features files found. Download some from Hathi first!")
+  }
+
+  for(local_json in json_files) {
+    num_file <- which(json_files %in% local_json)
+    if(num_file %% 5 == 1) {
+      message("Caching file ", num_file, " of ", length(json_files), "...")
+    }
+    if(!file.exists(cached_filenames[num_file])) {
+      ef <- jsonlite::read_json(local_json) %>%
+        parse_listified_book() %>%
+        dplyr::mutate(page = as.integer(page),
+                      count = as.integer(count))
+
+      cache_ef_file(ef, cached_filenames[num_file], cache_type = cache_type)
+    }
+  }
+
+  if(!keep_json) {
+    message("Now deleting all JSON files!")
+    fs::file_delete(json_files)
+  }
+
+
+}
+
+
