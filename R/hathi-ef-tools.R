@@ -19,9 +19,9 @@
 #'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
 #'   cache types are: compressed csv (the default), "none" (no local caching of
 #'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
-#'   with [arrow]; not yet implemented, so the function does nothing if this
-#'   format is specified), or "text2vec.csv" (a csv suitable for use with the
-#'   package [text2vec](https://cran.r-project.org/package=text2vec)).
+#'   with [arrow]; needs the [arrow] package installed), or "text2vec.csv" (a
+#'   csv suitable for use with the package
+#'   [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return A [tibble::tibble] with the extracted features.
 #' @export
@@ -71,9 +71,9 @@ download_hathi_ef <- function(htid,
 #'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
 #'   cache types are: compressed csv (the default), "none" (no local caching of
 #'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
-#'   with [arrow]; not yet implemented, so the function throws an error if this
-#'   format is specified), or "text2vec.csv" (a csv suitable for use with the
-#'   package [text2vec](https://cran.r-project.org/package=text2vec)).
+#'   with [arrow]; needs the [arrow] package installed), or "text2vec.csv" (a
+#'   csv suitable for use with the package
+#'   [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return a [tibble] with the extracted features.
 #' @export

@@ -19,9 +19,9 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 \code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
 cache types are: compressed csv (the default), "none" (no local caching of
 JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with \link{arrow}; not yet implemented, so the function throws an error if this
-format is specified), or "text2vec.csv" (a csv suitable for use with the
-package \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
+with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
+csv suitable for use with the package
+\href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
 \item{keep_json}{Whether to keep the downloaded json files. Default is
 \code{TRUE}; if false, it only keeps the local cached files (e.g., the csv

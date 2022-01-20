@@ -22,9 +22,9 @@ directory will be automatically created if it doesn't already exist.}
 \code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
 cache types are: compressed csv (the default), "none" (no local caching of
 JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with \link{arrow}; not yet implemented, so the function does nothing if this
-format is specified), or "text2vec.csv" (a csv suitable for use with the
-package \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
+with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
+csv suitable for use with the package
+\href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
 \value{
 A \link[tibble:tibble]{tibble::tibble} with the extracted features.
