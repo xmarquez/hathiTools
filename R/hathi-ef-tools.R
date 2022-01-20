@@ -42,8 +42,7 @@ download_hathi_ef <- function(htid,
   local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
   if(file.exists(local_cache)) {
     message("File has already been downloaded. Returning existing cached file.")
-    res <- read_cached_ef_file(local_cache, cache_type)
-    return(res)
+    ef <- read_cached_ef_file(local_cache, cache_type)
   } else {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
     if(!file.exists(local_json)) {
@@ -168,6 +167,10 @@ read_cached_ef_file <- function(filename, cache_type) {
   if(cache_type %in% c("feather")) {
     res <- arrow::read_feather(filename)
   }
+  if(cache_type != "text2vec.csv") {
+    res$count <- as.numeric(res$count)
+  }
+  res$page <- as.numeric(res$page)
   res
 }
 
@@ -181,6 +184,9 @@ cache_ef_file <- function(ef, filename, cache_type) {
       dplyr::group_by(section, page) %>%
       dplyr::summarise(token = stringr::str_c(rep(token, count), "_", rep(POS, count), collapse = " "),
                        .groups = "drop")
+
+    ef$page <- as.numeric(ef$page)
+
 
   }
   if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
@@ -314,7 +320,7 @@ read_json <- function(htid, dir) {
                                  check_suffixes = c("json.bz2", "json"),
                                  dir = dir) %>%
     parse_listified_book() %>%
-    dplyr::mutate(page = as.integer(page), count = as.integer(count))
+    dplyr::mutate(page = as.numeric(page), count = as.numeric(count))
 }
 
 

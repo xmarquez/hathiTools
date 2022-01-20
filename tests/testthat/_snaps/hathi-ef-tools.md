@@ -3,19 +3,19 @@
     Code
       ef
     Output
-      # A tibble: 95,258 x 5
-         token       POS   count section  page
-         <chr>       <chr> <dbl> <chr>   <dbl>
-       1 I           UNK       1 body        4
-       2 IN          UNK       3 body        7
-       3 II          UNK       1 body        7
-       4 HADE        UNK       1 body        7
-       5 WITH        UNK       1 body        7
-       6 fOCQUEVILLE UNK       1 body        7
-       7 PARIS       UNK       1 body        7
-       8 REEVE       UNK       1 body        7
-       9 .           UNK       9 body        7
-      10 UNIVERSITY  UNK       1 body        7
+      # A tibble: 95,258 x 6
+         htid               token       POS   count section  page
+         <chr>              <chr>       <chr> <dbl> <chr>   <dbl>
+       1 mdp.39015001796443 I           UNK       1 body        4
+       2 mdp.39015001796443 IN          UNK       3 body        7
+       3 mdp.39015001796443 II          UNK       1 body        7
+       4 mdp.39015001796443 HADE        UNK       1 body        7
+       5 mdp.39015001796443 WITH        UNK       1 body        7
+       6 mdp.39015001796443 fOCQUEVILLE UNK       1 body        7
+       7 mdp.39015001796443 PARIS       UNK       1 body        7
+       8 mdp.39015001796443 REEVE       UNK       1 body        7
+       9 mdp.39015001796443 .           UNK       9 body        7
+      10 mdp.39015001796443 UNIVERSITY  UNK       1 body        7
       # ... with 95,248 more rows
 
 # get_hathi_counts returns a tibble
@@ -45,7 +45,7 @@
     Output
       # A tibble: 137,182 x 6
          htid                     token  POS   count section  page
-         <chr>                    <chr>  <chr> <int> <chr>   <int>
+         <chr>                    <chr>  <chr> <dbl> <chr>   <dbl>
        1 aeu.ark:/13960/t3qv43c3w "iJi"  NN        1 body        1
        2 aeu.ark:/13960/t3qv43c3w ".8"   CD        1 body        1
        3 aeu.ark:/13960/t3qv43c3w "11.6" CD        1 body        1
@@ -85,7 +85,7 @@
     Output
       # A tibble: 137,182 x 6
          htid                     token  POS   count section  page
-         <chr>                    <chr>  <chr> <int> <chr>   <int>
+         <chr>                    <chr>  <chr> <dbl> <chr>   <dbl>
        1 aeu.ark:/13960/t3qv43c3w "iJi"  NN        1 body        1
        2 aeu.ark:/13960/t3qv43c3w ".8"   CD        1 body        1
        3 aeu.ark:/13960/t3qv43c3w "11.6" CD        1 body        1
@@ -105,7 +105,7 @@
     Output
       # A tibble: 137,182 x 6
          htid                     token  POS   count section  page
-         <chr>                    <chr>  <chr> <int> <chr>   <int>
+         <chr>                    <chr>  <chr> <dbl> <chr>   <dbl>
        1 aeu.ark:/13960/t3qv43c3w "iJi"  NN        1 body        1
        2 aeu.ark:/13960/t3qv43c3w ".8"   CD        1 body        1
        3 aeu.ark:/13960/t3qv43c3w "11.6" CD        1 body        1
