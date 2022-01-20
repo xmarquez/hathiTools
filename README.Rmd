@@ -138,7 +138,7 @@ extracted_features
 And we can extract the metadata:
 
 ```{r example8}
-meta <- get_metadata(result6$htid[2], dir = tmp)
+meta <- get_hathi_meta(result6$htid[2], dir = tmp)
 
 meta
 ```
