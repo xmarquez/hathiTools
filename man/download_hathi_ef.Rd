@@ -21,8 +21,9 @@ directory will be automatically created if it doesn't already exist.}
 \item{cache_type}{Type of caching used. Defaults to
 \code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
 cache types are: compressed csv (the default), "none" (no local caching of
-JSON download; only JSON file kept), "rds", "feather", file (suitable for
-use with \link{arrow}), or "text2vec.csv" (a csv suitable for use with the
+JSON download; only JSON file kept), "rds", "feather" (suitable for use
+with \link{arrow}; not yet implemented, so the function does nothing if this
+format is specified), or "text2vec.csv" (a csv suitable for use with the
 package \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
 \value{
@@ -31,12 +32,14 @@ A \link[tibble:tibble]{tibble::tibble} with the extracted features.
 \description{
 This function downloads a Hathi Trust Extracted Features file for a single
 Hathi Trust id and (typically, unless explicitly prevented) caches the result
-as a CSV file or other type of columnar format suitable for fast reading.
+as a CSV file or other type of columnar format suitable for fast loading into
+R.
 }
 \details{
 Note that if you want to download the Extracted Features of many Hathi Trust
-IDs, it is best to use \link{rsync_from_hathi}. That is what you'd normally do if
-you first built a workset using \link{workset_builder}.
+IDs, it is best to use \link{rsync_from_hathi} (and then run \link{cache_all} to
+convert all the downloaded JSON into a format that is fast to load). That is
+what you'd normally do if you first built a workset using \link{workset_builder}.
 }
 \examples{
 \dontrun{
