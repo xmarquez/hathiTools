@@ -93,7 +93,7 @@ to use the raw json to produce a different data structure.}
 \item{...}{Additional parameters passed to \code{build_json_query}}
 }
 \value{
-A \link{tibble} whenver possible, otherwise json-formatted text.
+A \link{tibble} whenever possible, otherwise json-formatted text.
 }
 \description{
 Queries the HathiTrust Bookworm Server at

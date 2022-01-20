@@ -4,16 +4,30 @@
 \alias{get_hathi_counts}
 \title{Reads the downloaded extracted features file for a given Hathi Trust id}
 \usage{
-get_hathi_counts(htid, dir = "hathi-ef")
+get_hathi_counts(
+  htid,
+  dir = getOption("hathiTools.ef.dir"),
+  cache_type = getOption("hathiTools.cachetype")
+)
 }
 \arguments{
-\item{htid}{The Hathi Trust id of the file whose extracted features are to be
-returned. If the file does not exist, it is first downloaded using \link{download_hathi}.}
+\item{htid}{The Hathi Trust id of the item whose extracted features files are
+to be loaded into memory. If it hasn't been downloaded, the function will
+try to download it first via \link{download_hathi}.}
 
-\item{dir}{The directory where the file is saved. Defaults to \code{hathi-ef}.}
+\item{dir}{The directory where the download extracted features files are to
+be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
+"hathi-ef" on load.}
+
+\item{cache_type}{Type of caching used. Defaults to
+\code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
+cache types are: compressed csv (the default), "none" (no local caching of
+JSON download; only JSON file kept), "rds", "feather", file (suitable for
+use with \link{arrow}), or "text2vec.csv" (a csv suitable for use with the
+package \link{text2vec}).}
 }
 \value{
-a \link{tibble} with the extracted features, by page.
+a \link{tibble} with the extracted features.
 }
 \description{
 Reads the downloaded extracted features file for a given Hathi Trust id
@@ -23,9 +37,11 @@ Reads the downloaded extracted features file for a given Hathi Trust id
 # Download the 1863 version of "Democracy in America" by Tocqueville
 
 tmp <- tempdir()
-download_hathi("miun.aew4744.0001.001", dir = tmp)
 
-get_hathi_counts("miun.aew4744.0001.001", dir = tmp)
+download_hathi_ef("aeu.ark:/13960/t3qv43c3w", dir = tmp)
+
+#Get the downloaded extracted features
+get_hathi_counts("aeu.ark:/13960/t3qv43c3w", dir = tmp)
 
 }
 }

@@ -2,30 +2,36 @@
 % Please edit documentation in R/hathi-ef-tools.R
 \name{get_metadata}
 \alias{get_metadata}
-\title{Reads the metadata of a downloaded Hathi Trust extracted features file}
+\title{Reads the metadata of a single downloaded Hathi Trust extracted features file}
 \usage{
-get_metadata(htid, dir = "hathi-ef")
+get_metadata(htid, dir = getOption("hathiTools.ef.dir"))
 }
 \arguments{
 \item{htid}{The Hathi Trust id of the item whose extracted features files are
 to be downloaded.}
 
-\item{dir}{The directory where the file is saved. Defaults to \code{hathi-ef}. If
-the file does not exist, it will first be downloaded using
-\link{download_hathi}.}
+\item{dir}{The directory where the file is saved. Defaults to
+\code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/ on load. If
+the file does not exist, this function will first attempt to download it
+using \link{download_hathi}.}
 }
 \value{
 a \link{tibble} with metadata.
 }
 \description{
-Reads the metadata of a downloaded Hathi Trust extracted features file
+Note that if you want to extract the metadata of more than one Hathi Trust ID
+at a time, it is best to simply query the Workset Builder database using
+\link{get_workset_meta}. Using \link{get_workset_meta} also guarantees you'll get a
+rectangular data with HT ids in the rows. It is also possible to get simple
+metadata for large numbers of htids by downloading the big hathifile using
+\link{download_hathifile} and then finding filtering the file.
 }
 \examples{
 \dontrun{
 # Download the 1862 version of "Democracy in America" by Tocqueville
 
 tmp <- tempdir()
-download_hathi("mdp.39015001796443", dir = tmp)
+download_hathi_ef("mdp.39015001796443", dir = tmp)
 
 get_metadata("mdp.39015001796443", dir = tmp)
 }
