@@ -13,7 +13,7 @@ get_hathi_counts(
 \arguments{
 \item{htid}{The Hathi Trust id of the item whose extracted features files are
 to be loaded into memory. If it hasn't been downloaded, the function will
-try to download it first via \link{download_hathi}.}
+try to download it first via \link{download_hathi_ef}.}
 
 \item{dir}{The directory where the download extracted features files are to
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just

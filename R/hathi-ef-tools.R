@@ -66,7 +66,7 @@ download_hathi_ef <- function(htid,
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be loaded into memory. If it hasn't been downloaded, the function will
-#'   try to download it first via [download_hathi].
+#'   try to download it first via [download_hathi_ef].
 #' @param dir The directory where the download extracted features files are to
 #'   be found. Defaults to `getOption("hathiTools.ef.dir")`, which is just
 #'   "hathi-ef" on load.
@@ -123,7 +123,7 @@ get_hathi_counts <- function(htid,
 #' @param dir The directory where the file is saved. Defaults to
 #'   `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/ on load. If
 #'   the file does not exist, this function will first attempt to download it
-#'   using [download_hathi].
+#'   using [download_hathi_ef].
 #'
 #' @return a [tibble] with metadata.
 #' @export
