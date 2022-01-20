@@ -1,4 +1,4 @@
-dir <- tempdir()
+dir <- "./raw-hathifiles"
 
 test_that("Hathifile Update can be downloaded", {
   skip_on_cran()

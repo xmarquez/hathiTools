@@ -3,7 +3,7 @@
     Code
       hf
     Output
-      [1] "C:\\Users\\marquexa\\AppData\\Local\\Temp\\Rtmpe6qeOt/hathi_upd_20220119.txt.gz"
+      [1] "./raw-hathifiles/hathi_upd_20220119.txt.gz"
 
 # Hathifile can be loaded
 
