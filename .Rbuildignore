@@ -2,3 +2,11 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^\.travis\.yml$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^\.github$
+^raw\-hathifiles$
+^data-raw$
+^metadata$
+^hathi-ef$
