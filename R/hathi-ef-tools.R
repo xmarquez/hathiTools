@@ -1,3 +1,253 @@
+#' Downloads a Hathi Trust Extracted Features file for a single Hathi Trust id
+#'
+#' This function downloads a Hathi Trust Extracted Features file for a single
+#' Hathi Trust id and (typically, unless explicitly prevented) caches the result
+#' as a CSV file or other type of columnar format suitable for fast reading.
+#'
+#' Note that if you want to download the Extracted Features of many Hathi Trust
+#' IDs, it is best to use [rsync_from_hathi]. That is what you'd normally do if
+#' you first built a workset using [workset_builder].
+#'
+#' @param htid The Hathi Trust id of the item whose extracted features files are
+#'   to be downloaded.
+#' @param dir The directory to download the extracted features files. Defaults
+#'   to `getOption("hathiTools.ef.dir")`, which is just "hathi-ef" on load; the
+#'   directory will be automatically created if it doesn't already exist.
+#' @param cache_type Type of caching used. Defaults to
+#'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
+#'   cache types are: compressed csv (the default), "none" (no local caching of
+#'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
+#'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
+#'   package [text2vec]).
+#'
+#' @return A [tibble::tibble] with the extracted features.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # Download the 1862 version of "Democracy in America" by Tocqueville
+#' download_hathi_ef("mdp.39015001796443", dir = tempdir())
+#' }
+download_hathi_ef <- function(htid,
+                           dir = getOption("hathiTools.ef.dir"),
+                           cache_type = getOption("hathiTools.cachetype")) {
+
+  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+                                        "feather", "text2vec.csv"))
+
+  page <- count <- NULL
+  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
+  if(file.exists(local_cache)) {
+    message("File has already been downloaded. Returning existing cached file.")
+    res <- read_cached_ef_file(local_cache, cache_type)
+    return(res)
+  } else {
+    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+    if(!file.exists(local_json)) {
+      download_http(htid, dir = dir)
+    }
+    ef <- load_json(htid,
+                    check_suffixes = c("json.bz2", "json"),
+                    dir = dir) %>%
+      parse_listified_book() %>%
+      dplyr::mutate(page = as.integer(page),
+                    count = as.integer(count))
+
+    ef <- cache_ef_file(ef, local_cache, cache_type = cache_type)
+
+  }
+  ef %>%
+    dplyr::mutate(htid = htid, .before = dplyr::everything())
+
+}
+
+#' Reads the downloaded extracted features file for a given Hathi Trust id
+#'
+#' @param htid The Hathi Trust id of the item whose extracted features files are
+#'   to be loaded into memory. If it hasn't been downloaded, the function will
+#'   try to download it first via [download_hathi].
+#' @param dir The directory where the download extracted features files are to
+#'   be found. Defaults to `getOption("hathiTools.ef.dir")`, which is just
+#'   "hathi-ef" on load.
+#' @param cache_type Type of caching used. Defaults to
+#'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
+#'   cache types are: compressed csv (the default), "none" (no local caching of
+#'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
+#'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
+#'   package [text2vec]).
+#'
+#' @return a [tibble] with the extracted features.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Download the 1863 version of "Democracy in America" by Tocqueville
+#'
+#' tmp <- tempdir()
+#'
+#' download_hathi_ef("aeu.ark:/13960/t3qv43c3w", dir = tmp)
+#'
+#' #Get the downloaded extracted features
+#' get_hathi_counts("aeu.ark:/13960/t3qv43c3w", dir = tmp)
+#'
+#' }
+get_hathi_counts <- function(htid,
+                             dir = getOption("hathiTools.ef.dir"),
+                             cache_type = getOption("hathiTools.cachetype")) {
+
+  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+                                        "feather", "text2vec.csv"))
+
+  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
+  if(!file.exists(local_cache)) {
+    ef <- download_hathi_ef(htid, dir = dir, cache_type = cache_type)
+  } else {
+    ef <- read_cached_ef_file(local_cache, cache_type = cache_type)
+  }
+  ef %>%
+    dplyr::mutate(htid = htid, .before = dplyr::everything())
+}
+
+#' Reads the metadata of a single downloaded Hathi Trust extracted features file
+#'
+#' Note that if you want to extract the metadata of more than one Hathi Trust ID
+#' at a time, it is best to simply query the Workset Builder database using
+#' [get_workset_meta]. Using [get_workset_meta] also guarantees you'll get a
+#' rectangular data with HT ids in the rows. It is also possible to get simple
+#' metadata for large numbers of htids by downloading the big hathifile using
+#' [download_hathifile] and then finding filtering the file.
+#'
+#' @param htid The Hathi Trust id of the item whose extracted features files are
+#'   to be downloaded.
+#' @param dir The directory where the file is saved. Defaults to
+#'   `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/ on load. If
+#'   the file does not exist, this function will first attempt to download it
+#'   using [download_hathi].
+#'
+#' @return a [tibble] with metadata.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Download the 1862 version of "Democracy in America" by Tocqueville
+#'
+#' tmp <- tempdir()
+#' download_hathi_ef("mdp.39015001796443", dir = tmp)
+#'
+#' get_metadata("mdp.39015001796443", dir = tmp)
+#' }
+get_metadata <- function (htid, dir = getOption("hathiTools.ef.dir")) {
+  local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+  meta <- value <- NULL
+  if(!file.exists(local_json)) {
+    download_hathi_ef(htid, dir = dir)
+  }
+  meta <- load_json(htid, dir = dir)$metadata
+
+  length_zero_cols <- meta %>% purrr::map_lgl(~{length(.) == 0})
+  meta_names <- names(meta)
+  meta_names <- meta_names[ !length_zero_cols ]
+  meta <- meta[ !length_zero_cols]
+
+  flatten_data <- function(x) {
+    tibble::as_tibble_col(x) %>%
+      tidyr::unnest(value) %>%
+      dplyr::mutate(value = as.character(value))
+  }
+  meta <- meta %>% purrr::map(flatten_data) %>% dplyr::bind_rows(.id = "field")
+  meta$htid <- htid
+  meta
+}
+
+#' Caches all downloaded JSON Extracted Features files
+#'
+#' It is useful to run this function after running [rsync_from_hathi]; this way,
+#' you can cache all your slow-to-load JSON Extracted Features files to a faster
+#' to load format (e.g., feather or csv).
+#'
+#' @inheritParams get_hathi_counts
+#' @param keep_json Whether to keep the downloaded json files. Default is
+#'   `TRUE`; if false, it only keeps the local cached files (e.g., the csv
+#'   files). This can save space.
+#'
+#' @export
+#'
+cache_all <- function(dir = getOption("hathiTools.ef.dir"),
+                      cache_type = getOption("hathiTools.cachetype"),
+                      keep_json = TRUE) {
+
+  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+                                        "feather", "text2vec.csv"))
+
+
+  if(cache_type == "none") {
+    return()
+  }
+
+  json_files <- fs::dir_ls(path = dir, recurse = TRUE, glob = "*.json*")
+  cached_filenames <- stringr::str_replace(json_files,
+                                       "\\.json.+",
+                                       paste0(".", cache_type))
+
+  if(length(json_files) < 1) {
+    stop("No JSON extracted features files found. Download some from Hathi first!")
+  }
+
+  for(local_json in json_files) {
+    num_file <- which(json_files %in% local_json)
+    if(num_file %% 5 == 1) {
+      message("Caching file ", num_file, " of ", length(json_files), "...")
+    }
+    if(!file.exists(cached_filenames[num_file])) {
+      ef <- jsonlite::read_json(local_json) %>%
+        parse_listified_book() %>%
+        dplyr::mutate(page = as.integer(page),
+                      count = as.integer(count))
+
+      cache_ef_file(ef, cached_filenames[num_file], cache_type = cache_type)
+    }
+  }
+
+  if(!keep_json) {
+    message("Now deleting all JSON files!")
+    fs::file_delete(json_files)
+  }
+
+
+}
+read_cached_ef_file <- function(filename, cache_type) {
+  if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
+    res <- vroom::vroom(filename)
+  }
+  if(cache_type %in% c("rds")) {
+    res <- readRDS(filename)
+  }
+  if(cache_type %in% c("feather")) {
+    res <- arrow::read_feather(filename)
+  }
+  res
+}
+
+cache_ef_file <- function(ef, filename, cache_type) {
+  if(stringr::str_detect(cache_type, "text2vec")) {
+
+    ef <- ef %>%
+      dplyr::group_by(htid, section, page) %>%
+      dplyr::summarise(token = stringr::str_c(rep(token, count), "_", rep(POS, count), collapse = " "),
+                       .groups = "drop")
+
+  }
+  if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
+    vroom::vroom_write(ef, filename, delim = ",")
+  }
+  if(cache_type == "rds") {
+    saveRDS(ef, filename, compress = TRUE)
+  }
+  ef
+
+}
+
 id_encode <- function (htid) {
   htid %>%
     id_clean() %>%
@@ -17,21 +267,19 @@ pairtree <- function (htid) {
   }
   breaks <- seq(1, nchar(splitted[2]), by = 2)
   cleaned <- splitted[2] %>% id_encode()
-  slashes <- stringr::str_sub(cleaned, breaks, breaks + 1) %>% stringr::str_c(sep = "/",
-                                                                     collapse = "/")
+  slashes <- stringr::str_sub(cleaned, breaks, breaks + 1) %>%
+    stringr::str_c(sep = "/", collapse = "/")
   stringr::str_c(splitted[1], "pairtree_root", slashes, cleaned,
                  sep = "/")
 }
 
-local_loc <- function (htid, suffix = "json", dir)
-{
+local_loc <- function(htid, suffix = "json", dir) {
   clean <- htid %>% id_clean()
   stub <- stubbytree(htid)
   stringr::str_glue("{dir}/{stub}/{clean}.{suffix}")
 }
 
-load_json <- function (htid, check_suffixes = c("json", "json.bz2", "json.gz"), dir)
-{
+load_json <- function(htid, check_suffixes = c("json", "json.bz2", "json.gz"), dir) {
   for (suffix in check_suffixes) {
     fname <- local_loc(htid, suffix = suffix, dir = dir)
     if (file.exists(fname)) {
@@ -43,52 +291,8 @@ load_json <- function (htid, check_suffixes = c("json", "json.bz2", "json.gz"), 
   NULL
 }
 
-#' Reads the metadata of a downloaded Hathi Trust extracted features file
-#'
-#' @param htid The Hathi Trust id of the item whose extracted features files are
-#'   to be downloaded.
-#' @param dir The directory where the file is saved. Defaults to `hathi-ef`. If
-#'   the file does not exist, it will first be downloaded using
-#'   [download_hathi].
-#'
-#' @return a [tibble] with metadata.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Download the 1862 version of "Democracy in America" by Tocqueville
-#'
-#' tmp <- tempdir()
-#' download_hathi("mdp.39015001796443", dir = tmp)
-#'
-#' get_metadata("mdp.39015001796443", dir = tmp)
-#' }
-get_metadata <- function (htid, dir = "hathi-ef")
-{
-  local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
-  meta <- value <- NULL
-  if(!file.exists(local_json)) {
-    download_hathi(htid, dir = dir)
-  }
-  meta <- load_json(htid, dir = dir)$metadata
 
-  length_zero_cols <- meta %>% purrr::map_lgl(~{length(.) == 0})
-  meta_names <- names(meta)
-  meta_names <- meta_names[ !length_zero_cols ]
-  meta <- meta[ !length_zero_cols]
-
-  flatten_data <- function(x) {
-    tibble::as_tibble_col(x) %>%
-      tidyr::unnest(value) %>%
-      dplyr::mutate(value = as.character(value))
-  }
-  meta <- meta %>% purrr::map(flatten_data) %>% dplyr::bind_rows(.id = "field")
-  meta$htid <- htid
-  meta
-}
-
-stubbytree <- function (htid)
-{
+stubbytree <- function(htid) {
   splitted <- stringr::str_split(htid, "\\.", n = 2)[[1]]
   if (length(splitted) == 1) {
     stop(stringr::str_glue("malformed htid {htid}: Hathi ids should contain a period"))
@@ -107,40 +311,7 @@ stubby_url_to_rsync <- function(htid) {
   url
 }
 
-#' Converts a list of htids to relative paths for rsync to download
-#'
-#' @param htids A character vector or list of HathiTrust ids (htids)
-#' @param file A text file to save the resulting list of relative stubbytree
-#'   paths to use in the command `rsync -av --files-from FILE.txt
-#'   data.analytics.hathitrust.org::features-2020.03/ hathi-ef/`
-#'
-#' @section Details:
-#'
-#'   If you have a lot of files to download, generating the list of relative
-#'   stubbytree paths and using rsync is much faster than using [download_hathi]
-#'   over a list of htids. But rsync only downloads json files, so calling
-#'   [get_hathi_counts] will be slower the first time as the function will
-#'   cache all downloaded json files to csv.
-#'
-#' @return The list of relative paths saved to the file (invisibly).
-#' @export
-#'
-#' @examples
-#' htid_to_rsync(c("nc01.ark:/13960/t2v41mn4r", "mdp.39015001796443"), tempfile())
-htid_to_rsync <- function(htids, file) {
-  rel_paths <- htids %>%
-    purrr::map_chr(stubby_url_to_rsync)
-
-  writeLines(rel_paths, file)
-
-  message(stringr::str_glue("Use rsync -av --files-from {file} data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory"))
-
-  invisible(rel_paths)
-
-}
-
-parse_page <- function (page)
-{
+parse_page <- function(page) {
   parts <- c("body", "header", "footer")
   seq <- as.numeric(page$seq)
   body <- parts %>%
@@ -153,8 +324,7 @@ parse_page <- function (page)
   body
 }
 
-parse_section <- function (page, section)
-{
+parse_section <- function(page, section) {
   d <- page[[section]]$tokenPosCount
   if (length(d)) {
     lens <- sapply(d, length)
@@ -165,24 +335,22 @@ parse_section <- function (page, section)
   return(NULL)
 }
 
-parse_listified_book <- function (listified_version)
-{
+parse_listified_book <- function(listified_version) {
   page <- NULL
   listified_version$features$pages %>%
     purrr::map(parse_page) %>%
-    rlang::flatten() %>%
+    purrr::flatten() %>%
     dplyr::bind_rows() %>%
     dplyr::mutate(page = as.numeric(page))
 }
 
-download_http <- function(htid, dir)
-{
+download_http <- function(htid, dir) {
   local_name <- local_loc(htid, suffix = c("json.bz2"), dir = dir)
   if(file.exists(local_name)) {
     return(local_name)
   } else {
-    tree = stubbytree(htid)
-    clean = id_clean(htid)
+    tree <- stubbytree(htid)
+    clean <- id_clean(htid)
     url <- stringr::str_glue("http://data.analytics.hathitrust.org/features-2020.03/{tree}/{clean}.json.bz2")
     dir.create(dirname(local_name), showWarnings = FALSE, recursive = TRUE)
     utils::download.file(url = url, destfile = local_name)
@@ -190,70 +358,15 @@ download_http <- function(htid, dir)
   }
 }
 
-#' Downloads a Hathi Trust Extracted Features file for a given Hathi Trust id
-#'
-#' @param htid The Hathi Trust id of the item whose extracted features files are
-#'   to be downloaded.
-#' @param dir The directory to download the extracted features files. Defaults
-#'   to "hathi-ef"; the directory will be automatically created if it doesn't
-#'   already exist.
-#'
-#' @return Saves the json and csv versions of the extracted features.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'
-#' # Download the 1862 version of "Democracy in America" by Tocqueville
-#' download_hathi("mdp.39015001796443", dir = tempdir())
-#' }
-download_hathi <- function(htid, dir = "hathi-ef") {
+read_json <- function(htid, dir) {
   page <- count <- NULL
-  local_csv <- local_loc(htid, suffix = "csv.gz", dir = dir)
-  if(file.exists(local_csv)) {
-    return()
-  } else {
-    download_http(htid, dir = dir)
-    listified_version <- load_json(htid, check_suffixes = c("json.bz2", "json"), dir = dir)
-    tibble <- listified_version %>% parse_listified_book()
-    tibble %>% dplyr::mutate(page = as.integer(page), count = as.integer(count)) %>%
-      readr::write_csv(local_csv)
-  }
 
+  listified_version <- load_json(htid,
+                                 check_suffixes = c("json.bz2", "json"),
+                                 dir = dir) %>%
+    parse_listified_book() %>%
+    dplyr::mutate(page = as.integer(page), count = as.integer(count))
 }
 
-#' Reads the downloaded extracted features file for a given Hathi Trust id
-#'
-#' @param htid The Hathi Trust id of the file whose extracted features are to be
-#'   returned. If the file does not exist, it is first downloaded using [download_hathi].
-#' @param dir The directory where the file is saved. Defaults to `hathi-ef`.
-#'
-#' @return a [tibble] with the extracted features, by page.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' # Download the 1863 version of "Democracy in America" by Tocqueville
-#'
-#' tmp <- tempdir()
-#' download_hathi("miun.aew4744.0001.001", dir = tmp)
-#'
-#' get_hathi_counts("miun.aew4744.0001.001", dir = tmp)
-#'
-#' }
-get_hathi_counts <- function(htid, dir = "hathi-ef") {
-  local_csv <- local_loc(htid, suffix = "csv.gz", dir = dir)
-  if(!file.exists(local_csv)) {
-    download_hathi(htid, dir = dir)
-  }
-  if (file.exists(local_csv)) {
-    df <- readr::read_csv(local_csv, col_types = "ccici", progress = FALSE)
-    df$htid <- htid
-    df <- df %>%
-      dplyr::relocate(htid)
-    return(df)
 
-  } else {
-    return(tibble::tibble())
-  }
-}
+
