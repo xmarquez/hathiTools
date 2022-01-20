@@ -1,1 +1,7 @@
 *.RData
+docs
+.Rproj.user
+raw-hathifiles
+metadata
+hathi-ef
+.Rhistory
