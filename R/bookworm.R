@@ -1,5 +1,5 @@
 
-
+#' @importFrom utils URLencode
 build_json_query <- function(word, groups,
                              words_collation,
                              counttype,
@@ -136,8 +136,7 @@ build_json_query <- function(word, groups,
 #'   to use the raw json to produce a different data structure.
 #' @param ... Additional parameters passed to `build_json_query`
 #'
-#' @return A [tibble] whenver possible, otherwise json-formatted text.
-#' @importFrom rlang .data
+#' @return A [tibble] whenever possible, otherwise json-formatted text.
 #' @export
 #'
 #' @examples
@@ -233,4 +232,5 @@ query_bookworm <- function(word, groups = "date_year",
 
   data
 }
+
 
