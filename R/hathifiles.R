@@ -213,7 +213,7 @@ add_imputed_date <- function(hathi_file) {
   message("Adding imputed date variable")
 
   hathi_file$imputed_pub_date <- stringr::str_extract(iconv(hathi_file$imprint, to = "ASCII"),
-                                                      "[^[:alnum:]][12][0-9]{3}[^[:alnum:]]") %>%
+                                                      "[12][0-9]{3}") %>%
     as.numeric()
 
   current_year <- as.POSIXlt(Sys.time())$year + 1900
