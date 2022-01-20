@@ -2,11 +2,13 @@
 #'
 #' This function downloads a Hathi Trust Extracted Features file for a single
 #' Hathi Trust id and (typically, unless explicitly prevented) caches the result
-#' as a CSV file or other type of columnar format suitable for fast reading.
+#' as a CSV file or other type of columnar format suitable for fast loading into
+#' R.
 #'
 #' Note that if you want to download the Extracted Features of many Hathi Trust
-#' IDs, it is best to use [rsync_from_hathi]. That is what you'd normally do if
-#' you first built a workset using [workset_builder].
+#' IDs, it is best to use [rsync_from_hathi] (and then run [cache_all] to
+#' convert all the downloaded JSON into a format that is fast to load). That is
+#' what you'd normally do if you first built a workset using [workset_builder].
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be downloaded.
@@ -16,8 +18,9 @@
 #' @param cache_type Type of caching used. Defaults to
 #'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
 #'   cache types are: compressed csv (the default), "none" (no local caching of
-#'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
-#'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
+#'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
+#'   with [arrow]; not yet implemented, so the function does nothing if this
+#'   format is specified), or "text2vec.csv" (a csv suitable for use with the
 #'   package [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return A [tibble::tibble] with the extracted features.
@@ -36,7 +39,6 @@ download_hathi_ef <- function(htid,
   cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
 
-  page <- count <- NULL
   local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
   if(file.exists(local_cache)) {
     message("File has already been downloaded. Returning existing cached file.")
@@ -47,12 +49,7 @@ download_hathi_ef <- function(htid,
     if(!file.exists(local_json)) {
       download_http(htid, dir = dir)
     }
-    ef <- load_json(htid,
-                    check_suffixes = c("json.bz2", "json"),
-                    dir = dir) %>%
-      parse_listified_book() %>%
-      dplyr::mutate(page = as.integer(page),
-                    count = as.integer(count))
+    ef <- read_json(htid, dir = dir)
 
     ef <- cache_ef_file(ef, local_cache, cache_type = cache_type)
 
@@ -73,8 +70,9 @@ download_hathi_ef <- function(htid,
 #' @param cache_type Type of caching used. Defaults to
 #'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
 #'   cache types are: compressed csv (the default), "none" (no local caching of
-#'   JSON download; only JSON file kept), "rds", "feather", file (suitable for
-#'   use with [arrow]), or "text2vec.csv" (a csv suitable for use with the
+#'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
+#'   with [arrow]; not yet implemented, so the function throws an error if this
+#'   format is specified), or "text2vec.csv" (a csv suitable for use with the
 #'   package [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @return a [tibble] with the extracted features.
@@ -116,7 +114,7 @@ get_hathi_counts <- function(htid,
 #' [get_workset_meta]. Using [get_workset_meta] also guarantees you'll get a
 #' rectangular data with HT ids in the rows. It is also possible to get simple
 #' metadata for large numbers of htids by downloading the big hathifile using
-#' [download_hathifile] and then finding filtering the file.
+#' [download_hathifile] and then filtering it.
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be downloaded.
@@ -135,9 +133,9 @@ get_hathi_counts <- function(htid,
 #' tmp <- tempdir()
 #' download_hathi_ef("mdp.39015001796443", dir = tmp)
 #'
-#' get_metadata("mdp.39015001796443", dir = tmp)
+#' get_hathi_meta("mdp.39015001796443", dir = tmp)
 #' }
-get_metadata <- function (htid, dir = getOption("hathiTools.ef.dir")) {
+get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
   local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
   meta <- value <- NULL
   if(!file.exists(local_json)) {
@@ -160,64 +158,6 @@ get_metadata <- function (htid, dir = getOption("hathiTools.ef.dir")) {
   meta
 }
 
-#' Caches all downloaded JSON Extracted Features files
-#'
-#' It is useful to run this function after running [rsync_from_hathi]; this way,
-#' you can cache all your slow-to-load JSON Extracted Features files to a faster
-#' to load format (e.g., feather or csv).
-#'
-#' @inheritParams get_hathi_counts
-#' @param keep_json Whether to keep the downloaded json files. Default is
-#'   `TRUE`; if false, it only keeps the local cached files (e.g., the csv
-#'   files). This can save space.
-#'
-#' @export
-#'
-cache_all <- function(dir = getOption("hathiTools.ef.dir"),
-                      cache_type = getOption("hathiTools.cachetype"),
-                      keep_json = TRUE) {
-
-  page <- count <- NULL
-
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
-
-
-  if(cache_type == "none") {
-    return()
-  }
-
-  json_files <- fs::dir_ls(path = dir, recurse = TRUE, glob = "*.json*")
-  cached_filenames <- stringr::str_replace(json_files,
-                                       "\\.json.+",
-                                       paste0(".", cache_type))
-
-  if(length(json_files) < 1) {
-    stop("No JSON extracted features files found. Download some from Hathi first!")
-  }
-
-  for(local_json in json_files) {
-    num_file <- which(json_files %in% local_json)
-    if(num_file %% 5 == 1) {
-      message("Caching file ", num_file, " of ", length(json_files), "...")
-    }
-    if(!file.exists(cached_filenames[num_file])) {
-      ef <- jsonlite::read_json(local_json) %>%
-        parse_listified_book() %>%
-        dplyr::mutate(page = as.integer(page),
-                      count = as.integer(count))
-
-      cache_ef_file(ef, cached_filenames[num_file], cache_type = cache_type)
-    }
-  }
-
-  if(!keep_json) {
-    message("Now deleting all JSON files!")
-    fs::file_delete(json_files)
-  }
-
-
-}
 read_cached_ef_file <- function(filename, cache_type) {
   if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
     res <- vroom::vroom(filename)
@@ -225,9 +165,9 @@ read_cached_ef_file <- function(filename, cache_type) {
   if(cache_type %in% c("rds")) {
     res <- readRDS(filename)
   }
-  # if(cache_type %in% c("feather")) {
-  #   res <- arrow::read_feather(filename)
-  # }
+  if(cache_type %in% c("feather")) {
+    res <- arrow::read_feather(filename)
+  }
   res
 }
 
@@ -249,6 +189,10 @@ cache_ef_file <- function(ef, filename, cache_type) {
   if(cache_type == "rds") {
     saveRDS(ef, filename, compress = TRUE)
   }
+  if(cache_type == "feather") {
+    arrow::write_feather(ef, filename)
+  }
+
   ef
 
 }
