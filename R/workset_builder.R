@@ -75,7 +75,11 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
 
   tmp <- tempfile(fileext = "json")
 
-  curl::curl_download(query_string, tmp)
+
+  h <- curl::new_handle()
+  curl::handle_setopt(h, ssl_verifypeer = FALSE)
+
+  curl::curl_download(query_string, tmp, handle = h)
 
   res <- vroom::vroom_lines(tmp) %>%
     jsonlite::fromJSON() %>%
@@ -378,11 +382,14 @@ get_workset_meta <- function(workset,
 
   message("Getting download key...")
 
-  res <- httr::POST("https://solr2.htrc.illinois.edu/htrc-ef-access/get?action=url-shortener",
-                    body = htids,
-                    encode = "form",
-                    httr::content_type("application/x-www-form-urlencoded"),
-                    httr::verbose(data_out = FALSE))
+  httr::with_config(
+    config = httr::config(ssl_verifypeer = FALSE),
+    res <- httr::POST("https://solr2.htrc.illinois.edu/htrc-ef-access/get?action=url-shortener",
+                      body = htids,
+                      encode = "form",
+                      httr::content_type("application/x-www-form-urlencoded"),
+                      httr::verbose(data_out = FALSE))
+  )
 
   key <- res$content %>% rawToChar()
 
@@ -393,14 +400,18 @@ get_workset_meta <- function(workset,
   message("Downloading metadata for ", num_vols, " volumes. ",
           "This might take some time.")
 
-  if(cache) {
-    curl::curl_download(download_url, filename, quiet = FALSE)
+  h <- curl::new_handle()
+  curl::handle_setopt(h, ssl_verifypeer = FALSE)
+
+    if(cache) {
+      curl::curl_download(download_url, filename, quiet = FALSE, handle = h)
     meta <- vroom::vroom(filename, delim = ",")
   } else {
     tmp <- tempfile(fileext = ".csv")
-    curl::curl_download(download_url, tmp, quiet = FALSE)
+    curl::curl_download(download_url, tmp, quiet = FALSE, handle = h)
     meta <- vroom::vroom(tmp, delim = ",")
   }
+
 
   meta
 
