@@ -190,7 +190,7 @@ result8
 Here's the metadata for the first six of these results.
 
 ```{r}
-meta <- get_workset_meta(head(result8)) 
+meta <- get_workset_meta(head(result8), metadata_dir = tmp) 
 
 meta
 ```
@@ -202,9 +202,10 @@ tmp <- tempfile()
 
 htid_to_rsync(result8$htid, tmp)
 ```
+
 There's a convenience function that will attempt to do this for you in one command.
 
-```{r}
+```{r, eval = FALSE}
 rsync_from_hathi(head(result8$htid))
 ```
 
