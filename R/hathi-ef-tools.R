@@ -165,6 +165,9 @@ read_cached_ef_file <- function(filename, cache_type) {
     res <- readRDS(filename)
   }
   if(cache_type %in% c("feather")) {
+    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+      stop("Must have 'arrow' package installed to use 'feather' cache")
+    }
     res <- arrow::read_feather(filename)
   }
   if(cache_type != "text2vec.csv") {
@@ -196,6 +199,9 @@ cache_ef_file <- function(ef, filename, cache_type) {
     saveRDS(ef, filename, compress = TRUE)
   }
   if(cache_type == "feather") {
+    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+      stop("Must have 'arrow' package installed to use 'feather' cache")
+    }
     arrow::write_feather(ef, filename)
   }
 
