@@ -171,7 +171,7 @@ load_raw_hathifile <- function(filename = NULL,
   }
 
   res <- vroom::vroom(filename, col_names = hf_headers,
-                      delim = "\t", quote = "", col_select = cols)
+                      delim = "\t", quote = "", col_select = dplyr::all_of(cols))
 
   current_year <- as.POSIXlt(Sys.time())$year + 1900
 
@@ -188,7 +188,7 @@ load_raw_hathifile <- function(filename = NULL,
 
 
   res %>%
-      dplyr::select(cols)
+      dplyr::select(dplyr::all_of(cols))
 
 }
 
