@@ -60,7 +60,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package allows you to interact with the HathiTrust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a similar tool to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a>, as well as to download and process <a href="https://analytics.hathitrust.org/datasets" class="external-link">HathiTrust Extracted Features</a> files on which the Bookworm viewer is based, and to build worksets of Hathi Trust IDs by querying the <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. (The HathiTrust collection contains over 13 million digitised books, including many of those originally digitised by Google for its Google Books project).</p>
+<p>This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a tool similar to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a> and the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. You can also download and process the <a href="https://analytics.hathitrust.org/datasets" class="external-link">Hathi Trust Extracted Features</a> files on which the Bookworm viewer is based. The Hathi Trust collection contains over 17 million digitised books, including many of those originally digitised by Google for its Google Books project.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -71,7 +71,7 @@
 <div class="section level2">
 <h2 id="downloading-word-frequencies">Downloading word frequencies<a class="anchor" aria-label="anchor" href="#downloading-word-frequencies"></a>
 </h2>
-<p>The simplest task to use the package for is to download word frequencies from the HathiTrust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>:</p>
+<p>The simplest task to use the package for is to download word frequencies from the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xmarquez.github.io/hathiTools">hathiTools</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
@@ -235,14 +235,36 @@
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span> 
 
 <span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">download_hathi</span><span class="op">(</span>dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+  <span class="fu"><a href="reference/download_hathi_ef.html">download_hathi_ef</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 18,763 x 6</span>
+<span class="co">#&gt;    htid        token      POS   count section  page</span>
+<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span>
+<span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span>
+<span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span>
+<span class="co">#&gt;  4 uc1.$b67929 uc-male    JJ        1 body        1</span>
+<span class="co">#&gt;  5 uc1.$b67929 *          SYM       1 body        1</span>
+<span class="co">#&gt;  6 uc1.$b67929 .          .         1 body        1</span>
+<span class="co">#&gt;  7 uc1.$b67929 Free       NNP       1 body        1</span>
+<span class="co">#&gt;  8 uc1.$b67929 Men        NNP       1 body        1</span>
+<span class="co">#&gt;  9 uc1.$b67929 Democracy  NNP       1 body        1</span>
+<span class="co">#&gt; 10 uc1.$b67929 School     NNP       1 body        1</span>
+<span class="co">#&gt; # ... with 18,753 more rows</span>
 
 <span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+<span class="co">#&gt; Rows: 18763 Columns: 5</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: ","</span>
+<span class="co">#&gt; chr (3): token, POS, section</span>
+<span class="co">#&gt; dbl (2): count, page</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 
 <span class="va">extracted_features</span>
 <span class="co">#&gt; # A tibble: 18,763 x 6</span>
 <span class="co">#&gt;    htid        token      POS   count section  page</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;int&gt; &lt;chr&gt;   &lt;int&gt;</span>
+<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span>
 <span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span>
 <span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span>
@@ -256,7 +278,7 @@
 <span class="co">#&gt; # ... with 18,753 more rows</span></code></pre></div>
 <p>And we can extract the metadata:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu">get_metadata</span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
 
 <span class="va">meta</span>
 <span class="co">#&gt; # A tibble: 35 x 3</span>
@@ -273,8 +295,47 @@
 <span class="co">#&gt;  9 contributor   Educational Policies Commission.                      uc1.$b67~</span>
 <span class="co">#&gt; 10 contributor   http://www.viaf.org/viaf/136691592                    uc1.$b67~</span>
 <span class="co">#&gt; # ... with 25 more rows</span></code></pre></div>
-<p>One can get info about the corpus itself by using <code>counttype = "TotalWords"</code> or <code>counttype = "TotalTexts"</code> and omitting the word key.</p>
+<p>We can also get the metadata for all of these books at the same time:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+<span class="co">#&gt; Warning in get_workset_meta(result6$htid, metadata_dir = tmp): This function</span>
+<span class="co">#&gt; works best with worksets generated by workset_builder. I cannot determine if</span>
+<span class="co">#&gt; this file was generated by workset_builder; results may not be accurate or fail.</span>
+<span class="co">#&gt; Getting download key...</span>
+<span class="co">#&gt; Downloading metadata for 100 volumes. This might take some time.</span>
+<span class="co">#&gt; Rows: 100 Columns: 36</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: ","</span>
+<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPl...</span>
+<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
+<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
+
+<span class="va">meta</span>
+<span class="co">#&gt; # A tibble: 100 x 36</span>
+<span class="co">#&gt;    htBibUrl  schemaVersion volumeIdentifier rightsAttributes title genre pubDate</span>
+<span class="co">#&gt;    &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 http://c~           1.3 nc01.ark:/13960~ und              Teac~ "[\"~    1941</span>
+<span class="co">#&gt;  2 http://c~           1.3 uc1.$b67929      pd               The ~ "[\"~    1941</span>
+<span class="co">#&gt;  3 http://c~           1.3 mdp.39015062763~ pd               The ~ "[\"~    1941</span>
+<span class="co">#&gt;  4 http://c~           1.3 mdp.39015068297~ pd               The ~ "[\"~    1941</span>
+<span class="co">#&gt;  5 http://c~           1.3 uc1.$b67873      pd               Penn~ "[\"~    1941</span>
+<span class="co">#&gt;  6 http://c~           1.3 mdp.39015035886~ ic               Educ~ "[\"~    1941</span>
+<span class="co">#&gt;  7 http://c~           1.3 mdp.39015031665~ pd               Educ~ "[\"~    1941</span>
+<span class="co">#&gt;  8 http://c~           1.3 uc1.$b67928      pd               Educ~ "[\"~    1941</span>
+<span class="co">#&gt;  9 http://c~           1.3 uiug.3011210806~ ic               Proc~ "[\"~    1941</span>
+<span class="co">#&gt; 10 http://c~           1.3 uc1.b4305220     ic               Guid~ "[\"~    1941</span>
+<span class="co">#&gt; # ... with 90 more rows, and 29 more variables: pubPlace &lt;chr&gt;,</span>
+<span class="co">#&gt; #   typeOfResource &lt;chr&gt;, bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;,</span>
+<span class="co">#&gt; #   dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;,</span>
+<span class="co">#&gt; #   issn &lt;chr&gt;, oclc &lt;chr&gt;, lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span>
+<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
+<span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
+<p>One can get info about the corpus itself by using <code>counttype = "TotalWords"</code> or <code>counttype = "TotalTexts"</code> and omitting the word key.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">result7</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,
                           lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1500</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; No encoding supplied: defaulting to UTF-8.</span>
@@ -305,9 +366,9 @@
   <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Total texts per language in the HathiTrust bookworm"</span>, subtitle <span class="op">=</span> <span class="st">"Log scale. Less common languages grouped as 'other'. 10 year rolling average."</span>, x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.</span></code></pre></div>
 <p><img src="reference/figures/README-example9-1.png" width="100%"></p>
-<p>Note that the accessible HathiTrust Bookworm database is the 2016 version. A more current version of the database exists (with some 17 million digitized texts), but is not publicly accessible yet, I think.</p>
+<p>Note that the accessible Hathi Trust Bookworm database is the 2016 version. A more current version of the database exists (with some 17 million digitized texts), but is not publicly accessible yet, I think.</p>
 <p>It is also possible to build a workset of Hathi Trust IDs for further analysis. Here, for example, we find all the volumes that contain the term “democracy” and have genre strings that include “dictionary” and “biography”.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">result8</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>token <span class="op">=</span> <span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dictionary"</span>, <span class="st">"biography"</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">result8</span> 
@@ -325,34 +386,49 @@
 <span class="co">#&gt;  9 coo.31924081662029           1</span>
 <span class="co">#&gt; 10 coo.31924086013368           1</span>
 <span class="co">#&gt; # ... with 1,119 more rows</span></code></pre></div>
-<p>Here’s the metadata for the first of these results.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span> 
-
-<span class="va">result8</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">download_hathi</span><span class="op">(</span>dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-
-<span class="fu">get_metadata</span><span class="op">(</span><span class="va">result8</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">)</span> 
-<span class="co">#&gt; # A tibble: 31 x 3</span>
-<span class="co">#&gt;    field         value                                           htid           </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                           &lt;chr&gt;          </span>
-<span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Metad~ aeu.ark:/13960~</span>
-<span class="co">#&gt;  2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t390~ aeu.ark:/13960~</span>
-<span class="co">#&gt;  3 type          DataFeedItem                                    aeu.ark:/13960~</span>
-<span class="co">#&gt;  4 type          Book                                            aeu.ark:/13960~</span>
-<span class="co">#&gt;  5 dateCreated   20200209                                        aeu.ark:/13960~</span>
-<span class="co">#&gt;  6 title         An American biographical and historical dictio~ aeu.ark:/13960~</span>
-<span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/75398636               aeu.ark:/13960~</span>
-<span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Person    aeu.ark:/13960~</span>
-<span class="co">#&gt;  9 contributor   Allen, William, 1784-1868.                      aeu.ark:/13960~</span>
-<span class="co">#&gt; 10 pubDate       1832                                            aeu.ark:/13960~</span>
-<span class="co">#&gt; # ... with 21 more rows</span></code></pre></div>
-<p>One can also turn the workset into a list of htids for downloading via rsync:</p>
+<p>Here’s the metadata for the first six of these results.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result8</span><span class="op">)</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span> 
+<span class="co">#&gt; Getting download key...</span>
+<span class="co">#&gt; Downloading metadata for 6 volumes. This might take some time.</span>
+<span class="co">#&gt; Rows: 6 Columns: 36</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: ","</span>
+<span class="co">#&gt; chr  (30): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPl...</span>
+<span class="co">#&gt; dbl   (4): schemaVersion, pubDate, hathitrustRecordNumber, sourceInstitution...</span>
+<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
+
+<span class="va">meta</span>
+<span class="co">#&gt; # A tibble: 6 x 36</span>
+<span class="co">#&gt;   htBibUrl  schemaVersion volumeIdentifier  rightsAttributes title genre pubDate</span>
+<span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 http://c~           1.3 aeu.ark:/13960/t~ pd               An A~ "[\"~    1832</span>
+<span class="co">#&gt; 2 http://c~           1.3 aeu.ark:/13960/t~ pd               An A~ "[\"~    1809</span>
+<span class="co">#&gt; 3 http://c~           1.3 chi.090377798     pd               Univ~ "[\"~    1885</span>
+<span class="co">#&gt; 4 http://c~           1.3 chi.097697911     pd               The ~ "[\"~    1880</span>
+<span class="co">#&gt; 5 http://c~           1.3 chi.098306000     pd               Live~ "[\"~    1814</span>
+<span class="co">#&gt; 6 http://c~           1.3 chi.23017470      pd               The ~ "[\"~    1880</span>
+<span class="co">#&gt; # ... with 29 more variables: pubPlace &lt;chr&gt;, typeOfResource &lt;chr&gt;,</span>
+<span class="co">#&gt; #   bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;, dateCreated &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span>
+<span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span>
+<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
+<span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
+<p>One can also turn the workset into a list of htids for downloading via rsync:</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result8</span><span class="op">$</span><span class="va">htid</span>, <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwlzUmS\file7f747bd4008 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpU9KGqk\file5d443336f6c data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<p>There’s a convenience function that will attempt to do this for you in one command.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result8</span><span class="op">$</span><span class="va">htid</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>(This requires having rsync installed; see the vignette on using worksets in this website).</p>
+<p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
 </div>
 <div class="section level2">
 <h2 id="credits">Credits<a class="anchor" aria-label="anchor" href="#credits"></a>
