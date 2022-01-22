@@ -85,3 +85,25 @@
 #' \url{https://wiki.htrc.illinois.edu/display/COM/Word+Frequencies+in+English-Language+Literature,+1700-1922}
 #'
 "poetry"
+
+#' ISO639 language codes
+#'
+#' A dataset containing the ISO639 language codes. Used internally to match
+#' languages.
+#'
+#' \describe{
+#'
+#' \item{alpha3-b}{alpha-3 bibliographic code}
+#'
+#' \item{alpha3-t}{alpha-3 terminologic code (when given)}
+#'
+#' \item{alpha2}{alpha-2 code (when given)}
+#'
+#' \item{English}{English name of language}
+#'
+#' \item{French}{French name of language}
+#' }
+#'
+#' @source
+#' \url{https://datahub.io/core/language-codes#resource-language-codes-full}
+"iso639"
