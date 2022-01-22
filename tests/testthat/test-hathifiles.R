@@ -12,9 +12,12 @@ test_that("Hathifile can be loaded", {
   skip_on_cran()
   skip_on_ci()
   skip_if_offline()
-  expect_snapshot(hf <- download_hathifile(dir = dir, full_catalog = FALSE) %>%
+  hf <- download_hathifile(dir = dir, full_catalog = FALSE) %>%
     load_raw_hathifile(dir = dir,
-                       cols = c("htid","rights_date_used", "author", "title", "imprint")))
+                       cols = c("htid","rights_date_used", "author", "title", "imprint"))
+  expect_s3_class(hf, "tbl")
+  expect_s3_class(hf, "tbl_df")
+  expect_true(nrow(hf) > 0)
 })
 
 test_that("Imputed date is properly calculated", {
