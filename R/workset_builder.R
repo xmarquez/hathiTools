@@ -1,13 +1,24 @@
 #' @importFrom utils URLencode
 build_solr_query <- function(q = "((volumegenre_txt:fiction)) AND ((en_htrctokentext:democracy))",
                              fl= "volumeid_s,id",
-                             fq= "volumegenre_htrcstrings:(\"Love stories.\")",
-                             volumes_only = FALSE) {
+                             fq,
+                             volumes_only = FALSE,
+                             rows = Inf) {
 
   stream_handler <- "https://solr2.htrc.illinois.edu/robust-solr/solr3456-faceted-htrc-full-ef16/stream"
   solr_endpoint <- "solr3456-faceted-htrc-full-ef16"
-  qt <- "/export"
-  sort <- "volumeid_s asc"
+  if(is.infinite(rows)) {
+    qt <- "/export"
+  } else {
+    qt <- "/select"
+  }
+  if(qt == "/select") {
+    rows <- ceiling(rows/15)
+    sort <- paste0("rows=", rows, ",",
+                   "sort=\"volumeid_s asc\",start=0")
+  } else {
+    sort <- "sort=\"volumeid_s asc\""
+  }
   indent <- "off"
   wt <- "json"
 
@@ -28,7 +39,7 @@ build_solr_query <- function(q = "((volumegenre_txt:fiction)) AND ((en_htrctoken
                          ",",
                          "q=", "\"", q, "\"",
                          ",",
-                         "sort=", "\"", sort, "\"",
+                         sort,
                          ",",
                          "fl=", "\"", fl, "\"",
                          ",",
@@ -64,14 +75,16 @@ build_solr_query <- function(q = "((volumegenre_txt:fiction)) AND ((en_htrctoken
 
 read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctokentext:democracy))",
                              fq= NULL,
-                             volumes_only = FALSE) {
+                             volumes_only = FALSE,
+                             rows = Inf) {
 
-  `result-set` <- EOF <- RESPONSE_TIME <- `count(*)` <- volumeid_s <- NULL
+  `result-set` <- EOF <- RESPONSE_TIME <- `count(*)` <- volumeid_s <- htid <- NULL
 
   query_string <- build_solr_query(q = q,
                                    fl = "volumeid_s,id",
                                    fq = fq,
-                                   volumes_only)
+                                   volumes_only,
+                                   rows = rows)
 
   tmp <- tempfile(fileext = "json")
 
@@ -91,9 +104,17 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
     res <- res %>%
       dplyr::rename(n = `count(*)`,
                     htid = volumeid_s)
+    if(!is.infinite(rows)) {
+      res <- res %>%
+        dplyr::slice(1:rows)
+    }
   } else {
     res <- res %>%
       dplyr::rename(htid = volumeid_s)
+    if(!is.infinite(rows)) {
+      res <- res %>%
+        dplyr::filter(htid %in% unique(htid)[1:min(rows, nrow(res))])
+    }
 
   }
 
@@ -115,21 +136,26 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
 #'   files. Can be a vector of characters, e.g., `c("liberal", "democracy")`; if
 #'   a vector, the results are interpreted using the value of `token_join` -- by
 #'   default AND, so that the query will find all volumes where the tokens
-#'   appear in the same page, but not necessarily next to each other (in that
-#'   case, all pages containing both "liberal" and "democracy"). If `token_join`
-#'   is "OR" then the query will find all volumes where either of the tokens
-#'   appear. Search is case-insensitive; phrases can be included (e.g., "liberal
-#'   democracy"), and the database will then return matches that are separated
-#'   by hyphens (i.e., pages that contain the token "liberal-democracy").
+#'   appear in the same volume, but not necessarily in the same page (in that
+#'   case, all volumes containing both "liberal" and "democracy"). If
+#'   `token_join` is "OR" then the query will find all volumes where either of
+#'   the tokens appear. Search is case-insensitive; phrases can be included
+#'   (e.g., "liberal democracy"), and the database will then return matches
+#'   where both terms appear in the *same page* (though not necessarily next to
+#'   each other).
 #' @param genre A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
 #'   Trust full metadata. Can be a set of genre strings, e.g.,
 #'   `c("dictionary","biography")`, which are interpreted using the value of
 #'   `genre_join` (by default "AND", so the metadata must contain both genre
 #'   strings; if "OR", the query will look for volumes that contain any of the
 #'   genre strings).
-#' @param lang Language. Default is "en" (english). Right now this function can
-#'   only search one language at a time; if you wish to search for terms in more
-#'   than one language, create multiple worksets and bind them together.
+#' @param lang Language. Default is "eng" (English); a string like "English" or
+#'   any 2 or 3 letter ISO639 code (available in the dataset [iso639] included
+#'   with this package) is allowed. (If no language code is found, the default
+#'   is to search all languages; set to `NULL` if you want to search all
+#'   languages). Right now this function can only search one language at a time;
+#'   if you wish to search for terms in more than one language, create multiple
+#'   worksets and bind them together.
 #' @param title Title field. Multiple words will be joined with "AND"; can be a
 #'   phrase (e.g., "Democracy in America").
 #' @param name Names associated with the book (e.g., author). Multiple terms
@@ -148,6 +174,9 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
 #'   is "AND"; the query will ask for all volumes containing all the selected
 #'   genre strings. "OR" means the query will ask for all volumes where any of
 #'   the genre strings occur.
+#' @param max_vols Maximum number of volumes to return. Default is `Inf`, all
+#'   volumes; for queries expected to return large numbers of volumes, it's
+#'   sometimes best to specify a small number.
 #'
 #' @return A [tibble] with volume_ids, number of occurrences of the terms in the
 #'   volume, and if `volumes_only` is `FALSE` a column for page ids.
@@ -177,14 +206,13 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
 #' }
 workset_builder <- function(token, genre, title,
                             name, imprint, pub_date,
-                            lang = "en",
+                            lang = "eng",
                             volumes_only = TRUE,
                             token_join = c("AND", "OR"),
-                            genre_join = c("AND", "OR")) {
+                            genre_join = c("AND", "OR"),
+                            max_vols = Inf) {
 
   volumeid_s <- htid <- NULL
-
-  stopifnot(length(lang) == 1)
 
   token_join <- match.arg(token_join, c("AND", "OR"))
 
@@ -195,11 +223,31 @@ workset_builder <- function(token, genre, title,
   genre_join <- paste0(" ", genre_join, " ")
 
   if(!missing(token)) {
-    token_query <- paste0(lang, "_htrctokentext:", token)
+    if(any(stringr::str_detect(token, "[:space:]"))) {
+      token <- paste0("\"", token, "\"")
+    }
+    if(missing(lang) || is.null(lang)) {
+      lang_short <- "alllangs"
+    } else {
+      stopifnot(length(lang) == 1)
+
+      lang_short <- find_language(lang)
+    }
+
+    token_query <- paste0(lang_short, "_htrctokentext:", token)
     token_query <- stringr::str_c("(", token_query, ")", sep = "") %>%
       paste(collapse = token_join)
   } else {
     token_query <- ""
+  }
+
+  if(token_query == "" && !missing(lang)) {
+    lang <- find_language(lang, "alpha3-b")
+    if(length(lang) > 0 && lang != "alllangs") {
+      token_query <- paste0("(volumelanguage_txt:", lang, ")")
+    } else{
+      token_query <- ""
+    }
   }
 
 
@@ -288,7 +336,8 @@ workset_builder <- function(token, genre, title,
   }
 
   res <- read_solr_stream(q = token_query,
-                          volumes_only = volumes_only)
+                          volumes_only = volumes_only,
+                          rows = max_vols)
 
   attr(res, "query") <- token_query
   class(res) <- c("hathi_workset", class(res))
@@ -352,12 +401,12 @@ get_workset_meta <- function(workset,
 
 
   if(is.character(workset)) {
-    num_vols <- length(workset)
-    htids <- stringr::str_c(workset, "-metadata") %>%
+    num_vols <- length(unique(workset))
+    htids <- stringr::str_c(unique(workset), "-metadata") %>%
       paste0(collapse = ",")
   } else {
-    num_vols <- nrow(workset)
-    htids <- stringr::str_c(workset$htid, "-metadata") %>%
+    num_vols <- length(unique(workset$htid))
+    htids <- stringr::str_c(unique(workset$htid), "-metadata") %>%
       paste0(collapse = ",")
   }
 
@@ -414,5 +463,37 @@ get_workset_meta <- function(workset,
 
 
   meta
+
+}
+
+find_language <- function(lang, code_type = c("alpha2", "alpha3-b", "alpha3-t")) {
+
+  alpha2 <- `alpha3-b` <- `alpha3-t` <- English <- French <- NULL
+
+  code_type <- match.arg(code_type, c("alpha2", "alpha3-b", "alpha3-t"))
+  if(is.null(lang) || lang == "alllangs") {
+    return("alllangs")
+  }
+  if(nchar(lang) == 2) {
+    res <- hathiTools::iso639 %>%
+      dplyr::filter(stringr::str_detect(alpha2, stringr::regex(lang, ignore_case = TRUE)))
+    return(res[[code_type]])
+  } else if(nchar(lang) == 3) {
+    res <- hathiTools::iso639 %>%
+      dplyr::filter(stringr::str_detect(`alpha3-b`, stringr::regex(lang, ignore_case = TRUE)) |
+                      stringr::str_detect(`alpha3-t`, stringr::regex(lang, ignore_case = TRUE)))
+    return(res[[code_type]])
+  } else {
+    res <- hathiTools::iso639 %>%
+      dplyr::filter(stringr::str_detect(`alpha3-b`, stringr::regex(lang, ignore_case = TRUE)) |
+                      stringr::str_detect(`alpha3-t`, stringr::regex(lang, ignore_case = TRUE)) |
+                      stringr::str_detect(`alpha2`, stringr::regex(lang, ignore_case = TRUE)) |
+                      stringr::str_detect(English, stringr::regex(lang, ignore_case = TRUE)) |
+                      stringr::str_detect(French, stringr::regex(lang, ignore_case = TRUE)))
+  }
+  if(nrow(res) == 0) {
+    return("alllangs")
+  }
+  res[[code_type]][!is.na(res[["alpha2"]])]
 
 }

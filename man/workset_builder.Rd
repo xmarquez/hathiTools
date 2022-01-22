@@ -11,10 +11,11 @@ workset_builder(
   name,
   imprint,
   pub_date,
-  lang = "en",
+  lang = "eng",
   volumes_only = TRUE,
   token_join = c("AND", "OR"),
-  genre_join = c("AND", "OR")
+  genre_join = c("AND", "OR"),
+  max_vols = Inf
 )
 }
 \arguments{
@@ -22,12 +23,13 @@ workset_builder(
 files. Can be a vector of characters, e.g., \code{c("liberal", "democracy")}; if
 a vector, the results are interpreted using the value of \code{token_join} -- by
 default AND, so that the query will find all volumes where the tokens
-appear in the same page, but not necessarily next to each other (in that
-case, all pages containing both "liberal" and "democracy"). If \code{token_join}
-is "OR" then the query will find all volumes where either of the tokens
-appear. Search is case-insensitive; phrases can be included (e.g., "liberal
-democracy"), and the database will then return matches that are separated
-by hyphens (i.e., pages that contain the token "liberal-democracy").}
+appear in the same volume, but not necessarily in the same page (in that
+case, all volumes containing both "liberal" and "democracy"). If
+\code{token_join} is "OR" then the query will find all volumes where either of
+the tokens appear. Search is case-insensitive; phrases can be included
+(e.g., "liberal democracy"), and the database will then return matches
+where both terms appear in the \emph{same page} (though not necessarily next to
+each other).}
 
 \item{genre}{A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
 Trust full metadata. Can be a set of genre strings, e.g.,
@@ -48,9 +50,13 @@ joined with "AND"; can be a phrase (e.g., "University of Chicago Press").}
 \item{pub_date}{Publication date in Hathi Trust metadata. Can be a range,
 e.g., \code{1800:1900}, or a set of years, e.g., \code{c(1800, 1805)}.}
 
-\item{lang}{Language. Default is "en" (english). Right now this function can
-only search one language at a time; if you wish to search for terms in more
-than one language, create multiple worksets and bind them together.}
+\item{lang}{Language. Default is "eng" (English); a string like "English" or
+any 2 or 3 letter ISO639 code (available in the dataset \link{iso639} included
+with this package) is allowed. (If no language code is found, the default
+is to search all languages; set to \code{NULL} if you want to search all
+languages). Right now this function can only search one language at a time;
+if you wish to search for terms in more than one language, create multiple
+worksets and bind them together.}
 
 \item{volumes_only}{If \code{TRUE} (the default), returns only volume IDs plus a
 count of the number of times the tokens appear in the volume; \code{FALSE}
@@ -64,6 +70,10 @@ the query will ask for all pages where any of the tokens occur.}
 is "AND"; the query will ask for all volumes containing all the selected
 genre strings. "OR" means the query will ask for all volumes where any of
 the genre strings occur.}
+
+\item{max_vols}{Maximum number of volumes to return. Default is \code{Inf}, all
+volumes; for queries expected to return large numbers of volumes, it's
+sometimes best to specify a small number.}
 }
 \value{
 A \link{tibble} with volume_ids, number of occurrences of the terms in the
