@@ -19,17 +19,17 @@ workset_builder(
 )
 }
 \arguments{
-\item{token}{The tokens to search for in the HathiTrust Extracted Features
+\item{token}{The tokens to search for in the Hathi Trust Extracted Features
 files. Can be a vector of characters, e.g., \code{c("liberal", "democracy")}; if
-a vector, the results are interpreted using the value of \code{token_join} -- by
-default AND, so that the query will find all volumes where the tokens
-appear in the same volume, but not necessarily in the same page (in that
-case, all volumes containing both "liberal" and "democracy"). If
-\code{token_join} is "OR" then the query will find all volumes where either of
-the tokens appear. Search is case-insensitive; phrases can be included
-(e.g., "liberal democracy"), and the database will then return matches
-where both terms appear in the \emph{same page} (though not necessarily next to
-each other).}
+a character vector with more than one element, the results are interpreted
+using the value of \code{token_join} -- by default AND, so that the query will
+find all volumes where \emph{all} the tokens appear, though not necessarily in
+the same page (in the example, all volumes containing both "liberal" and
+"democracy"). If \code{token_join} is "OR" then the query will find all volumes
+where either of the tokens appear. Search is case-insensitive; phrases can
+be included (e.g., "liberal democracy"), and the database will then return
+matches where both terms appear in the \emph{same page} (though not necessarily
+next to each other).}
 
 \item{genre}{A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
 Trust full metadata. Can be a set of genre strings, e.g.,
@@ -44,7 +44,7 @@ phrase (e.g., "Democracy in America").}
 \item{name}{Names associated with the book (e.g., author). Multiple terms
 will be joined with "AND"; can be a phrase (e.g., "Alexis de Tocqueville").}
 
-\item{imprint}{Imprint information (e.g., published). Multiple terms will be
+\item{imprint}{Imprint information (e.g., publisher). Multiple terms will be
 joined with "AND"; can be a phrase (e.g., "University of Chicago Press").}
 
 \item{pub_date}{Publication date in Hathi Trust metadata. Can be a range,
@@ -60,11 +60,14 @@ worksets and bind them together.}
 
 \item{volumes_only}{If \code{TRUE} (the default), returns only volume IDs plus a
 count of the number of times the tokens appear in the volume; \code{FALSE}
-returns both volume and page IDs where the tokens are found.}
+returns both volume and page IDs where the tokens are found. Note the page
+IDs are 0-based; when looking for the page at the Hathi Digital Library
+site, it's necessary to add 1. \link{browse_htids} does this automatically.}
 
-\item{token_join}{The logical connector for different tokens. Default is
-"AND"; the query will ask for all pages where all tokens occur. "OR" means
-the query will ask for all pages where any of the tokens occur.}
+\item{token_join}{The logical connector for the tokens in \code{token}, if more
+than one. Default is "AND"; the query will ask for all volumes where all
+tokens occur. "OR" means the query will ask for all volumes where any of
+the tokens occur.}
 
 \item{genre_join}{The logical connector for different genre strings. Default
 is "AND"; the query will ask for all volumes containing all the selected
@@ -73,7 +76,8 @@ the genre strings occur.}
 
 \item{max_vols}{Maximum number of volumes to return. Default is \code{Inf}, all
 volumes; for queries expected to return large numbers of volumes, it's
-sometimes best to specify a small number.}
+sometimes best to specify a small number just to test that the query is
+what one wants.}
 }
 \value{
 A \link{tibble} with volume_ids, number of occurrences of the terms in the
@@ -81,8 +85,9 @@ volume, and if \code{volumes_only} is \code{FALSE} a column for page ids.
 }
 \description{
 Queries the SOLR endpoint of the Workset Builder 2.0 (beta) at
-https://solr2.htrc.illinois.edu/solr-ef/. This API is experimental, and so
-this function can fail at any time if the API changes.
+\url{https://solr2.htrc.illinois.edu/solr-ef/}.
+This API is experimental, and so this function can fail at any time if the
+API changes.
 }
 \examples{
 \dontrun{
