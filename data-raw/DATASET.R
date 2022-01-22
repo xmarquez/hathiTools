@@ -69,3 +69,9 @@ hf_headers <- vroom::vroom(headers_link)
 hf_headers <- names(hf_headers)
 
 usethis::use_data(hf_headers, internal = TRUE, overwrite = TRUE)
+
+# Downloading ISO language codes
+
+iso639 <- vroom::vroom("https://datahub.io/core/language-codes/r/language-codes-full.csv")
+
+usethis::use_data(iso639, overwrite = TRUE)
