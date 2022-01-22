@@ -242,6 +242,7 @@ workset_builder <- function(token, genre, title,
   }
 
   if(token_query == "" && !missing(lang)) {
+    stopifnot(length(lang) == 1)
     lang <- find_language(lang, "alpha3-b")
     if(length(lang) > 0 && lang != "alllangs") {
       token_query <- paste0("(volumelanguage_txt:", lang, ")")

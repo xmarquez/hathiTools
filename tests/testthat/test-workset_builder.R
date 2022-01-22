@@ -49,6 +49,14 @@ test_that("Workset can be produced with different combinations of language, name
 
   workset14 <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1800:1850)
   expect_true(nrow(workset14) > 0 && nrow(workset14) < 100)
+
+  expect_error(workset_builder(lang = c("en", "fr"),
+                               name = "Alexis de Tocqueville",
+                               pub_date = 1800:1850))
+  expect_error(workset_builder("democracy",
+                               lang = c("en", "fr"),
+                               name = "Alexis de Tocqueville",
+                               pub_date = 1800:1850))
 }
 )
 
