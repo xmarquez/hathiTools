@@ -9,6 +9,7 @@
 #'   specified Hathi Trust Id (and page, if given). If there is more than one
 #'   HTID in the workset, it will prompt you to open the next one.
 #' @export
+#' @importFrom utils browseURL
 #'
 #' @examples
 #' \dontrun{
