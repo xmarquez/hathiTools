@@ -2,16 +2,17 @@
 % Please edit documentation in R/bookworm.R
 \name{query_bookworm}
 \alias{query_bookworm}
-\title{Queries the HathiTrust Bookworm Server at
+\title{Queries the Hathi Trust Bookworm Server at
 https://bookworm.htrc.illinois.edu/develop/}
 \usage{
 query_bookworm(
   word,
   groups = "date_year",
-  words_collation = "Case_Insensitive",
+  words_collation = c("Case_Insensitive", "Case_Sensitive", "Stem"),
   counttype = "WordsPerMillion",
-  method = "return_json",
+  method = c("return_json", "returnPossibleFields", "search_results"),
   lims = c(1920, 2000),
+  compare_to,
   as_json = FALSE,
   ...
 )
@@ -55,12 +56,14 @@ derive \code{TextPercent} locally, if you prefer).
 
 \code{SumWords}: equal to \code{TotalWords + WordCount}
 
-\code{TextRatio}: equal to \code{TextCount/TotalTexts}
+\code{TextRatio}: equal to \code{TextCount/TotalTexts} Currently does not work. Will
+throw an error in this version.
 
-\code{SumTexts}: equal to \code{TextCount + TotalTexts}}
+\code{SumTexts}: equal to \code{TextCount + TotalTexts} Currently does not work. Will
+throw an error in this version.}
 
 \item{method}{Type of results to return. Can be \code{return_json} (the default -
-automatically converted to a proper tibble when possible; the JSON is
+automatically converted to a proper \link{tibble} when possible; the JSON is
 structured as "nested dicts for each grouping in \code{groups} pointing to an
 array consisting of the results for each count in \code{counttype}", according
 to the \href{https://bookworm-project.github.io/Docs/query_structure.html}{API documentation}.),
@@ -86,18 +89,36 @@ intended."
 \item{lims}{Min and max year as a two-element numeric vector. Default is
 \code{c(1920, 2000)}.}
 
+\item{compare_to}{A word to compare relative frequencies to. Currently this
+is most useful with \code{counttype = "WordsRatio"}; this compares the relative
+frequency of two words.}
+
 \item{as_json}{Whether to return the raw json. Useful for complex queries
 where the function does not know how to return a \link{tibble}, or when you want
 to use the raw json to produce a different data structure.}
 
-\item{...}{Additional parameters passed to \code{build_json_query}}
+\item{...}{Additional parameters passed to the query builder; these would be
+the fields that method = \code{returnPossibleFields} returns, including fields
+to group the query by (e.g., groups = "class"). At the date of this
+writing, these fields were: language, publication_country,
+publication_state, subclass, narrow_class, class, resource_type,
+target_audience, scanner, first_author_birth, first_author_name,
+contributing_library, literary_form, cataloguing_source,
+first_author_death, first_place, first_publisher, is_gov, subject_places,
+date_year, and record_date_year. These are not documented, and in some
+cases one must know the exact string to search for; for example, a search
+with \code{first_author_name = "Tocqueville"} won't find anything, but a search
+with \code{first_author_name = "Tocqueville, Alexis de 1805-1859."} may.}
 }
 \value{
-A \link{tibble} whenever possible, otherwise json-formatted text.
+A tidy \link{tibble} whenever possible, with columns for each grouping
+parameter, the word (if any), and the counts and counttypes. For \code{method = "search_result"}, a workset that can be used in \link{browse_htids} and
+\link{get_workset_meta}.
 }
 \description{
-Queries the HathiTrust Bookworm Server at
-https://bookworm.htrc.illinois.edu/develop/
+Retrieves word frequency data from the Hathi Trust Bookworm Server at
+https://bookworm.htrc.illinois.edu/develop/, with options to group according
+to various forms of metadata and to limit according to that same metadata.
 }
 \examples{
 \dontrun{
