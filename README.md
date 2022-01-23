@@ -47,26 +47,24 @@ library(tidyverse)
 #> x dplyr::lag()    masks stats::lag()
 
 result <- query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000), counttype = c("WordsPerMillion", "TextPercent"))
-#> No encoding supplied: defaulting to UTF-8.
 
 result
-#> # A tibble: 482 x 4
-#>    date_year democracy monarchy counttype      
-#>        <int>     <dbl>    <dbl> <chr>          
-#>  1      1760     0.382     5.50 WordsPerMillion
-#>  2      1760     2.50     10.3  TextPercent    
-#>  3      1761     0.300     6.32 WordsPerMillion
-#>  4      1761     2.13     11.8  TextPercent    
-#>  5      1762     0.352     4.94 WordsPerMillion
-#>  6      1762     2.00      8.95 TextPercent    
-#>  7      1763     0.488     9.32 WordsPerMillion
-#>  8      1763     1.94     13.9  TextPercent    
-#>  9      1764     0.663     4.37 WordsPerMillion
-#> 10      1764     2.37      6.87 TextPercent    
-#> # ... with 472 more rows
+#> # A tibble: 964 x 4
+#>    word      date_year value counttype      
+#>    <chr>         <int> <dbl> <chr>          
+#>  1 democracy      1760 0.382 WordsPerMillion
+#>  2 democracy      1760 2.50  TextPercent    
+#>  3 democracy      1761 0.300 WordsPerMillion
+#>  4 democracy      1761 2.13  TextPercent    
+#>  5 democracy      1762 0.352 WordsPerMillion
+#>  6 democracy      1762 2.00  TextPercent    
+#>  7 democracy      1763 0.488 WordsPerMillion
+#>  8 democracy      1763 1.94  TextPercent    
+#>  9 democracy      1764 0.663 WordsPerMillion
+#> 10 democracy      1764 2.37  TextPercent    
+#> # ... with 954 more rows
 
 result %>%
-  pivot_longer(democracy:monarchy, names_to = "word") %>%
   group_by(word, counttype) %>%
   mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
   ggplot(aes(x = date_year, color = word)) +
@@ -87,27 +85,26 @@ Library of Congress system:
 ``` r
 result2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"),
                           lims = c(1900,2000))
-#> No encoding supplied: defaulting to UTF-8.
 
 result2
-#> # A tibble: 2,121 x 4
-#>    date_year word      class                                     WordsPerMillion
-#>        <int> <chr>     <chr>                                               <dbl>
-#>  1      1900 democracy N/A                                                 4.03 
-#>  2      1900 democracy Agriculture                                         0.769
-#>  3      1900 democracy Education                                           9.56 
-#>  4      1900 democracy World History And History Of Europe, Asi~           5.50 
-#>  5      1900 democracy History Of The Americas                            15.7  
-#>  6      1900 democracy Fine Arts                                           0.816
-#>  7      1900 democracy Science                                             0.146
-#>  8      1900 democracy General Works                                      14.6  
-#>  9      1900 democracy Military Science                                    0.962
-#> 10      1900 democracy Geography.  Anthropology.  Recreation               0.691
+#> # A tibble: 2,121 x 5
+#>    word      date_year class                                   value counttype  
+#>    <chr>         <int> <chr>                                   <dbl> <chr>      
+#>  1 democracy      1900 N/A                                     4.03  WordsPerMi~
+#>  2 democracy      1900 Agriculture                             0.769 WordsPerMi~
+#>  3 democracy      1900 Education                               9.56  WordsPerMi~
+#>  4 democracy      1900 World History And History Of Europe, ~  5.50  WordsPerMi~
+#>  5 democracy      1900 History Of The Americas                15.7   WordsPerMi~
+#>  6 democracy      1900 Fine Arts                               0.816 WordsPerMi~
+#>  7 democracy      1900 Science                                 0.146 WordsPerMi~
+#>  8 democracy      1900 General Works                          14.6   WordsPerMi~
+#>  9 democracy      1900 Military Science                        0.962 WordsPerMi~
+#> 10 democracy      1900 Geography.  Anthropology.  Recreation   0.691 WordsPerMi~
 #> # ... with 2,111 more rows
 
 result2 %>%
-  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(class, 40), WordsPerMillion))) +
-  geom_tile(aes(fill = WordsPerMillion)) +
+  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(class, 40), value))) +
+  geom_tile(aes(fill = value)) +
   facet_wrap(~word) +
   scale_fill_gradient2() +
   theme_bw() +
@@ -123,11 +120,10 @@ Or across literary forms:
 ``` r
 result3 <- query_bookworm(word = "democracy", groups = c("date_year", "literary_form"),
                           lims = c(1900,2000))
-#> No encoding supplied: defaulting to UTF-8.
 
 result3 %>%
-  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(literary_form, 40), WordsPerMillion))) +
-  geom_tile(aes(fill = WordsPerMillion)) +
+  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(literary_form, 40), value))) +
+  geom_tile(aes(fill = value)) +
   facet_wrap(~word) +
   scale_fill_gradient2() +
   theme_bw() +
@@ -145,22 +141,21 @@ English-language texts that use the word “democracy” per year from
 
 ``` r
 result4 <- query_bookworm(word = c("democracy"), lims = c(1760, 2000), counttype = c("TotalTexts"), language = "English")
-#> No encoding supplied: defaulting to UTF-8.
 
 result4 
-#> # A tibble: 241 x 3
-#>    date_year democracy counttype 
-#>        <int>     <int> <chr>     
-#>  1      1760       388 TotalTexts
-#>  2      1761       393 TotalTexts
-#>  3      1762       319 TotalTexts
-#>  4      1763       443 TotalTexts
-#>  5      1764       320 TotalTexts
-#>  6      1765       352 TotalTexts
-#>  7      1766       439 TotalTexts
-#>  8      1767       402 TotalTexts
-#>  9      1768       480 TotalTexts
-#> 10      1769       424 TotalTexts
+#> # A tibble: 241 x 4
+#>    word      date_year value counttype 
+#>    <chr>         <int> <int> <chr>     
+#>  1 democracy      1760   388 TotalTexts
+#>  2 democracy      1761   393 TotalTexts
+#>  3 democracy      1762   319 TotalTexts
+#>  4 democracy      1763   443 TotalTexts
+#>  5 democracy      1764   320 TotalTexts
+#>  6 democracy      1765   352 TotalTexts
+#>  7 democracy      1766   439 TotalTexts
+#>  8 democracy      1767   402 TotalTexts
+#>  9 democracy      1768   480 TotalTexts
+#> 10 democracy      1769   424 TotalTexts
 #> # ... with 231 more rows
 ```
 
@@ -169,7 +164,6 @@ available for grouping:
 
 ``` r
 result5 <- query_bookworm(word = "", method = "returnPossibleFields")
-#> No encoding supplied: defaulting to UTF-8.
 
 result5
 #> # A tibble: 21 x 6
@@ -195,15 +189,14 @@ the second graph above. This query pulls the first 100 books in the
 catalog for 1941 in the category “education”:
 
 ``` r
-result2 %>% filter(class == "Education", WordsPerMillion == max(WordsPerMillion))
-#> # A tibble: 1 x 4
-#>   date_year word      class     WordsPerMillion
-#>       <int> <chr>     <chr>               <dbl>
-#> 1      1941 democracy Education            242.
+result2 %>% filter(class == "Education", value == max(value))
+#> # A tibble: 1 x 5
+#>   word      date_year class     value counttype      
+#>   <chr>         <int> <chr>     <dbl> <chr>          
+#> 1 democracy      1941 Education  242. WordsPerMillion
 
 result6 <- query_bookworm(word = "democracy", groups = "date_year",
                           date_year = "1941", class = "Education", method = "search_results")
-#> No encoding supplied: defaulting to UTF-8.
 
 result6 
 #> # A tibble: 100 x 3
@@ -336,6 +329,13 @@ meta
 #> #   governmentDocument <chr>, names <chr>, issuance <chr>, ...
 ```
 
+And one can browse interactively these titles on the Hathi Trust
+website:
+
+``` r
+browse_htids(result6)
+```
+
 One can get info about the corpus itself by using
 `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting
 the word key.
@@ -343,29 +343,28 @@ the word key.
 ``` r
 result7 <- query_bookworm(counttype = c("TotalTexts"), groups = c("date_year", "language"),
                           lims = c(1500,2000))
-#> No encoding supplied: defaulting to UTF-8.
 
 result7 %>%
-  summarise(TotalTexts = sum(TotalTexts))
+  summarise(value = sum(value))
 #> # A tibble: 1 x 1
-#>   TotalTexts
-#>        <int>
-#> 1   12534182
+#>      value
+#>      <int>
+#> 1 12534182
 
 library(ggrepel)
 
 result7 %>%
-  mutate(language = fct_lump_n(language, 10, w = TotalTexts)) %>%
+  mutate(language = fct_lump_n(language, 10, w = value)) %>%
   group_by(date_year, language) %>%
-  summarise(TotalTexts = sum(TotalTexts)) %>%
+  summarise(value = sum(value)) %>%
   group_by(language) %>%
   mutate(label = ifelse(date_year == max(date_year), as.character(language), NA_character_)) %>%
   group_by(language) %>%
-  mutate(rolling_avg = slider::slide_dbl(TotalTexts, mean, .before = 10, .after = 10)) %>%
+  mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
   ggplot() +
   geom_line(aes(x = date_year, y = rolling_avg, color = language), show.legend = FALSE) +
-  geom_line(aes(x = date_year, y = TotalTexts, color = language), show.legend = FALSE, alpha = 0.3) +
-  geom_text_repel(aes(x = date_year, y = TotalTexts, label = label, color = language), show.legend = FALSE) +
+  geom_line(aes(x = date_year, y = value, color = language), show.legend = FALSE, alpha = 0.3) +
+  geom_text_repel(aes(x = date_year, y = value, label = label, color = language), show.legend = FALSE) +
   scale_y_log10() +
   theme_bw() +
   labs(title = "Total texts per language in the HathiTrust bookworm", subtitle = "Log scale. Less common languages grouped as 'other'. 10 year rolling average.", x = "Year", y = "")
@@ -375,8 +374,7 @@ result7 %>%
 <img src="man/figures/README-example9-1.png" width="100%" />
 
 Note that the accessible Hathi Trust Bookworm database is the 2016
-version. A more current version of the database exists (with some 17
-million digitized texts), but is not publicly accessible yet, I think.
+version.
 
 It is also possible to build a workset of Hathi Trust IDs for further
 analysis. Here, for example, we find all the volumes that contain the
@@ -387,7 +385,7 @@ term “democracy” and have genre strings that include “dictionary” and
 result8 <- workset_builder(token = "democracy", genre = c("dictionary", "biography"))
 
 result8 
-#> # A tibble: 1,129 x 2
+#> # A tibble: 1,260 x 2
 #>    htid                         n
 #>    <chr>                    <int>
 #>  1 aeu.ark:/13960/t39030j16     3
@@ -400,7 +398,7 @@ result8
 #>  8 coo.31924022643799           1
 #>  9 coo.31924081662029           1
 #> 10 coo.31924086013368           1
-#> # ... with 1,119 more rows
+#> # ... with 1,250 more rows
 ```
 
 Here’s the metadata for the first six of these results.
@@ -445,7 +443,7 @@ rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result8$htid, tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpU9KGqk\file5d443336f6c data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp6P96Oi\file958c42992559 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
