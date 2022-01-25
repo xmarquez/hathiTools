@@ -1,5 +1,5 @@
 Package: hathiTools
-Title: IAccess the Hathi Trust Bookworm and Extracted Features Files from R
+Title: Access the Hathi Trust Bookworm and Extracted Features Files from R
 Version: 0.0.0.9001
 Authors@R: 
     person(given = "Xavier",
@@ -31,5 +31,6 @@ Depends:
 URL: https://xmarquez.github.io/hathiTools
 Suggests: 
     testthat (>= 3.0.0),
-    arrow
+    arrow,
+    rmarkdown
 Config/testthat/edition: 3
