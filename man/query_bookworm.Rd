@@ -8,7 +8,7 @@ https://bookworm.htrc.illinois.edu/develop/}
 query_bookworm(
   word,
   groups = "date_year",
-  words_collation = c("Case_Insensitive", "Case_Sensitive", "Stem"),
+  ignore_case = TRUE,
   counttype = "WordsPerMillion",
   method = c("return_json", "returnPossibleFields", "search_results"),
   lims = c(1920, 2000),
@@ -24,10 +24,7 @@ strings.}
 \item{groups}{At least one category to group results by. The default is
 \code{date_year}, which groups results by year.}
 
-\item{words_collation}{Whether to use case-sensitive (\code{"Case_Sensitive"}) or
-case-insensitive (\code{"Case_Insensitive"}, the default) matching. Can also be
-\code{stem} to return word results for word stems. See the \href{https://bookworm-project.github.io/Docs/query_structure.html}{Bookworm API documentation}
-for details.}
+\item{ignore_case}{Default is \code{TRUE}, ignores case in search.}
 
 \item{counttype}{The default is words per million, \code{counttype = "WordsPerMillion"}. According to the \href{https://bookworm-project.github.io/Docs/query_structure.html}{API documentation},
 the following options are available:
