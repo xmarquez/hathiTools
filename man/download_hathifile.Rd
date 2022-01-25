@@ -16,10 +16,12 @@ https://www.hathitrust.org/hathifiles}
 
 \item{dir}{The directory to use to save the downloaded hathifile. Defaults to
 \code{getOption("hathiTools.hathifile.dir")}, which on loading the package is
-just \code{./raw-hathifiles}.}
+just \code{./raw-hathifiles} (a directory which will be created if it doesn't
+exist already when you call the function).}
 
 \item{full_catalog}{Whether to download the full catalog, or just the latest
-update. Default is \code{TRUE} - download the full catalog.}
+update (there's a new "update file" every day, and a new version of the
+full catalog every month). Default is \code{TRUE} - download the full catalog.}
 }
 \value{
 The downloaded filename.
@@ -29,7 +31,8 @@ This function downloads the \href{https://www.hathitrust.org/hathifiles}{big hat
 digitized volumes in the Hathi Trust digital library collection. It can be
 used in conjunction with \link{workset_builder} and \code{rsync} to select an
 appropriate sample of Hathi Trust Extracted Features files and metadata for
-further analysis. Warning - it's a 1GB file; if the file has been downloaded
-already, the function will just return the file name and won't attempt to
-download again.
+further analysis. Warning - it's a 1GB file; if the latest version of the
+file (there's a new one every month) has been downloaded already, the
+function will just return the file name and won't attempt to download it
+again.
 }

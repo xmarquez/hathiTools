@@ -5,17 +5,20 @@
 #' digitized volumes in the Hathi Trust digital library collection. It can be
 #' used in conjunction with [workset_builder] and `rsync` to select an
 #' appropriate sample of Hathi Trust Extracted Features files and metadata for
-#' further analysis. Warning - it's a 1GB file; if the file has been downloaded
-#' already, the function will just return the file name and won't attempt to
-#' download again.
+#' further analysis. Warning - it's a 1GB file; if the latest version of the
+#' file (there's a new one every month) has been downloaded already, the
+#' function will just return the file name and won't attempt to download it
+#' again.
 #'
 #' @param url The URL for the Hathi Trust hathifiles
 #'   https://www.hathitrust.org/hathifiles
 #' @param dir The directory to use to save the downloaded hathifile. Defaults to
 #'   `getOption("hathiTools.hathifile.dir")`, which on loading the package is
-#'   just `./raw-hathifiles`.
+#'   just `./raw-hathifiles` (a directory which will be created if it doesn't
+#'   exist already when you call the function).
 #' @param full_catalog Whether to download the full catalog, or just the latest
-#'   update. Default is `TRUE` - download the full catalog.
+#'   update (there's a new "update file" every day, and a new version of the
+#'   full catalog every month). Default is `TRUE` - download the full catalog.
 #'
 #' @return The downloaded filename.
 #' @export
@@ -89,8 +92,8 @@ download_hathifile <- function(url = "https://www.hathitrust.org/hathifiles",
 #'
 #'This function loads a previously downloaded hathifile into memory (or
 #'downloads the latest one if it can't find it). It also turns the column
-#'`us_gov_doc_flag` into a logical and eliminates `9999` values for
-#'`rights_date_used`.
+#'`us_gov_doc_flag` into a logical value (`TRUE` or `FALSE`) and eliminates
+#'`9999` values for `rights_date_used` (sets them to `NA`).
 #'
 #'@param filename The name of the downloaded hathifile. If `NULL`, it will
 #'  attempt to guess it from `getOption("hathiTools.hathifile.dir")` and
@@ -223,5 +226,3 @@ add_imputed_date <- function(hathi_file) {
 
   hathi_file
 }
-
-

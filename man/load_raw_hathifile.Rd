@@ -48,6 +48,6 @@ but fully loaded this data frame takes over 5GB in memory.
 \description{
 This function loads a previously downloaded hathifile into memory (or
 downloads the latest one if it can't find it). It also turns the column
-\code{us_gov_doc_flag} into a logical and eliminates \code{9999} values for
-\code{rights_date_used}.
+\code{us_gov_doc_flag} into a logical value (\code{TRUE} or \code{FALSE}) and eliminates
+\code{9999} values for \code{rights_date_used} (sets them to \code{NA}).
 }
