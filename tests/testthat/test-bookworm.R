@@ -127,3 +127,12 @@ test_that("Bookworm query can return a specific period", {
                               counttype = c("WordsPerMillion", "WordCount"),
                               lims = c(1700:2000)))
 })
+
+test_that("Bookworm query words for case sensitive and case insensitive search", {
+  skip_on_cran()
+  skip_on_ci()
+  skip_if_offline()
+  res1 <- query_bookworm("democracy")
+  res2 <- query_bookworm("democracy", ignore_case = FALSE)
+  expect_true(all(res1$value >= res2$value))
+})

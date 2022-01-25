@@ -9,11 +9,7 @@
 #'   strings.
 #' @param groups At least one category to group results by. The default is
 #'   `date_year`, which groups results by year.
-#' @param words_collation Whether to use case-sensitive (`"Case_Sensitive"`) or
-#'   case-insensitive (`"Case_Insensitive"`, the default) matching. Can also be
-#'   `stem` to return word results for word stems. See the [Bookworm API
-#'   documentation](https://bookworm-project.github.io/Docs/query_structure.html)
-#'    for details.
+#' @param ignore_case Default is `TRUE`, ignores case in search.
 #' @param counttype The default is words per million, `counttype =
 #'   "WordsPerMillion"`. According to the [API
 #'   documentation](https://bookworm-project.github.io/Docs/query_structure.html),
@@ -115,7 +111,7 @@
 #'   class = "Education", method = "search_results")
 #' }
 query_bookworm <- function(word, groups = "date_year",
-                           words_collation =  c("Case_Insensitive", "Case_Sensitive", "Stem"),
+                           ignore_case =  TRUE,
                            counttype = "WordsPerMillion",
                            method = c("return_json", "returnPossibleFields", "search_results"),
                            lims = c(1920, 2000),
@@ -124,12 +120,16 @@ query_bookworm <- function(word, groups = "date_year",
 
   method <- match.arg(method, c("return_json", "returnPossibleFields", "search_results"))
 
-  words_collation <- match.arg(words_collation, c("Case_Insensitive", "Case_Sensitive", "Stem"))
-
   counttype <- match.arg(counttype, c("WordsPerMillion", "WordCount",
                                       "TextCount", "TextPercent", "TotalTexts",
                                       "TotalWords", "WordsRatio", "SumWords",
                                       "TextRatio", "SumTexts"), several.ok = TRUE)
+
+  if(ignore_case) {
+    words_collation = "Case_Insensitive"
+  } else {
+    words_collation = "Case_Sensitive"
+  }
 
   if(!missing(compare_to) && length(compare_to) > 1) {
     stop("`compare_to` only supports comparisons to one term at a time")
@@ -166,6 +166,8 @@ query_bookworm <- function(word, groups = "date_year",
   }
 
   result <- httr::content(result, as = "text", encoding = "UTF-8")
+
+  result <- stringr::str_replace_all(result, stringr::fixed("[Infinity]"), "[]")
 
   if(stringr::str_detect(result, "Database error. Try checking field names.+status.+error")) {
     stop("Database error. Try checking field names, if necessary using method = returnPossibleFields")
