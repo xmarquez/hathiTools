@@ -1,0 +1,210 @@
+---
+title: "Using the Hathi Trust Bookworm Tool"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The Hathi Trust Bookworm (https://bookworm.htrc.illinois.edu/develop/) is a tool similar to the [Google Books Ngram viewer](https://books.google.com/ngrams) that allows one to retrieve word frequency data from the texts in the [Hathi Trust Digital Library](https://www.hathitrust.org/). With about 13 million digitised volumes in its database (many of them originally digitised for the Google Books project), the Hathi Trust Bookworm is a very powerful tool to explore trends in word frequencies over time. Moreover, in contrast to the Google Ngram viewer, the Bookworm can search over the metadata of the collection, making possible more informative queries about the sources of particular word frequency trends.[^Ngram]
+
+[^Ngram]: The Google Ngram Viewer does have some advantages over the bookworm, primarily the ability to retrieve data about bigram, trigram, 4-gram, and 5-gram frequencies over time, and to conduct wildcard and part-of-speech searches. 
+
+This package offers one function, `query_bookworm()`, that makes it relatively easy to retrieve word frequency and other data from the Hathi Trust Bookworm into R, and to use it for exploratory analyses of word frequency trends. 
+
+For example, suppose we are interested in the changing frequencies of terms like "democracy", "dictatorship", "monarchy", and so on. We can download the frequency of these terms (according to various metrics) with a single call:
+
+```{r setup}
+library(hathiTools)
+library(tidyverse)
+library(slider) # For moving averages
+
+res <- query_bookworm(c("democracy", "dictatorship", "monarchy", 
+                        "aristocracy", "oligarchy", "tyranny", 
+                        "autocracy"), 
+                      counttype = c("WordsPerMillion", "TextPercent"), 
+                      lims = c(1700, 2020))
+```
+
+This results in a nice, tidy tibble:
+
+```{r}
+res
+```
+Which can be used for plotting:
+
+```{r}
+res %>%
+  mutate(counttype = case_when(counttype == "WordsPerMillion" ~ "Words per million",
+                               TRUE ~ "Percent of volumes containing word")) %>%
+  group_by(word, counttype) %>%
+  mutate(rolling_avg = slide_dbl(value, mean, .before = 10, .after = 10)) %>%
+  ggplot(aes(x = date_year, color = word)) +
+  geom_line(aes(y = value), alpha = 0.3) +
+  geom_line(aes(x = date_year, y = rolling_avg)) +
+  facet_wrap(~counttype) +
+  labs(x = "Approx. year of publication", y = "", subtitle = "10 year rolling average, books published between 1700-2020",
+       title = "Frequency of 'democracy' and other political terms in the HathiTrust corpus") +
+  theme_bw() +
+  scale_color_viridis_d()
+
+```
+
+The trends are clear: "democracy" becomes a much more salient term during the 19th and 20th centuries, with big peaks around the World Wars and the end of the Cold War. 
+
+We can also look at the frequency of democracy *relative* to another word (e.g., dictatorship) across time by using `counttype = "WordsRatio"`:
+
+```{r}
+res2 <- query_bookworm(word = "democracy", compare_to = "dictatorship",
+                          lims = c(1900, 2000), counttype = "WordsRatio")
+
+res2 %>%
+  ggplot(aes(x = date_year, y = value)) +
+  geom_line() +
+  theme_bw() +
+  labs(title = "Frequency of 'democracy' relative to 'dictatorship' in the Bookworm corpus",
+       x = "Approx. date of publication",
+       y = "Ratio")
+
+```
+
+'Democracy' is always used more frequently than 'dictatorship' in the 20th century, but especially right around the First World War.
+
+We can also explore the kinds of books where 'democracy' is mentioned in the 20th century. This query groups the volumes that mention 'democracy' by both the year of publication and the volume classification in the Hathi Trust metadata:
+
+```{r}
+res2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"),
+                          lims = c(1900,2000))
+
+res2 %>%
+  ggplot(aes(x = date_year, y = fct_reorder(str_trunc(class, 40), value))) +
+  geom_tile(aes(fill = value)) +
+  facet_wrap(~word, scales = "free_y") +
+  scale_fill_gradient2() +
+  theme_bw() +
+  labs(y = "", x = "Year", title = "Frequency of 'democracy' \nacross library classifications",
+       fill = "Words per million") +
+  theme(legend.position = "bottom") 
+  
+```
+
+As we might expect, most volumes classified as "Political Science", "History", and "Social Sciences" mention democracy more often than medicine or agriculture, especially in the second half of the 20th century. But a surprising number of books classified as "Education" mention democracy quite a bit, especially right around the Second World War.
+
+It is also possible to further limit the query to, e.g., books published in a particular language or written by a particular author. For example, this gives the number of English-language texts that use the word "democracy" in 1900-2000, grouped by library classification. 
+
+```{r}
+res3 <- query_bookworm(word = c("democracy"), 
+                       lims = c(1900, 2000), 
+                       groups = "class", 
+                       counttype = "TotalTexts", 
+                       language = "English")
+
+res3 
+```
+Among texts which have some classification (most don't!), ~100,000 education and political science texts mention the term.
+
+And this query finds how many volumes between 1900 and 2000 had Alexis de Tocqueville as a first author and mentioned the word "democracy", grouped by date of publication and the library where the digitised volume was taken from:
+
+```{r}
+res3 <- query_bookworm(word = "democracy", 
+                       lims = c(1900, 2000), 
+                       groups = c("date_year", "contributing_library"), 
+                       counttype = "TotalTexts",
+                       first_author_name = c("Tocqueville, Alexis de, 1805-1859.",
+                                             "Tocqueville, Alexis de, 1805-1859"))
+
+res3 %>%
+  arrange(date_year)
+
+```
+
+Tocqueville has been republished and collected by big libraries quite a bit in the 20th century!
+
+One can use `method = "returnPossibleFields"` to return the fields available for limiting a query or grouping the results:
+
+```{r example5}
+query_bookworm(word = "", method = "returnPossibleFields")
+
+```
+
+We can also get a sample of the book titles and links for a particular year. (It's a limited sample; the database will only pull the top 100 books mentioning the term, weighted by the frequency of the term in the volume). For example, we can pull out the top 100 books in the category "Education" that mention the word "democracy" in 1941, the year where education books seem to be most likely to mention democracy:
+
+```{r example6}
+
+res4 <- query_bookworm(word = "democracy",
+                       date_year = "1941", 
+                       class = "Education", 
+                       method = "search_results")
+
+res4 
+```
+
+If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on "Building and Using Hathi Trust Worksets" for more.
+
+We can investigate further any of these volumes by downloading their associated "Extracted Features" file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, `r res4$title[2]`, available at `r res4$url[2]`, as a nice tidy `tibble` suitable for analysis with a package like `{tidytext}`.
+
+```{r}
+
+tmp <- tempdir() 
+
+extracted_features <- get_hathi_counts(res4$htid[2], dir = tmp)
+
+extracted_features
+
+```
+
+And we can extract the full metadata for that particular volume, which tells us this title was created by the Educational Policies Commission, National Education Association of the United States and the American Association of School Administrators:
+
+```{r example8}
+meta <- get_hathi_meta(res4$htid[2], dir = tmp)
+
+meta
+```
+We can also get the metadata for all of these volumes at the same time:
+
+```{r}
+meta <- get_workset_meta(res4, metadata_dir = tmp)
+
+meta
+```
+And browse interactively these titles on the Hathi Trust website:
+
+```r
+browse_htids(res4)
+
+```
+
+If you want to download lots of volumes and have [rsync](https://linux.die.net/man/1/rsync) installed in your system, the functions `rsync_from_hathi()` and `htid_to_rsync()` can facilitate the process; see the article on "Building and Using Hathi Trust Worksets" for more.
+
+One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
+
+```{r }
+res5 <- query_bookworm(counttype = "TotalTexts", 
+                       groups = c("date_year", "language"),
+                       lims = c(1500,2000))
+
+library(ggrepel)
+
+res5 %>%
+  mutate(language = fct_lump_n(language, 10, w = value)) %>%
+  group_by(date_year, language) %>%
+  summarise(value = sum(value)) %>%
+  group_by(language) %>%
+  mutate(label = ifelse(date_year == max(date_year), as.character(language), NA_character_)) %>%
+  group_by(language) %>%
+  mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
+  ggplot() +
+  geom_line(aes(x = date_year, y = rolling_avg, color = language), show.legend = FALSE) +
+  geom_line(aes(x = date_year, y = value, color = language), show.legend = FALSE, alpha = 0.3) +
+  geom_text_repel(aes(x = date_year, y = value, label = label, color = language), show.legend = FALSE) +
+  scale_y_log10() +
+  theme_bw() +
+  labs(title = "Total texts per language in the HathiTrust bookworm", 
+       subtitle = "Log scale. Less common languages grouped as 'other'. 10 year rolling average.", 
+       x = "Year", y = "")
+```
+
+The bookworm does not index every text in the Hathi Digital Library; it contains `r res5 %>% summarise(value = sum(value)) %>% pull(value) %>% format(big.mark = ",")` volumes, while the full Hathi Trust library contains more than digitised 17,000,000 volumes. For a full list (with some metadata) for *all* volumes in the Hathi Trust collection, use the functions `download_hathifile()` and `load_raw_hathifile()`.
