@@ -197,6 +197,7 @@ workset_builder <- function(token, genre, title,
     stopifnot(is.numeric(pub_date))
     pub_date <- stringr::str_c("(volumepubDate_txt:", pub_date, ")")
     pub_date <- paste(pub_date, collapse = " OR ")
+    pub_date <- paste0("(", pub_date, ")")
     if(token_query != "") {
       token_query <- paste0("(",
                             pub_date,
