@@ -11,7 +11,7 @@ get_hathi_meta(htid, dir = getOption("hathiTools.ef.dir"))
 to be downloaded.}
 
 \item{dir}{The directory where the file is saved. Defaults to
-\code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/ on load. If
+\code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/" on load. If
 the file does not exist, this function will first attempt to download it
 using \link{download_hathi_ef}.}
 }
@@ -28,10 +28,10 @@ metadata for large numbers of htids by downloading the big hathifile using
 }
 \examples{
 \dontrun{
-# Download the 1862 version of "Democracy in America" by Tocqueville
+# Download the 1862 version of "Democracy in America" by Tocqueville and get
+# its metadata
 
 tmp <- tempdir()
-download_hathi_ef("mdp.39015001796443", dir = tmp)
 
 get_hathi_meta("mdp.39015001796443", dir = tmp)
 }
