@@ -25,6 +25,19 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+    </li>
+    <li>
+      <a href="../articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -76,9 +89,13 @@ library site</p></td>
         </td>
         <td><p>rsync Hathi Trust EFs from Hathi Trust</p></td>
       </tr><tr><td>
-          <p><code><a href="cache_all.html">cache_all()</a></code> </p>
+          <p><code><a href="cache_htids.html">cache_htids()</a></code> </p>
         </td>
-        <td><p>Caches all downloaded JSON Extracted Features files</p></td>
+        <td><p>Caches downloaded JSON Extracted Features files to another format</p></td>
+      </tr><tr><td>
+          <p><code><a href="find_cached_htids.html">find_cached_htids()</a></code> </p>
+        </td>
+        <td><p>Finds cached Extracted Features files for a set of HT ids</p></td>
       </tr></tbody><tbody><tr><th colspan="2">
           <h2 id="downloading-and-working-with-a-big-hathifile">Downloading and working with a big hathifile <a href="#downloading-and-working-with-a-big-hathifile" class="anchor" aria-hidden="true"></a></h2>
           <p class="section-desc"></p><p>Functions for downloading and working with one of the big ‘hathifiles’ (metadata for over 17 million records) at <a href="https://www.hathitrust.org/hathifiles" class="external-link uri">https://www.hathitrust.org/hathifiles</a>.</p>
@@ -100,10 +117,6 @@ library site</p></td>
           <p class="section-desc"></p><p>Functions for downloading and working with the Extracted Features file for a single Hathi Trust volume.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="download_hathi_ef.html">download_hathi_ef()</a></code> </p>
-        </td>
-        <td><p>Downloads a Hathi Trust Extracted Features file for a single Hathi Trust id</p></td>
-      </tr><tr><td>
           <p><code><a href="get_hathi_counts.html">get_hathi_counts()</a></code> </p>
         </td>
         <td><p>Reads the downloaded extracted features file for a given Hathi Trust id</p></td>

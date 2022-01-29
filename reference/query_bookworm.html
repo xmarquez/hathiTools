@@ -29,6 +29,19 @@ to various forms of metadata and to limit according to that same metadata."><!--
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+    </li>
+    <li>
+      <a href="../articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -54,7 +67,7 @@ to various forms of metadata and to limit according to that same metadata.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">query_bookworm</span><span class="op">(</span>
   <span class="va">word</span>,
   groups <span class="op">=</span> <span class="st">"date_year"</span>,
-  words_collation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Case_Insensitive"</span>, <span class="st">"Case_Sensitive"</span>, <span class="st">"Stem"</span><span class="op">)</span>,
+  ignore_case <span class="op">=</span> <span class="cn">TRUE</span>,
   counttype <span class="op">=</span> <span class="st">"WordsPerMillion"</span>,
   method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"return_json"</span>, <span class="st">"returnPossibleFields"</span>, <span class="st">"search_results"</span><span class="op">)</span>,
   lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1920</span>, <span class="fl">2000</span><span class="op">)</span>,
@@ -72,11 +85,8 @@ strings.</p></dd>
 <dt>groups</dt>
 <dd><p>At least one category to group results by. The default is
 <code>date_year</code>, which groups results by year.</p></dd>
-<dt>words_collation</dt>
-<dd><p>Whether to use case-sensitive (<code>"Case_Sensitive"</code>) or
-case-insensitive (<code>"Case_Insensitive"</code>, the default) matching. Can also be
-<code>stem</code> to return word results for word stems. See the <a href="https://bookworm-project.github.io/Docs/query_structure.html" class="external-link">Bookworm API documentation</a>
-for details.</p></dd>
+<dt>ignore_case</dt>
+<dd><p>Default is <code>TRUE</code>, ignores case in search.</p></dd>
 <dt>counttype</dt>
 <dd><p>The default is words per million, <code>counttype = "WordsPerMillion"</code>. According to the <a href="https://bookworm-project.github.io/Docs/query_structure.html" class="external-link">API documentation</a>,
 the following options are available:</p>

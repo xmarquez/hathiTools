@@ -30,6 +30,19 @@ download_hathifile and then filtering it."><!-- mathjax --><script src="https://
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+    </li>
+    <li>
+      <a href="../articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -64,9 +77,8 @@ metadata for large numbers of htids by downloading the big hathifile using
 to be downloaded.</p></dd>
 <dt>dir</dt>
 <dd><p>The directory where the file is saved. Defaults to
-<code>getOption("hathiTools.ef.dir")</code>, which is just "./hathi-ef/ on load. If
-the file does not exist, this function will first attempt to download it
-using <a href="download_hathi_ef.html">download_hathi_ef</a>.</p></dd>
+<code>getOption("hathiTools.ef.dir")</code>, which is just "./hathi-ef/" on load. If
+the file does not exist, this function will first attempt to download it.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -76,10 +88,10 @@ using <a href="download_hathi_ef.html">download_hathi_ef</a>.</p></dd>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Download the 1862 version of "Democracy in America" by Tocqueville</span></span>
+<span class="r-in"><span class="co"># Download the 1862 version of "Democracy in America" by Tocqueville and get</span></span>
+<span class="r-in"><span class="co"># its metadata</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="download_hathi_ef.html">download_hathi_ef</a></span><span class="op">(</span><span class="st">"mdp.39015001796443"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="fu">get_hathi_meta</span><span class="op">(</span><span class="st">"mdp.39015001796443"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>

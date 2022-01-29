@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IAccess the Hathi Trust Bookworm and Extracted Features Files from R • hathiTools</title>
+<title>Access the Hathi Trust Bookworm and Extracted Features Files from R • hathiTools</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="IAccess the Hathi Trust Bookworm and Extracted Features Files from R">
+<script src="pkgdown.js"></script><meta property="og:title" content="Access the Hathi Trust Bookworm and Extracted Features Files from R">
 <meta property="og:description" content='The package allows one to query the Hathi Trust Digital Library Bookworm and Workset Builder, as well as to download the "extracted features" and metadata files for more than 17 million digitized volumes.'>
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -42,6 +42,21 @@
 <li>
   <a href="reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+<li>
+      <a href="articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+    </li>
+    <li>
+      <a href="articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+    </li>
+  </ul>
+</li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
 </div>
@@ -60,7 +75,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a tool similar to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a> and the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. You can also download and process the <a href="https://analytics.hathitrust.org/datasets" class="external-link">Hathi Trust Extracted Features</a> files on which the Bookworm viewer is based. The Hathi Trust collection contains over 17 million digitised books, including many of those originally digitised by Google for its Google Books project.</p>
+<p>This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a tool similar to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a> and the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. It also allows you to download and process the <a href="https://analytics.hathitrust.org/datasets" class="external-link">Hathi Trust Extracted Features</a> files, which contain per-page word counts and part-of-speech information for over 15 million digitised volumes, including many of those originally digitised by Google for its Google Books project.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -112,239 +127,22 @@
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span>, subtitle <span class="op">=</span> <span class="st">"10 year rolling average, books published between 1760-2000"</span>,
        title <span class="op">=</span> <span class="st">"Frequency of 'democracy' and 'monarchy' in the HathiTrust corpus"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-example-1.png" width="100%"></p>
-<p>It is also possible to do more complex queries, for example to look at the relative frequency of a term across book classifications from the Library of Congress system:</p>
+<p><img src="reference/figures/README-example-1.png" width="100%"> There are more than 13 million texts in the bookworm database.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>,
-                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">total_texts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,
+                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2020</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">result2</span>
-<span class="co">#&gt; # A tibble: 2,121 x 5</span>
-<span class="co">#&gt;    word      date_year class                                   value counttype  </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;                                   &lt;dbl&gt; &lt;chr&gt;      </span>
-<span class="co">#&gt;  1 democracy      1900 N/A                                     4.03  WordsPerMi~</span>
-<span class="co">#&gt;  2 democracy      1900 Agriculture                             0.769 WordsPerMi~</span>
-<span class="co">#&gt;  3 democracy      1900 Education                               9.56  WordsPerMi~</span>
-<span class="co">#&gt;  4 democracy      1900 World History And History Of Europe, ~  5.50  WordsPerMi~</span>
-<span class="co">#&gt;  5 democracy      1900 History Of The Americas                15.7   WordsPerMi~</span>
-<span class="co">#&gt;  6 democracy      1900 Fine Arts                               0.816 WordsPerMi~</span>
-<span class="co">#&gt;  7 democracy      1900 Science                                 0.146 WordsPerMi~</span>
-<span class="co">#&gt;  8 democracy      1900 General Works                          14.6   WordsPerMi~</span>
-<span class="co">#&gt;  9 democracy      1900 Military Science                        0.962 WordsPerMi~</span>
-<span class="co">#&gt; 10 democracy      1900 Geography.  Anthropology.  Recreation   0.691 WordsPerMi~</span>
-<span class="co">#&gt; # ... with 2,111 more rows</span>
-
-<span class="va">result2</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="fu">str_trunc</span><span class="op">(</span><span class="va">class</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">word</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_gradient2</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">""</span>, x <span class="op">=</span> <span class="st">"Year"</span>, title <span class="op">=</span> <span class="st">"Frequency of 'democracy' \nacross library of congress classifications"</span>,
-       fill <span class="op">=</span> <span class="st">"Words per million"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-example2-1.png" width="100%"></p>
-<p>Or across literary forms:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"literary_form"</span><span class="op">)</span>,
-                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">result3</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="fu">str_trunc</span><span class="op">(</span><span class="va">literary_form</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">word</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_gradient2</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">""</span>, x <span class="op">=</span> <span class="st">"Year"</span>, title <span class="op">=</span> <span class="st">"Frequency of 'democracy' \nacross literary forms"</span>,
-       fill <span class="op">=</span> <span class="st">"Words per million"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-example3-1.png" width="100%"></p>
-<p>It is also possible to further limit the query to, e.g., books published in a particular language. For example, this gives the number of English-language texts that use the word “democracy” per year from 1760-2000.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result4</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>, language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span>
-
-<span class="va">result4</span> 
-<span class="co">#&gt; # A tibble: 241 x 4</span>
-<span class="co">#&gt;    word      date_year value counttype </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;int&gt; &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 democracy      1760   388 TotalTexts</span>
-<span class="co">#&gt;  2 democracy      1761   393 TotalTexts</span>
-<span class="co">#&gt;  3 democracy      1762   319 TotalTexts</span>
-<span class="co">#&gt;  4 democracy      1763   443 TotalTexts</span>
-<span class="co">#&gt;  5 democracy      1764   320 TotalTexts</span>
-<span class="co">#&gt;  6 democracy      1765   352 TotalTexts</span>
-<span class="co">#&gt;  7 democracy      1766   439 TotalTexts</span>
-<span class="co">#&gt;  8 democracy      1767   402 TotalTexts</span>
-<span class="co">#&gt;  9 democracy      1768   480 TotalTexts</span>
-<span class="co">#&gt; 10 democracy      1769   424 TotalTexts</span>
-<span class="co">#&gt; # ... with 231 more rows</span></code></pre></div>
-<p>One can use <code>method = "returnPossibleFields"</code> to return the fields available for grouping:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result5</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">""</span>, method <span class="op">=</span> <span class="st">"returnPossibleFields"</span><span class="op">)</span>
-
-<span class="va">result5</span>
-<span class="co">#&gt; # A tibble: 21 x 6</span>
-<span class="co">#&gt;    name                tablename                 dbname type  anchor description</span>
-<span class="co">#&gt;    &lt;chr&gt;               &lt;chr&gt;                     &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;      </span>
-<span class="co">#&gt;  1 language            languageLookup            langu~ char~ bookid ""         </span>
-<span class="co">#&gt;  2 publication_country publication_countryLookup publi~ char~ bookid ""         </span>
-<span class="co">#&gt;  3 publication_state   publication_stateLookup   publi~ char~ bookid ""         </span>
-<span class="co">#&gt;  4 subclass            subclassLookup            subcl~ char~ bookid ""         </span>
-<span class="co">#&gt;  5 narrow_class        narrow_classLookup        narro~ char~ bookid ""         </span>
-<span class="co">#&gt;  6 class               classLookup               class  char~ bookid ""         </span>
-<span class="co">#&gt;  7 resource_type       resource_typeLookup       resou~ char~ bookid ""         </span>
-<span class="co">#&gt;  8 target_audience     target_audienceLookup     targe~ char~ bookid ""         </span>
-<span class="co">#&gt;  9 scanner             scannerLookup             scann~ char~ bookid ""         </span>
-<span class="co">#&gt; 10 first_author_birth  first_author_birthLookup  first~ char~ bookid ""         </span>
-<span class="co">#&gt; # ... with 11 more rows</span></code></pre></div>
-<p>We can also get a sample of the book titles and links for a particular year. For example, suppose we’re interested in why so many books in the category “Education” mention the word “democracy” in 1941, as appears in the second graph above. This query pulls the first 100 books in the catalog for 1941 in the category “education”:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result2</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">class</span> <span class="op">==</span> <span class="st">"Education"</span>, <span class="va">value</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 5</span>
-<span class="co">#&gt;   word      date_year class     value counttype      </span>
-<span class="co">#&gt;   &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;          </span>
-<span class="co">#&gt; 1 democracy      1941 Education  242. WordsPerMillion</span>
-
-<span class="va">result6</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="st">"date_year"</span>,
-                          date_year <span class="op">=</span> <span class="st">"1941"</span>, class <span class="op">=</span> <span class="st">"Education"</span>, method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span>
-
-<span class="va">result6</span> 
-<span class="co">#&gt; # A tibble: 100 x 3</span>
-<span class="co">#&gt;    htid                      title                       url                    </span>
-<span class="co">#&gt;    &lt;chr&gt;                     &lt;chr&gt;                       &lt;chr&gt;                  </span>
-<span class="co">#&gt;  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the ~ https://babel.hathitru~</span>
-<span class="co">#&gt;  2 uc1.$b67929               The education of free men ~ https://babel.hathitru~</span>
-<span class="co">#&gt;  3 mdp.39015062763720        The education of free men ~ https://babel.hathitru~</span>
-<span class="co">#&gt;  4 mdp.39015068297905        The education of free men ~ https://babel.hathitru~</span>
-<span class="co">#&gt;  5 uc1.$b67873               Pennsylvania bill of right~ https://babel.hathitru~</span>
-<span class="co">#&gt;  6 mdp.39015035886111        Education in a world of fe~ https://babel.hathitru~</span>
-<span class="co">#&gt;  7 mdp.39015031665543        Education and the morale o~ https://babel.hathitru~</span>
-<span class="co">#&gt;  8 uc1.$b67928               Education and the morale o~ https://babel.hathitru~</span>
-<span class="co">#&gt;  9 uiug.30112108068831       Proceedings of the convent~ https://babel.hathitru~</span>
-<span class="co">#&gt; 10 uc1.b4305220              Guidance in democratic liv~ https://babel.hathitru~</span>
-<span class="co">#&gt; # ... with 90 more rows</span></code></pre></div>
-<p>We can download the Extracted Features file associated with any of these HathiTrust IDs:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span> 
-
-<span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="reference/download_hathi_ef.html">download_hathi_ef</a></span><span class="op">(</span>dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 18,763 x 6</span>
-<span class="co">#&gt;    htid        token      POS   count section  page</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span>
-<span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span>
-<span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span>
-<span class="co">#&gt;  4 uc1.$b67929 uc-male    JJ        1 body        1</span>
-<span class="co">#&gt;  5 uc1.$b67929 *          SYM       1 body        1</span>
-<span class="co">#&gt;  6 uc1.$b67929 .          .         1 body        1</span>
-<span class="co">#&gt;  7 uc1.$b67929 Free       NNP       1 body        1</span>
-<span class="co">#&gt;  8 uc1.$b67929 Men        NNP       1 body        1</span>
-<span class="co">#&gt;  9 uc1.$b67929 Democracy  NNP       1 body        1</span>
-<span class="co">#&gt; 10 uc1.$b67929 School     NNP       1 body        1</span>
-<span class="co">#&gt; # ... with 18,753 more rows</span>
-
-<span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 18763 Columns: 5</span>
-<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-
-<span class="va">extracted_features</span>
-<span class="co">#&gt; # A tibble: 18,763 x 6</span>
-<span class="co">#&gt;    htid        token      POS   count section  page</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span>
-<span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span>
-<span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span>
-<span class="co">#&gt;  4 uc1.$b67929 uc-male    JJ        1 body        1</span>
-<span class="co">#&gt;  5 uc1.$b67929 *          SYM       1 body        1</span>
-<span class="co">#&gt;  6 uc1.$b67929 .          .         1 body        1</span>
-<span class="co">#&gt;  7 uc1.$b67929 Free       NNP       1 body        1</span>
-<span class="co">#&gt;  8 uc1.$b67929 Men        NNP       1 body        1</span>
-<span class="co">#&gt;  9 uc1.$b67929 Democracy  NNP       1 body        1</span>
-<span class="co">#&gt; 10 uc1.$b67929 School     NNP       1 body        1</span>
-<span class="co">#&gt; # ... with 18,753 more rows</span></code></pre></div>
-<p>And we can extract the metadata:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-
-<span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 35 x 3</span>
-<span class="co">#&gt;    field         value                                                 htid     </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                                 &lt;chr&gt;    </span>
-<span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_MetadataSub~ uc1.$b67~</span>
-<span class="co">#&gt;  2 id            http://hdl.handle.net/2027/uc1.$b67929                uc1.$b67~</span>
-<span class="co">#&gt;  3 type          DataFeedItem                                          uc1.$b67~</span>
-<span class="co">#&gt;  4 type          Book                                                  uc1.$b67~</span>
-<span class="co">#&gt;  5 dateCreated   20200209                                              uc1.$b67~</span>
-<span class="co">#&gt;  6 title         The education of free men in American democracy.      uc1.$b67~</span>
-<span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/144709713                    uc1.$b67~</span>
-<span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Organization    uc1.$b67~</span>
-<span class="co">#&gt;  9 contributor   Educational Policies Commission.                      uc1.$b67~</span>
-<span class="co">#&gt; 10 contributor   http://www.viaf.org/viaf/136691592                    uc1.$b67~</span>
-<span class="co">#&gt; # ... with 25 more rows</span></code></pre></div>
-<p>We can also get the metadata for all of these books at the same time:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">result6</span><span class="op">$</span><span class="va">htid</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Warning in get_workset_meta(result6$htid, metadata_dir = tmp): This function</span>
-<span class="co">#&gt; works best with worksets generated by workset_builder. I cannot determine if</span>
-<span class="co">#&gt; this file was generated by workset_builder; results may not be accurate or fail.</span>
-<span class="co">#&gt; Getting download key...</span>
-<span class="co">#&gt; Downloading metadata for 100 volumes. This might take some time.</span>
-<span class="co">#&gt; Rows: 100 Columns: 36</span>
-<span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPl...</span>
-<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
-<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-
-<span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 100 x 36</span>
-<span class="co">#&gt;    htBibUrl  schemaVersion volumeIdentifier rightsAttributes title genre pubDate</span>
-<span class="co">#&gt;    &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 http://c~           1.3 nc01.ark:/13960~ und              Teac~ "[\"~    1941</span>
-<span class="co">#&gt;  2 http://c~           1.3 uc1.$b67929      pd               The ~ "[\"~    1941</span>
-<span class="co">#&gt;  3 http://c~           1.3 mdp.39015062763~ pd               The ~ "[\"~    1941</span>
-<span class="co">#&gt;  4 http://c~           1.3 mdp.39015068297~ pd               The ~ "[\"~    1941</span>
-<span class="co">#&gt;  5 http://c~           1.3 uc1.$b67873      pd               Penn~ "[\"~    1941</span>
-<span class="co">#&gt;  6 http://c~           1.3 mdp.39015035886~ ic               Educ~ "[\"~    1941</span>
-<span class="co">#&gt;  7 http://c~           1.3 mdp.39015031665~ pd               Educ~ "[\"~    1941</span>
-<span class="co">#&gt;  8 http://c~           1.3 uc1.$b67928      pd               Educ~ "[\"~    1941</span>
-<span class="co">#&gt;  9 http://c~           1.3 uiug.3011210806~ ic               Proc~ "[\"~    1941</span>
-<span class="co">#&gt; 10 http://c~           1.3 uc1.b4305220     ic               Guid~ "[\"~    1941</span>
-<span class="co">#&gt; # ... with 90 more rows, and 29 more variables: pubPlace &lt;chr&gt;,</span>
-<span class="co">#&gt; #   typeOfResource &lt;chr&gt;, bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;,</span>
-<span class="co">#&gt; #   dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;,</span>
-<span class="co">#&gt; #   issn &lt;chr&gt;, oclc &lt;chr&gt;, lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span>
-<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;,</span>
-<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
-<span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
-<p>And one can browse interactively these titles on the Hathi Trust website:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">result6</span><span class="op">)</span></code></pre></div>
-<p>One can get info about the corpus itself by using <code>counttype = "TotalWords"</code> or <code>counttype = "TotalTexts"</code> and omitting the word key.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result7</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,
-                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1500</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">result7</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+<span class="va">total_texts</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="fu">summarise</span><span class="op">(</span>value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 1</span>
 <span class="co">#&gt;      value</span>
 <span class="co">#&gt;      &lt;int&gt;</span>
-<span class="co">#&gt; 1 12534182</span>
+<span class="co">#&gt; 1 13786170</span>
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span>
 
-<span class="va">result7</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+<span class="va">total_texts</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">date_year</span> <span class="op">&gt;</span> <span class="fl">1500</span>, <span class="va">date_year</span> <span class="op">&lt;</span> <span class="fl">2001</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="fu">mutate</span><span class="op">(</span>language <span class="op">=</span> <span class="fu">fct_lump_n</span><span class="op">(</span><span class="va">language</span>, <span class="fl">10</span>, w <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="fu">group_by</span><span class="op">(</span><span class="va">date_year</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
   <span class="fu">summarise</span><span class="op">(</span>value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="reference/pipe.html">%&gt;%</a></span>
@@ -358,71 +156,147 @@
   <span class="fu">geom_text_repel</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span>, label <span class="op">=</span> <span class="va">label</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Total texts per language in the HathiTrust bookworm"</span>, subtitle <span class="op">=</span> <span class="st">"Log scale. Less common languages grouped as 'other'. 10 year rolling average."</span>, x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
+  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Total texts per language in the HathiTrust bookworm"</span>, 
+       subtitle <span class="op">=</span> <span class="st">"Log scale. Less common languages grouped as 'other'. 10 year rolling average."</span>, 
+       x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.</span></code></pre></div>
-<p><img src="reference/figures/README-example9-1.png" width="100%"></p>
-<p>Note that the accessible Hathi Trust Bookworm database is the 2016 version.</p>
-<p>It is also possible to build a workset of Hathi Trust IDs for further analysis. Here, for example, we find all the volumes that contain the term “democracy” and have genre strings that include “dictionary” and “biography”.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result8</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>token <span class="op">=</span> <span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"dictionary"</span>, <span class="st">"biography"</span><span class="op">)</span><span class="op">)</span>
+<p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
+<p>See <code><a href="articles/using_the_hathi_bookworm.html">vignette("using_the_hathi_bookworm")</a></code> for more on how to query the bookworm to get word frequencies grouped by particular fields and limited to specific categories.</p>
+</div>
+<div class="section level2">
+<h2 id="creating-worksets-of-hathi-trust-ids">Creating Worksets of Hathi Trust IDs<a class="anchor" aria-label="anchor" href="#creating-worksets-of-hathi-trust-ids"></a>
+</h2>
+<p>We can also create worksets of Hathi Trust IDs for volumes in the digital library that meet specific criteria, such as all volumes that mention “liberal” and “democracy” in the same page, or all volumes with by Alexis de Tocqueville in the “author” field.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"liberal democracy"</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
-<span class="va">result8</span> 
-<span class="co">#&gt; # A tibble: 1,260 x 2</span>
+<span class="va">result2</span>
+<span class="co">#&gt; # A tibble: 6,193 x 2</span>
+<span class="co">#&gt;    htid                     id                                  </span>
+<span class="co">#&gt;    &lt;chr&gt;                    &lt;chr&gt;                               </span>
+<span class="co">#&gt;  1 aeu.ark:/13960/t05x3k82c aeu.ark:/13960/t05x3k82c.page-000075</span>
+<span class="co">#&gt;  2 aeu.ark:/13960/t6pz5zs5h aeu.ark:/13960/t6pz5zs5h.page-000251</span>
+<span class="co">#&gt;  3 aeu.ark:/13960/t7pn9qp4g aeu.ark:/13960/t7pn9qp4g.page-000394</span>
+<span class="co">#&gt;  4 aeu.ark:/13960/t8qc19m2f aeu.ark:/13960/t8qc19m2f.page-000222</span>
+<span class="co">#&gt;  5 chi.090309143            chi.090309143.page-000227           </span>
+<span class="co">#&gt;  6 chi.096292271            chi.096292271.page-000333           </span>
+<span class="co">#&gt;  7 chi.096292271            chi.096292271.page-000364           </span>
+<span class="co">#&gt;  8 chi.096292336            chi.096292336.page-000337           </span>
+<span class="co">#&gt;  9 chi.096292336            chi.096292336.page-000368           </span>
+<span class="co">#&gt; 10 chi.101607416            chi.101607416.page-001182           </span>
+<span class="co">#&gt; # ... with 6,183 more rows</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result3</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
+<span class="va">result3</span>
+<span class="co">#&gt; # A tibble: 417 x 2</span>
 <span class="co">#&gt;    htid                         n</span>
 <span class="co">#&gt;    &lt;chr&gt;                    &lt;int&gt;</span>
-<span class="co">#&gt;  1 aeu.ark:/13960/t39030j16     3</span>
-<span class="co">#&gt;  2 aeu.ark:/13960/t9z040f1s     1</span>
-<span class="co">#&gt;  3 chi.090377798               25</span>
-<span class="co">#&gt;  4 chi.097697911                2</span>
-<span class="co">#&gt;  5 chi.098306000                1</span>
-<span class="co">#&gt;  6 chi.23017470                 2</span>
-<span class="co">#&gt;  7 chi.73090523                 3</span>
-<span class="co">#&gt;  8 coo.31924022643799           1</span>
-<span class="co">#&gt;  9 coo.31924081662029           1</span>
-<span class="co">#&gt; 10 coo.31924086013368           1</span>
-<span class="co">#&gt; # ... with 1,250 more rows</span></code></pre></div>
-<p>Here’s the metadata for the first six of these results.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result8</span><span class="op">)</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span> 
+<span class="co">#&gt;  1 aeu.ark:/13960/t00z8277t   506</span>
+<span class="co">#&gt;  2 aeu.ark:/13960/t0ms4jd0t   419</span>
+<span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s   455</span>
+<span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh9p   445</span>
+<span class="co">#&gt;  5 aeu.ark:/13960/t18k8252g   386</span>
+<span class="co">#&gt;  6 aeu.ark:/13960/t23b7448p   649</span>
+<span class="co">#&gt;  7 aeu.ark:/13960/t2h717j0v   607</span>
+<span class="co">#&gt;  8 aeu.ark:/13960/t2k65c727   543</span>
+<span class="co">#&gt;  9 aeu.ark:/13960/t3qv43c3w   516</span>
+<span class="co">#&gt; 10 aeu.ark:/13960/t6252fd09   382</span>
+<span class="co">#&gt; # ... with 407 more rows</span></code></pre></div>
+<p>We can browse these volumes interactively in the Hathi Trust website:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">result2</span><span class="op">)</span></code></pre></div>
+<p>See the vignette <code><a href="articles/using_worksets.html">vignette("using_worksets")</a></code> for more on creating and working with worksets.</p>
+</div>
+<div class="section level2">
+<h2 id="downloading-extracted-feature-files-for-specific-hathi-trust-volumes">Downloading extracted feature files for specific Hathi Trust volumes<a class="anchor" aria-label="anchor" href="#downloading-extracted-feature-files-for-specific-hathi-trust-volumes"></a>
+</h2>
+<p>We can download the Extracted Features file associated with any of these HathiTrust IDs:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span> 
+
+<span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+
+<span class="va">extracted_features</span>
+<span class="co">#&gt; # A tibble: 71,102 x 6</span>
+<span class="co">#&gt;    htid                     token POS   count section  page</span>
+<span class="co">#&gt;    &lt;chr&gt;                    &lt;chr&gt; &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 aeu.ark:/13960/t0ms4jd0t II    NNP       1 body        1</span>
+<span class="co">#&gt;  2 aeu.ark:/13960/t0ms4jd0t ``    ``        2 body        1</span>
+<span class="co">#&gt;  3 aeu.ark:/13960/t0ms4jd0t *     SYM       2 body        1</span>
+<span class="co">#&gt;  4 aeu.ark:/13960/t0ms4jd0t 23    CD        1 body        1</span>
+<span class="co">#&gt;  5 aeu.ark:/13960/t0ms4jd0t %     NN        4 body        1</span>
+<span class="co">#&gt;  6 aeu.ark:/13960/t0ms4jd0t n     NN        1 body        1</span>
+<span class="co">#&gt;  7 aeu.ark:/13960/t0ms4jd0t .     .         2 body        1</span>
+<span class="co">#&gt;  8 aeu.ark:/13960/t0ms4jd0t 9     CD        1 body        1</span>
+<span class="co">#&gt;  9 aeu.ark:/13960/t0ms4jd0t &lt;     JJR       1 body        1</span>
+<span class="co">#&gt; 10 aeu.ark:/13960/t0ms4jd0t U     NNP       1 body        1</span>
+<span class="co">#&gt; # ... with 71,092 more rows</span></code></pre></div>
+<p>And we can extract the metadata for any of them as well:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+
+<span class="va">meta</span>
+<span class="co">#&gt; # A tibble: 30 x 3</span>
+<span class="co">#&gt;    field         value                                         htid             </span>
+<span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                         &lt;chr&gt;            </span>
+<span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Met~ aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t0~ aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  3 type          DataFeedItem                                  aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  4 type          Book                                          aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  5 dateCreated   20200209                                      aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  6 title         De la démocratie en Amérique                  aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/66474207             aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Person  aeu.ark:/13960/t~</span>
+<span class="co">#&gt;  9 contributor   Tocqueville, Alexis de, 1805-1859.            aeu.ark:/13960/t~</span>
+<span class="co">#&gt; 10 pubDate       1848                                          aeu.ark:/13960/t~</span>
+<span class="co">#&gt; # ... with 20 more rows</span></code></pre></div>
+<p>We can also get the metadata for many or all of these books at the same time:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">result3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
 <span class="co">#&gt; Getting download key...</span>
-<span class="co">#&gt; Downloading metadata for 6 volumes. This might take some time.</span>
-<span class="co">#&gt; Rows: 6 Columns: 36</span>
+<span class="co">#&gt; Downloading metadata for 10 volumes. This might take some time.</span>
+<span class="co">#&gt; Rows: 10 Columns: 36</span>
 <span class="co">#&gt; -- Column specification --------------------------------------------------------</span>
 <span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (30): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPl...</span>
-<span class="co">#&gt; dbl   (4): schemaVersion, pubDate, hathitrustRecordNumber, sourceInstitution...</span>
+<span class="co">#&gt; chr  (20): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPl...</span>
+<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
+<span class="co">#&gt; lgl  (11): sourceInstitutionRecordNumber, enumerationChronology, governmentD...</span>
 <span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 
 <span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 6 x 36</span>
-<span class="co">#&gt;   htBibUrl  schemaVersion volumeIdentifier  rightsAttributes title genre pubDate</span>
-<span class="co">#&gt;   &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 http://c~           1.3 aeu.ark:/13960/t~ pd               An A~ "[\"~    1832</span>
-<span class="co">#&gt; 2 http://c~           1.3 aeu.ark:/13960/t~ pd               An A~ "[\"~    1809</span>
-<span class="co">#&gt; 3 http://c~           1.3 chi.090377798     pd               Univ~ "[\"~    1885</span>
-<span class="co">#&gt; 4 http://c~           1.3 chi.097697911     pd               The ~ "[\"~    1880</span>
-<span class="co">#&gt; 5 http://c~           1.3 chi.098306000     pd               Live~ "[\"~    1814</span>
-<span class="co">#&gt; 6 http://c~           1.3 chi.23017470      pd               The ~ "[\"~    1880</span>
+<span class="co">#&gt; # A tibble: 10 x 36</span>
+<span class="co">#&gt;    htBibUrl  schemaVersion volumeIdentifier rightsAttributes title genre pubDate</span>
+<span class="co">#&gt;    &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;            &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 http://c~           1.3 aeu.ark:/13960/~ pd               De l~ "[\"~    1850</span>
+<span class="co">#&gt;  2 http://c~           1.3 aeu.ark:/13960/~ pd               De l~ "[\"~    1848</span>
+<span class="co">#&gt;  3 http://c~           1.3 aeu.ark:/13960/~ pd               Demo~ "[\"~    1899</span>
+<span class="co">#&gt;  4 http://c~           1.3 aeu.ark:/13960/~ pd               De l~ "[\"~    1848</span>
+<span class="co">#&gt;  5 http://c~           1.3 aeu.ark:/13960/~ pdus             Demo~ "[\"~    1889</span>
+<span class="co">#&gt;  6 http://c~           1.3 aeu.ark:/13960/~ pd               Demo~ "[\"~    1898</span>
+<span class="co">#&gt;  7 http://c~           1.3 aeu.ark:/13960/~ pd               Demo~ "[\"~    1863</span>
+<span class="co">#&gt;  8 http://c~           1.3 aeu.ark:/13960/~ pd               De l~ "[\"~    1850</span>
+<span class="co">#&gt;  9 http://c~           1.3 aeu.ark:/13960/~ pd               Demo~ "[\"~    1838</span>
+<span class="co">#&gt; 10 http://c~           1.3 aeu.ark:/13960/~ pd               De l~ "[\"~    1848</span>
 <span class="co">#&gt; # ... with 29 more variables: pubPlace &lt;chr&gt;, typeOfResource &lt;chr&gt;,</span>
 <span class="co">#&gt; #   bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;, dateCreated &lt;dttm&gt;,</span>
 <span class="co">#&gt; #   lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span>
 <span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span>
-<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
-<span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
-<p>One can also turn the workset into a list of htids for downloading via rsync:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;lgl&gt;,</span>
+<span class="co">#&gt; #   governmentDocument &lt;lgl&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
+<p>One can also turn a workset into a list of htids for downloading their extracted features via rsync:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
 
-<span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result8</span><span class="op">$</span><span class="va">htid</span>, <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp6P96Oi\file958c42992559 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">)</span>
+<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp2HbLJ0\file4ec04d7a329f data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
 <p>There’s a convenience function that will attempt to do this for you in one command.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result8</span><span class="op">$</span><span class="va">htid</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>(This requires having rsync installed; see the vignette on using worksets in this website).</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>This requires having rsync installed; see the vignette <code><a href="articles/using_worksets.html">vignette("using_worksets")</a></code> for more on rsyncing large numbers of Hathi Trust IDs.</p>
 <p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
 </div>
 <div class="section level2">

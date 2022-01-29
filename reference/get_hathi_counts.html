@@ -25,6 +25,19 @@
       <ul class="nav navbar-nav"><li>
   <a href="../reference/index.html">Reference</a>
 </li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Articles
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+    </li>
+    <li>
+      <a href="../articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+    </li>
+  </ul></li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -56,7 +69,7 @@
     <dl><dt>htid</dt>
 <dd><p>The Hathi Trust id of the item whose extracted features files are
 to be loaded into memory. If it hasn't been downloaded, the function will
-try to download it first via <a href="download_hathi_ef.html">download_hathi_ef</a>.</p></dd>
+try to download it first.</p></dd>
 <dt>dir</dt>
 <dd><p>The directory where the download extracted features files are to
 be found. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
@@ -78,13 +91,11 @@ csv suitable for use with the package
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># Download the 1863 version of "Democracy in America" by Tocqueville</span></span>
+<span class="r-in"><span class="co"># Download the 1863 version of "Democracy in America" by Tocqueville and get</span></span>
+<span class="r-in"><span class="co"># its extracted features</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="fu"><a href="download_hathi_ef.html">download_hathi_ef</a></span><span class="op">(</span><span class="st">"aeu.ark:/13960/t3qv43c3w"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co">#Get the downloaded extracted features</span></span>
 <span class="r-in"><span class="fu">get_hathi_counts</span><span class="op">(</span><span class="st">"aeu.ark:/13960/t3qv43c3w"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="op">}</span></span>

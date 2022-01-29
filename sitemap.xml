@@ -4,6 +4,15 @@
     <loc>https://xmarquez.github.io/hathiTools/404.html</loc>
   </url>
   <url>
+    <loc>https://xmarquez.github.io/hathiTools/articles/index.html</loc>
+  </url>
+  <url>
+    <loc>https://xmarquez.github.io/hathiTools/articles/using_the_hathi_bookworm.html</loc>
+  </url>
+  <url>
+    <loc>https://xmarquez.github.io/hathiTools/articles/using_worksets.html</loc>
+  </url>
+  <url>
     <loc>https://xmarquez.github.io/hathiTools/authors.html</loc>
   </url>
   <url>
@@ -16,10 +25,7 @@
     <loc>https://xmarquez.github.io/hathiTools/reference/browse_htids.html</loc>
   </url>
   <url>
-    <loc>https://xmarquez.github.io/hathiTools/reference/cache_all.html</loc>
-  </url>
-  <url>
-    <loc>https://xmarquez.github.io/hathiTools/reference/download_hathi_ef.html</loc>
+    <loc>https://xmarquez.github.io/hathiTools/reference/cache_htids.html</loc>
   </url>
   <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/download_hathifile.html</loc>
@@ -29,6 +35,9 @@
   </url>
   <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/fiction.html</loc>
+  </url>
+  <url>
+    <loc>https://xmarquez.github.io/hathiTools/reference/find_cached_htids.html</loc>
   </url>
   <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/get_hathi_counts.html</loc>
