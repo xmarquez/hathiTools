@@ -11,6 +11,10 @@ find_cached_htids(
 )
 }
 \arguments{
+\item{htids}{A character vector of Hathi Trust ids, a workset created with
+\link{workset_builder}, or a data frame with a column named "htid" containing
+the Hathi Trust ids that require caching.}
+
 \item{dir}{The directory where the download extracted features files are to
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "hathi-ef" on load.}
@@ -22,10 +26,6 @@ JSON download; only JSON file kept), "rds", "feather" (suitable for use
 with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
 csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
-
-\item{keep_json}{Whether to keep the downloaded json files. Default is
-\code{TRUE}; if false, it only keeps the local cached files (e.g., the csv
-files). This can save space.}
 }
 \value{
 A \link{tibble} with the paths of the cached files and an indicator of

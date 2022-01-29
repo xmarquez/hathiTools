@@ -150,6 +150,8 @@ cache_htids <- function(htids,
                         cache_type = getOption("hathiTools.cachetype"),
                         keep_json = TRUE) {
 
+  exists.y <- exists.x <- page <- count <- NULL
+
   cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
 
@@ -240,10 +242,10 @@ cache_htids <- function(htids,
 
 #' Finds cached Extracted Features files for a set of HT ids
 #'
+#' @param htids A character vector of Hathi Trust ids, a workset created with
+#'   [workset_builder], or a data frame with a column named "htid" containing
+#'   the Hathi Trust ids that require caching.
 #' @inheritParams get_hathi_counts
-#' @param keep_json Whether to keep the downloaded json files. Default is
-#'   `TRUE`; if false, it only keeps the local cached files (e.g., the csv
-#'   files). This can save space.
 #'
 #' @return A [tibble] with the paths of the cached files and an indicator of
 #'   whether each htid has an existing cached file.
@@ -275,7 +277,7 @@ find_cached_htids <- function(htids,
   }
 
   local_files <- htids %>%
-    map_chr(local_loc, suffix = cache_type, dir = dir)
+    purrr::map_chr(local_loc, suffix = cache_type, dir = dir)
 
   tibble(htid = htids, local_loc = local_files, exists = fs::file_exists(local_files))
 
