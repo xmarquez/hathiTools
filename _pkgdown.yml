@@ -23,7 +23,7 @@ reference:
     fast-loading format.
   contents:
   - matches("rsync")
-  - cache_all
+  - matches("cache")
 - title: "Downloading and working with a big hathifile"
   desc: >
     Functions for downloading and working with one of the big 'hathifiles'
