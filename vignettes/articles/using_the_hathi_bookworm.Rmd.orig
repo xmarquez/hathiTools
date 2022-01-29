@@ -5,7 +5,7 @@ title: "Using the Hathi Trust Bookworm Tool"
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "vignettes/articles/figures/using-hathi-bookworm-",
+  fig.path = "vignettes/articles/using-hathi-bookworm-",
   comment = "#>"
 )
 ```

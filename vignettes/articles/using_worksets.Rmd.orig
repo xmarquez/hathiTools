@@ -5,7 +5,7 @@ title: "Creating Hathi Trust Worksets and Downloading Extracted Features Files"
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "vignettes/articles/figures/using-hathi-worksets-",
+  fig.path = "vignettes/articles/using-hathi-worksets-",
   comment = "#>"
 )
 ```

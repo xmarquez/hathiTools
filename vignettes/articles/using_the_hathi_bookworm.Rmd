@@ -66,7 +66,7 @@ res %>%
   scale_color_viridis_d()
 ```
 
-![plot of chunk unnamed-chunk-3](vignettes/articles/figures/using-hathi-bookworm-unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](vignettes/articles/using-hathi-bookworm-unnamed-chunk-3-1.png)
 
 The trends are clear: "democracy" becomes a much more salient term during the 19th and 20th centuries, with big peaks around the World Wars and the end of the Cold War.
 
@@ -86,7 +86,7 @@ res2 %>%
        y = "Ratio")
 ```
 
-![plot of chunk unnamed-chunk-4](vignettes/articles/figures/using-hathi-bookworm-unnamed-chunk-4-1.png)
+![plot of chunk unnamed-chunk-4](vignettes/articles/using-hathi-bookworm-unnamed-chunk-4-1.png)
 
 'Democracy' is always used more frequently than 'dictatorship' in the 20th century, but especially right around the First World War.
 
@@ -108,7 +108,7 @@ res2 %>%
   theme(legend.position = "bottom")
 ```
 
-![plot of chunk unnamed-chunk-5](vignettes/articles/figures/using-hathi-bookworm-unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5](vignettes/articles/using-hathi-bookworm-unnamed-chunk-5-1.png)
 
 As we might expect, most volumes classified as "Political Science", "History", and "Social Sciences" mention democracy more often than medicine or agriculture, especially in the second half of the 20th century. But a surprising number of books classified as "Education" mention democracy quite a bit, especially right around the Second World War.
 
@@ -355,6 +355,6 @@ res5 %>%
 #> Warning: ggrepel: 3 unlabeled data points (too many overlaps). Consider increasing max.overlaps
 ```
 
-![plot of chunk unnamed-chunk-10](vignettes/articles/figures/using-hathi-bookworm-unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-10](vignettes/articles/using-hathi-bookworm-unnamed-chunk-10-1.png)
 
 The bookworm does not index every text in the Hathi Digital Library; it containsabout 13 million volumes, while the full Hathi Trust library contains more than digitised 17,000,000 volumes. For a full list (with some metadata) for *all* volumes in the Hathi Trust collection, use the functions `download_hathifile()` and `load_raw_hathifile()`.
