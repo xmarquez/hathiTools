@@ -83,8 +83,7 @@ get_hathi_counts <- function(htid,
 #'   to be downloaded.
 #' @param dir The directory where the file is saved. Defaults to
 #'   `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/" on load. If
-#'   the file does not exist, this function will first attempt to download it
-#'   using [download_hathi_ef].
+#'   the file does not exist, this function will first attempt to download it.
 #'
 #' @return a [tibble] with metadata.
 #' @export
