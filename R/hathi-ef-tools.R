@@ -1,37 +1,3 @@
-#' Downloads a Hathi Trust Extracted Features file for a single Hathi Trust id
-#'
-#' This function downloads a Hathi Trust Extracted Features file for a single
-#' Hathi Trust id and (typically, unless explicitly prevented) caches the result
-#' as a CSV file or other type of columnar format suitable for fast loading into
-#' R.
-#'
-#' Note that if you want to download the Extracted Features of many Hathi Trust
-#' IDs, it is best to use [rsync_from_hathi] (and then run [cache_all] to
-#' convert all the downloaded JSON into a format that is fast to load). That is
-#' what you'd normally do if you first built a workset using [workset_builder].
-#'
-#' @param htid The Hathi Trust id of the item whose extracted features files are
-#'   to be downloaded.
-#' @param dir The directory to download the extracted features files. Defaults
-#'   to `getOption("hathiTools.ef.dir")`, which is just "hathi-ef" on load; the
-#'   directory will be automatically created if it doesn't already exist.
-#' @param cache_type Type of caching used. Defaults to
-#'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
-#'   cache types are: compressed csv (the default), "none" (no local caching of
-#'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
-#'   with [arrow]; needs the [arrow] package installed), or "text2vec.csv" (a
-#'   csv suitable for use with the package
-#'   [text2vec](https://cran.r-project.org/package=text2vec)).
-#'
-#' @return A [tibble::tibble] with the extracted features.
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'
-#' # Download the 1862 version of "Democracy in America" by Tocqueville
-#' download_hathi_ef("mdp.39015001796443", dir = tempdir())
-#' }
 download_hathi_ef <- function(htid,
                            dir = getOption("hathiTools.ef.dir"),
                            cache_type = getOption("hathiTools.cachetype")) {
@@ -62,7 +28,7 @@ download_hathi_ef <- function(htid,
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be loaded into memory. If it hasn't been downloaded, the function will
-#'   try to download it first via [download_hathi_ef].
+#'   try to download it first.
 #' @param dir The directory where the download extracted features files are to
 #'   be found. Defaults to `getOption("hathiTools.ef.dir")`, which is just
 #'   "hathi-ef" on load.
@@ -79,13 +45,11 @@ download_hathi_ef <- function(htid,
 #'
 #' @examples
 #' \dontrun{
-#' # Download the 1863 version of "Democracy in America" by Tocqueville
+#' # Download the 1863 version of "Democracy in America" by Tocqueville and get
+#' # its extracted features
 #'
 #' tmp <- tempdir()
 #'
-#' download_hathi_ef("aeu.ark:/13960/t3qv43c3w", dir = tmp)
-#'
-#' #Get the downloaded extracted features
 #' get_hathi_counts("aeu.ark:/13960/t3qv43c3w", dir = tmp)
 #'
 #' }
@@ -118,7 +82,7 @@ get_hathi_counts <- function(htid,
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be downloaded.
 #' @param dir The directory where the file is saved. Defaults to
-#'   `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/ on load. If
+#'   `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/" on load. If
 #'   the file does not exist, this function will first attempt to download it
 #'   using [download_hathi_ef].
 #'
@@ -127,10 +91,10 @@ get_hathi_counts <- function(htid,
 #'
 #' @examples
 #' \dontrun{
-#' # Download the 1862 version of "Democracy in America" by Tocqueville
+#' # Download the 1862 version of "Democracy in America" by Tocqueville and get
+#' # its metadata
 #'
 #' tmp <- tempdir()
-#' download_hathi_ef("mdp.39015001796443", dir = tmp)
 #'
 #' get_hathi_meta("mdp.39015001796443", dir = tmp)
 #' }
