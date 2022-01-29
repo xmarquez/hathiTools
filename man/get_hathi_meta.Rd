@@ -12,8 +12,7 @@ to be downloaded.}
 
 \item{dir}{The directory where the file is saved. Defaults to
 \code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/" on load. If
-the file does not exist, this function will first attempt to download it
-using \link{download_hathi_ef}.}
+the file does not exist, this function will first attempt to download it.}
 }
 \value{
 a \link{tibble} with metadata.
