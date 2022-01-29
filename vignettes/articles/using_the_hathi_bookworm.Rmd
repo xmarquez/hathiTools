@@ -34,6 +34,7 @@ This results in a nice, tidy tibble:
 ```{r}
 res
 ```
+
 Which can be used for plotting:
 
 ```{r}
@@ -142,7 +143,7 @@ res4 <- query_bookworm(word = "democracy",
 res4 
 ```
 
-If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on "Building and Using Hathi Trust Worksets" for more.
+If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on "Creating and Using Hathi Trust Worksets" for more.
 
 We can investigate further any of these volumes by downloading their associated "Extracted Features" file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, `r res4$title[2]`, available at `r res4$url[2]`, as a nice tidy `tibble` suitable for analysis with a package like `{tidytext}`.
 
@@ -163,6 +164,7 @@ meta <- get_hathi_meta(res4$htid[2], dir = tmp)
 
 meta
 ```
+
 We can also get the metadata for all of these volumes at the same time:
 
 ```{r}
@@ -177,7 +179,7 @@ browse_htids(res4)
 
 ```
 
-If you want to download lots of volumes and have [rsync](https://linux.die.net/man/1/rsync) installed in your system, the functions `rsync_from_hathi()` and `htid_to_rsync()` can facilitate the process; see the article on "Building and Using Hathi Trust Worksets" for more.
+If you want to download lots of volumes and have [rsync](https://linux.die.net/man/1/rsync) installed in your system, the functions `rsync_from_hathi()` and `htid_to_rsync()` can facilitate the process; see the article on "Creating and Using Hathi Trust Worksets" for more.
 
 One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
 
@@ -207,4 +209,4 @@ res5 %>%
        x = "Year", y = "")
 ```
 
-The bookworm does not index every text in the Hathi Digital Library; it contains `r res5 %>% summarise(value = sum(value)) %>% pull(value) %>% format(big.mark = ",")` volumes, while the full Hathi Trust library contains more than digitised 17,000,000 volumes. For a full list (with some metadata) for *all* volumes in the Hathi Trust collection, use the functions `download_hathifile()` and `load_raw_hathifile()`.
+The bookworm does not index every text in the Hathi Digital Library; it containsabout 13 million volumes, while the full Hathi Trust library contains more than digitised 17,000,000 volumes. For a full list (with some metadata) for *all* volumes in the Hathi Trust collection, use the functions `download_hathifile()` and `load_raw_hathifile()`.

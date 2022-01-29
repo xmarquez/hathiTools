@@ -1,0 +1,243 @@
+---
+title: "Creating Hathi Trust Worksets and Downloading Extracted Features Files"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models.
+
+Hathi Trust also makes it possible to create "worksets" (collections of volume IDs) where all of the volumes meet specified criteria (e.g., they contain specific words, or have a certain publication date, or were written by particular people). One can then use these worksets to download the full metadata and extracted features files for further analysis (and, if necessary, to request the full texts of these volumes).
+
+This package provides a function, `workset_builder()`, which queries the SOLR endpoint of the [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/) to load Hathi Trust IDs and metadata directly into R. Once you have a satisfactory workset of the volumes you want to analyze, you can then use the function `rsync_from_hathi()` to download the extracted features files for all the volumes in the workset, and easily cache them in a format suitable for further modeling. 
+
+## An example: Topic Models of Alexis de Tocqueville
+
+Suppose you are interested in creating a topic model of Alexis de Tocqueville's "Democracy in America". There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is a good way of understanding how these translations and editions vary.
+
+As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Workset Builder:
+
+```{r setup}
+library(hathiTools)
+library(tidyverse)
+
+tocqueville <- workset_builder(name = "Alexis de Tocqueville")
+tocqueville
+```
+
+The returned `tibble::tibble` contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, it just returns the number of pages for the volume. There are many options here; for example, we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
+
+```{r}
+tocqueville2 <- workset_builder("democracy", name = "Alexis de Tocqueville")
+
+tocqueville2
+
+```
+This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word "democracy" (most of them!). 
+
+The resulting data frame also includes a column for the number of times the term "democracy" is mentioned, but not exact pages. Yet it's also possible to get the exact page sequence numbers where the term appears:
+
+```{r}
+tocqueville3 <- workset_builder("democracy", name = "Alexis de Tocqueville", volumes_only = FALSE)
+
+tocqueville3
+
+```
+
+We can browse any of these pages interactively on the Hathi Trust website:
+
+```r
+browse_htids(tocqueville3)
+
+```
+
+But for our purposes, we want instead to focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title:
+
+```{r}
+tocqueville4 <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1950:2020, title = "Democracy in America")
+tocqueville4
+```
+
+We can download their full metadata as follows (it's a slow download, so use with care if you have a lot of Hathi Trust ids!):
+
+```{r}
+tocqueville_meta <- get_workset_meta(tocqueville4)
+tocqueville_meta 
+```
+
+There are `r nrow(tocqueville_meta)` volumes listed here, but many are the same book; sometimes the title has just been entered slightly differently in different cataloguing systems, or republished multiple times, or it's another volume of the same edition. We find 14 distinct bibliographical records with 14 distinct titles which we can investigate:
+
+```{r}
+tocqueville_meta %>%
+  summarise(n_records = n_distinct(hathitrustRecordNumber), 
+            n_titles = n_distinct(title))
+```
+
+
+We first download the "extracted features" files for these texts via `rsync`. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist):
+
+
+```{r}
+rsync_from_hathi(tocqueville4)
+```
+
+These are JSON files, which are slow to load and parse into data frames. We can cache them to fast-loading CSVs in the "./hathi-ef" directory using the function `cache_htids()`:
+
+```{r}
+cache_htids(tocqueville4)
+```
+These are available now in your `./hathi-ef` directory. The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file path, and whether the file exists or not (i.e., whether it was downloaded successfully and cached).  
+
+```{r}
+cached_files <- find_cached_htids(tocqueville4)
+
+cached_files
+```
+
+Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (`exists = FALSE`). In any case these files can now be loaded into R very quickly:
+
+```{r}
+tocqueville_ef <- cached_files %>%
+  filter(exists) %>%
+  pull(local_loc) %>%
+  set_names(cached_files$htid[cached_files$exists]) %>%
+  map_df(vroom::vroom, .id = "htid")
+
+tocqueville_ef
+```
+This large DF can be converted into a `quanteda::dfm` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
+
+```{r}
+library(tidytext)
+library(quanteda)
+
+tocqueville_meta$editions <- c("Reeve, Bowen, Bradley", "Nolla-Shleifer", "Reeve, Bowen, Bradley", 
+                      "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", 
+                      "Reeve, Bowen, Bradley", "Schocken books Mill appraisal", "Sinclair-Probst dramatizations", 
+                      "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", 
+                      "Goldhammer", "Bender abridgement of Reeve, Bowen, Bradley", "Lawrence", 
+                      "Reeve", "Schocken books Mill appraisal", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", 
+                      "Mayer-Lawrence", "Reeve", "Commager abridg. Reeve", "Commager abridg. Reeve")
+
+tocqueville_meta <- tocqueville_meta %>%
+  mutate(editions = paste(editions, enumerationChronology, pubDate))
+
+tocqueville_ef <- tocqueville_ef %>%
+  filter(section == "body", !str_detect(token, "[^[:alnum:]]"),
+         str_detect(POS, "NN|NOUN"), str_length(token) > 2) %>%
+  mutate(text_id = paste(htid, page, sep = "_")) %>%
+  group_by(text_id) %>%
+  mutate(num_tokens = n()) %>%
+  group_by(htid) %>%
+  mutate(prop_page = page/max(page)) %>%
+  ungroup() %>%
+  filter(num_tokens > 10) %>% # This selects pages with at least 10 tokens 
+  left_join(tocqueville_meta %>% # This adds the metadata
+              rename(htid = volumeIdentifier)) 
+
+tocqueville_dfm <- tocqueville_ef %>%
+  cast_dfm(text_id, token, count)
+
+docvars(tocqueville_dfm) <- tocqueville_ef %>% 
+  select(-token, -POS, -count) %>%
+  distinct()
+
+tocqueville_dfm
+```
+
+We can use this dfm in a variety of ways. Here I train a page-level topic model using the `{stm}` package, using only the English texts of Tocqueville. 
+
+First we subset the dfm, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.
+
+```{r}
+tocqueville_dfm_eng <- dfm_subset(tocqueville_dfm, subset = language == "eng") %>%
+  dfm_tolower() %>%
+  dfm_trim(20000, termfreq_type = "rank") %>%
+  dfm_remove(stopwords())
+
+tocqueville_dfm_eng
+```
+We then fit a structural topic model with 20 topics. This takes a while; normally you'd do some sensitivity analysis and check whether the model works better with more or fewer topics (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates (I want this article to run relatiely quickly!), but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
+
+```{r}
+library(stm)
+
+model <- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE)
+# model <- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE, prevalence = ~editions) # With prevalence covariates 
+
+```
+
+We then tidy this model using the tidiers from the `{tidytext}` package.
+
+```{r}
+tidy_model <- tidy(model, matrix = "gamma",
+                   document_names =  docvars(tocqueville_dfm_eng)$text_id)
+
+docs <- docvars(tocqueville_dfm_eng) %>%
+  as_tibble() %>%
+  mutate(document = text_id)
+
+tidy_model <- tidy_model %>%
+  left_join(docs)
+
+labels <- labelTopics(model)$prob %>%
+  t() %>%
+  as_tibble(.name_repair = "unique") %>%
+  pivot_longer(everything(), names_to = "topic", values_to = "word") %>%
+  group_by(topic) %>%
+  summarise(label = paste(word, collapse = ",")) %>%
+  ungroup() %>%
+  mutate(topic = str_remove(topic, fixed("...")) %>%
+           as.integer()) %>%
+  arrange(topic)
+
+tidy_model <- tidy_model %>%
+  left_join(labels) 
+
+tidy_model
+```
+
+We can now visualize the topic distribution per book:
+
+```{r, fig.width=14, fig.height=12}
+library(ggtext)
+
+
+tidy_model %>%  
+  mutate(editions = str_replace_all(editions, "NA", "1 vol. edition") %>%
+           str_replace_all("V\\.[ ]?", "v.") %>%
+           str_replace_all("v\\. ", "v."),
+         editions = paste(editions, "HT#", hathitrustRecordNumber)) %>%
+  ggplot() +
+  geom_col(aes(x = page,  y = gamma, fill = label), 
+           position = "fill",
+           width = 1) +
+  facet_grid(editions~., switch = 'y') +
+  # geom_vline(data = chapters, aes(xintercept = page)) +
+  theme_bw() +
+    theme(
+      panel.spacing.y=unit(0, "lines"),
+      strip.text.y.left = element_text(size = 7, angle = 0, hjust = 1),
+      legend.position = "bottom",
+      axis.text.y = element_blank(),
+      axis.title.y = element_blank(),
+      axis.ticks.y = element_blank(),
+      panel.border = element_blank(),
+      strip.background = element_blank(),
+      plot.title = element_markdown(),
+      panel.grid= element_blank()
+      ) +
+  scale_x_continuous() +
+  scale_fill_hcl() +
+  labs(title = "Topic distribution in different volumes and editions of translations of Tocqueville's *Democracy in America*",
+       x = "page sequence",
+       fill = "") +
+  guides(fill = guide_legend(ncol = 3))
+
+```
+
+We can see here some broad patterns: volume 2 has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages; etc.
