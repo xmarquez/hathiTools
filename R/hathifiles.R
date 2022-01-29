@@ -2,13 +2,13 @@
 #'
 #' This function downloads the [big hathifile
 #' catalog](https://www.hathitrust.org/hathifiles) with simple metadata for the
-#' digitized volumes in the Hathi Trust digital library collection. It can be
-#' used in conjunction with [workset_builder] and `rsync` to select an
-#' appropriate sample of Hathi Trust Extracted Features files and metadata for
-#' further analysis. Warning - it's a 1GB file; if the latest version of the
-#' file (there's a new one every month) has been downloaded already, the
-#' function will just return the file name and won't attempt to download it
-#' again.
+#' over 17 million digitized volumes in the Hathi Trust digital library
+#' collection. It can be used in conjunction with [workset_builder] and `rsync`
+#' to select an appropriate sample of Hathi Trust Extracted Features files and
+#' metadata for further analysis. Warning - it's a 1GB file; if the latest
+#' version of the file (there's a new one every month) has been downloaded
+#' already, the function will just return the file name and won't attempt to
+#' download it again.
 #'
 #' @param url The URL for the Hathi Trust hathifiles
 #'   https://www.hathitrust.org/hathifiles
@@ -16,9 +16,10 @@
 #'   `getOption("hathiTools.hathifile.dir")`, which on loading the package is
 #'   just `./raw-hathifiles` (a directory which will be created if it doesn't
 #'   exist already when you call the function).
-#' @param full_catalog Whether to download the full catalog, or just the latest
-#'   update (there's a new "update file" every day, and a new version of the
-#'   full catalog every month). Default is `TRUE` - download the full catalog.
+#' @param full_catalog Whether to download the full catalog (>17 million
+#'   records), or just the latest update (there's a new "update file" every day,
+#'   and a new version of the full catalog every month). Default is `TRUE` -
+#'   download the full catalog.
 #'
 #' @return The downloaded filename.
 #' @export
