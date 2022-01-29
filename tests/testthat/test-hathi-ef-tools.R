@@ -1,13 +1,5 @@
 dir <- tempdir()
 
-test_that("download_hathi_ef downloads EF and returns a tibble", {
-  skip_on_cran()
-  skip_on_ci()
-  skip_if_offline()
-  ef <- download_hathi_ef("mdp.39015001796443", dir = dir)
-  expect_snapshot(ef)
-})
-
 test_that("get_hathi_counts returns a tibble", {
   skip_on_cran()
   skip_on_ci()

@@ -111,3 +111,23 @@
       10 mdp.39015047759454 .          .         4 body        5
       # ... with 1,145 more rows
 
+# Can cache workset
+
+    Code
+      get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "feather")
+    Output
+      # A tibble: 1,155 x 6
+         htid               token      POS   count section  page
+         <chr>              <chr>      <chr> <dbl> <chr>   <dbl>
+       1 mdp.39015047759454 i          UNK       1 body        3
+       2 mdp.39015047759454 diceres    NNS       1 body        5
+       3 mdp.39015047759454 Gun        NN        1 body        5
+       4 mdp.39015047759454 Cimrte     NNP       1 body        5
+       5 mdp.39015047759454 for        IN        1 body        5
+       6 mdp.39015047759454 *          SYM       2 body        5
+       7 mdp.39015047759454 1700       CD        1 body        5
+       8 mdp.39015047759454 quodcunque JJ        1 body        5
+       9 mdp.39015047759454 MRDRYDEN   NN        1 body        5
+      10 mdp.39015047759454 .          .         4 body        5
+      # ... with 1,145 more rows
+

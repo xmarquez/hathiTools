@@ -1,23 +1,3 @@
-# download_hathi_ef downloads EF and returns a tibble
-
-    Code
-      ef
-    Output
-      # A tibble: 95,258 x 6
-         htid               token       POS   count section  page
-         <chr>              <chr>       <chr> <dbl> <chr>   <dbl>
-       1 mdp.39015001796443 I           UNK       1 body        4
-       2 mdp.39015001796443 IN          UNK       3 body        7
-       3 mdp.39015001796443 II          UNK       1 body        7
-       4 mdp.39015001796443 HADE        UNK       1 body        7
-       5 mdp.39015001796443 WITH        UNK       1 body        7
-       6 mdp.39015001796443 fOCQUEVILLE UNK       1 body        7
-       7 mdp.39015001796443 PARIS       UNK       1 body        7
-       8 mdp.39015001796443 REEVE       UNK       1 body        7
-       9 mdp.39015001796443 .           UNK       9 body        7
-      10 mdp.39015001796443 UNIVERSITY  UNK       1 body        7
-      # ... with 95,248 more rows
-
 # get_hathi_counts returns a tibble
 
     Code
