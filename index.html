@@ -293,11 +293,11 @@
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpCEOgEB\file60d0600439d3 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmpgxddh9\file4b5c259a2696 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
 <p>There’s a convenience function that will attempt to do this for you in one command.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>This requires having rsync installed; see the article “<a href="topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
+<p>This requires having rsync installed; see the article “<a href="articles/topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
 <p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
 </div>
 <div class="section level2">
