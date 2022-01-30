@@ -1,26 +1,23 @@
 ---
-title: "Creating Hathi Trust Worksets and Downloading Extracted Features Files"
+title: "Topic Modeling using the Hathi Trust Extracted Features Files"
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "vignettes/articles/using-hathi-worksets-",
+  cache = TRUE,
+  fig.path = "images/topic-modeling-",
   comment = "#>"
 )
 ```
 
-The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models.
+The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models. This vignette explains how one can use these files to do basic topic modeling of many volumes.
 
-Hathi Trust also makes it possible to create "worksets" (collections of volume IDs) where all of the volumes meet specified criteria (e.g., they contain specific words, or have a certain publication date, or were written by particular people). One can then use these worksets to download the full metadata and extracted features files for further analysis (and, if necessary, to request the full texts of these volumes).
+## An example: A Page-level Topic Model of different editions of Tocqueville's "Democracy in America"
 
-This package provides a function, `workset_builder()`, which queries the SOLR endpoint of the [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/) to load Hathi Trust IDs and metadata directly into R. Once you have a satisfactory workset of the volumes you want to analyze, you can then use the function `rsync_from_hathi()` to download the extracted features files for all the volumes in the workset, and easily cache them in a format suitable for further modeling.
+Suppose you are interested in creating a topic model of Alexis de Tocqueville's "Democracy in America". There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is one way of understanding how these translations and editions vary.
 
-## An example: Topic Models of Alexis de Tocqueville
-
-Suppose you are interested in creating a topic model of Alexis de Tocqueville's "Democracy in America". There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is a good way of understanding how these translations and editions vary.
-
-As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Workset Builder:
+As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust [Workset Builder](https://solr2.htrc.illinois.edu/solr-ef/):
 
 ```{r setup}
 library(hathiTools)
@@ -50,14 +47,14 @@ tocqueville3
 
 ```
 
-We can browse any of these pages interactively on the Hathi Trust website:
+We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain).
 
 ```r
 browse_htids(tocqueville3)
 
 ```
 
-But for our purposes, we want instead to focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title:
+For our topic modeling exercise, I will focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title:
 
 ```{r}
 tocqueville4 <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1950:2020, title = "Democracy in America")
@@ -102,7 +99,7 @@ cached_files
 
 Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (`exists = FALSE`). In any case these files can now be loaded into R very quickly:
 
-```{r}
+```{r, message = FALSE}
 tocqueville_ef <- cached_files %>%
   filter(exists) %>%
   pull(local_loc) %>%
@@ -163,7 +160,9 @@ tocqueville_dfm_eng <- dfm_subset(tocqueville_dfm, subset = language == "eng") %
 
 tocqueville_dfm_eng
 ```
-We then fit a structural topic model with 20 topics. This takes a while; normally you'd do some sensitivity analysis and check whether the model works better with more or fewer topics (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates (I want this article to run relatiely quickly!), but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
+
+We then fit a structural topic model with 20 topics. This takes a while; normally you'd do some sensitivity analysis and check whether the model works better with more or fewer topics (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
+
 
 ```{r}
 library(stm)
@@ -242,4 +241,4 @@ tidy_model %>%
 
 ```
 
-We can see here some broad patterns: volume 2 has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages; etc.
+We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages; etc.

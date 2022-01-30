@@ -11,3 +11,4 @@
 ^metadata$
 ^hathi-ef$
 ^vignettes/articles$
+^cache$

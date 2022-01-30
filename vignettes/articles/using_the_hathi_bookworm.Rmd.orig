@@ -20,8 +20,7 @@ For example, suppose we are interested in the changing frequencies of terms like
 
 ```{r setup}
 library(hathiTools)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 library(slider) # For moving averages
 
 res <- query_bookworm(c("democracy", "dictatorship", "monarchy",
