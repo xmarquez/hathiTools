@@ -241,34 +241,26 @@
 
 <span class="va">res4</span>
 <span class="co">#&gt; # A tibble: 100 x 3</span>
-<span class="co">#&gt;    htid                      title                                                                       url                                     </span>
-<span class="co">#&gt;    &lt;chr&gt;                     &lt;chr&gt;                                                                       &lt;chr&gt;                                   </span>
-<span class="co">#&gt;  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt;  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=~</span>
-<span class="co">#&gt; 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=~</span>
+<span class="co">#&gt;    htid                      title                                                                       url                                      </span>
+<span class="co">#&gt;    &lt;chr&gt;                     &lt;chr&gt;                                                                       &lt;chr&gt;                                    </span>
+<span class="co">#&gt;  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=n~</span>
+<span class="co">#&gt;  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=u~</span>
+<span class="co">#&gt;  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=m~</span>
+<span class="co">#&gt;  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=m~</span>
+<span class="co">#&gt;  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=u~</span>
+<span class="co">#&gt;  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=m~</span>
+<span class="co">#&gt;  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=m~</span>
+<span class="co">#&gt;  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=u~</span>
+<span class="co">#&gt;  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=u~</span>
+<span class="co">#&gt; 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=u~</span>
 <span class="co">#&gt; # ... with 90 more rows</span></code></pre></div>
-<p>If you need a bigger sample, use the function <code><a href="../reference/workset_builder.html">workset_builder()</a></code> to query the Hathi Trust’s <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>; this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on “Creating and Using Hathi Trust Worksets” for more.</p>
+<p>If you need a bigger sample, use the function <code><a href="../reference/workset_builder.html">workset_builder()</a></code> to query the Hathi Trust’s <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>; this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on see the article “<a href="topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more examples of how to use this facility.</p>
 <p>We can investigate further any of these volumes by downloading their associated “Extracted Features” file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, The education of free men in American democracy., available at <a href="https://babel.hathitrust.org/cgi/pt?id=uc1.%24b67929" class="external-link uri">https://babel.hathitrust.org/cgi/pt?id=uc1.$b67929</a>, as a nice tidy <code>tibble</code> suitable for analysis with a package like <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 18763 Columns: 5</span>
-<span class="co">#&gt; -- Column specification -------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 
 <span class="va">extracted_features</span>
 <span class="co">#&gt; # A tibble: 18,763 x 6</span>
@@ -307,11 +299,12 @@
 <p>We can also get the metadata for all of these volumes at the same time:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">res4</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Metadata has already been downloaded. Returning cached metadata.</span>
+<span class="co">#&gt; Getting download key...</span>
+<span class="co">#&gt; Downloading metadata for 100 volumes. This might take some time.</span>
 <span class="co">#&gt; Rows: 100 Columns: 36</span>
-<span class="co">#&gt; -- Column specification -------------------------------------------------------------------------------------------------------------------------</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------------------------------------------------------------------------</span>
 <span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn...</span>
+<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...</span>
 <span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
 <span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
 <span class="co">#&gt; </span>
@@ -320,18 +313,18 @@
 
 <span class="va">meta</span>
 <span class="co">#&gt; # A tibble: 100 x 36</span>
-<span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title        genre    pubDate pubPlace typeOfResource bibliographicFo~ language</span>
-<span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;        &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span>
-<span class="co">#&gt;  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching de~ "[\"bib~    1941 ncu      text           BK               eng     </span>
-<span class="co">#&gt;  2 http://catal~           1.3 uc1.$b67929       pd               The educati~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  3 http://catal~           1.3 mdp.390150627637~ pd               The educati~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  4 http://catal~           1.3 mdp.390150682979~ pd               The educati~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvani~ "[\"not~    1941 pau      text           BK               eng     </span>
-<span class="co">#&gt;  6 http://catal~           1.3 mdp.390150358861~ ic               Education i~ "[\"not~    1941 mau      text           BK               eng     </span>
-<span class="co">#&gt;  7 http://catal~           1.3 mdp.390150316655~ pd               Education a~ "[\"not~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  8 http://catal~           1.3 uc1.$b67928       pd               Education a~ "[\"not~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings~ "[\"con~    1941 onc      text           SE               eng     </span>
-<span class="co">#&gt; 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in~ "[\"bib~    1941 nyu      text           BK               eng     </span>
+<span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title         genre    pubDate pubPlace typeOfResource bibliographicFo~ language</span>
+<span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span>
+<span class="co">#&gt;  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching dem~ "[\"bib~    1941 ncu      text           BK               eng     </span>
+<span class="co">#&gt;  2 http://catal~           1.3 uc1.$b67929       pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
+<span class="co">#&gt;  3 http://catal~           1.3 mdp.390150627637~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
+<span class="co">#&gt;  4 http://catal~           1.3 mdp.390150682979~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
+<span class="co">#&gt;  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvania~ "[\"not~    1941 pau      text           BK               eng     </span>
+<span class="co">#&gt;  6 http://catal~           1.3 mdp.390150358861~ ic               Education in~ "[\"not~    1941 mau      text           BK               eng     </span>
+<span class="co">#&gt;  7 http://catal~           1.3 mdp.390150316655~ pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span>
+<span class="co">#&gt;  8 http://catal~           1.3 uc1.$b67928       pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span>
+<span class="co">#&gt;  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings ~ "[\"con~    1941 onc      text           SE               eng     </span>
+<span class="co">#&gt; 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in ~ "[\"bib~    1941 nyu      text           BK               eng     </span>
 <span class="co">#&gt; # ... with 90 more rows, and 25 more variables: dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span>
 <span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;, hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;,</span>
 <span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;, governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;,</span>
