@@ -108,7 +108,7 @@ We can browse these volumes interactively in the Hathi Trust website:
 browse_htids(result2)
 ```
 
-See the article "[Topic Models Using Hathi Extracted Features](topic_models_using_hathi_ef)" for more on creating and using with worksets for specific analysis purposes.
+See the article "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef)" for more on creating and using worksets for specific analysis purposes.
 
 ## Downloading extracted feature files for specific Hathi Trust volumes
 
