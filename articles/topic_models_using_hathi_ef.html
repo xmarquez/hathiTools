@@ -83,9 +83,12 @@
     
 <p>The Hathi Trust digital library makes available “extracted features” files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level “bags of words” are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models. This vignette explains how one can use these files to do basic topic modeling of many volumes.</p>
 <div class="section level2">
-<h2 id="an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america">An example: A Page-level Topic Model of different editions of Tocqueville’s “Democracy in America”<a class="anchor" aria-label="anchor" href="#an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america"></a>
+<h2 id="an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america">An example: A page-level topic model of different editions of Tocqueville’s <em>Democracy in America</em><a class="anchor" aria-label="anchor" href="#an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america"></a>
 </h2>
-<p>Suppose you are interested in creating a topic model of Alexis de Tocqueville’s “Democracy in America”. There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is one way of understanding how these translations and editions vary.</p>
+<p>Alexis de Tocqueville’s <em>Democracy in America</em> is a very influential text. Ever since its original publication in 1835, it has been translated into multiple languages and republished many times. In this vignette, we use the Hathi Trust extracted features files of its many editions to train a page-level topic model that can help visualize how these translations and editions vary.</p>
+<div class="section level3">
+<h3 id="selecting-the-sample">Selecting the sample<a class="anchor" aria-label="anchor" href="#selecting-the-sample"></a>
+</h3>
 <p>As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xmarquez.github.io/hathiTools">hathiTools</a></span><span class="op">)</span>
@@ -112,12 +115,11 @@
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>
 <span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
                                        <span class="fu">slice_sample</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Getting download key...</span>
-<span class="co">#&gt; Downloading metadata for 20 volumes. This might take some time.</span>
+<span class="co">#&gt; Metadata has already been downloaded. Returning cached metadata.</span>
 <span class="co">#&gt; Rows: 20 Columns: 36</span>
-<span class="co">#&gt; -- Column specification --------------------------------------------------------------------------------------------------------------------------</span>
+<span class="co">#&gt; -- Column specification -------------------------------------------------------------------------------------------------------------------------</span>
 <span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...</span>
+<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn...</span>
 <span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
 <span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
 <span class="co">#&gt; </span>
@@ -125,7 +127,7 @@
 <span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 <span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">select</span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># Needed so that the table below displays properly</span>
            <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"`"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"\\?"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -287,7 +289,7 @@
 </tr>
 </tbody>
 </table>
-<p>The returned workset above contains a column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the <code><a href="../reference/workset_builder.html">workset_builder()</a></code> function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word “democracy”:</p>
+<p>The function <code><a href="../reference/workset_builder.html">workset_builder()</a></code> by default returns a data frame with column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the function just returned the number of pages in each volume. If we instead search for the volumes where Tocqueville is an author that <em>also</em> mention the word “democracy”, the function returns both the volume id and the number of pages that contain the term.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
 
@@ -306,8 +308,7 @@
 <span class="co">#&gt;  9 aeu.ark:/13960/t9r21rt6x    95</span>
 <span class="co">#&gt; 10 aeu.ark:/13960/t9x06xb4h   167</span>
 <span class="co">#&gt; # ... with 212 more rows</span></code></pre></div>
-<p>This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word “democracy” (most of them!).</p>
-<p>The resulting data frame also includes a column for the number of times the term “democracy” is mentioned, but not exact pages. Yet it’s also possible to get the exact page sequence numbers where the term appears:</p>
+<p>This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word “democracy” (most of them!). It’s also possible to get the exact page sequence numbers where the term appears:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
@@ -326,10 +327,10 @@
 <span class="co">#&gt;  9 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000249</span>
 <span class="co">#&gt; 10 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000018</span>
 <span class="co">#&gt; # ... with 17,041 more rows</span></code></pre></div>
-<p>We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain).</p>
+<p>We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the acual page shown on the Hathi Trust website).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">tocqueville3</span><span class="op">)</span></code></pre></div>
-<p>For our topic modeling exercise, I will focus on volumes of Tocqueville published since 1950 (better OCR!) with “Democracy in America” in the title:</p>
+<p>For our topic modeling exercise, we will focus on volumes of Tocqueville published since 1950 (better OCR!) with “Democracy in America” in the title.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, pub_date <span class="op">=</span> <span class="fl">1950</span><span class="op">:</span><span class="fl">2020</span>, title <span class="op">=</span> <span class="st">"Democracy in America"</span><span class="op">)</span>
 <span class="va">tocqueville4</span>
@@ -389,12 +390,16 @@
 <span class="co">#&gt;   n_records n_titles</span>
 <span class="co">#&gt;       &lt;int&gt;    &lt;int&gt;</span>
 <span class="co">#&gt; 1        14       14</span></code></pre></div>
-<p>We first download the “extracted features” files for these texts via <code>rsync</code>. The <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> function attempts to do this automatically (to the <code>/hathi-ef</code> directory by default, which will be created if it doesn’t exist):</p>
+</div>
+<div class="section level3">
+<h3 id="downloading-and-caching-the-associated-extracted-features-files">Downloading and caching the associated Extracted Features files<a class="anchor" aria-label="anchor" href="#downloading-and-caching-the-associated-extracted-features-files"></a>
+</h3>
+<p>We first download the “extracted features” files for these texts through the Hathi Trust rsync server. The <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> function attempts to do this automatically (to the <code>/hathi-ef</code> directory by default, which will be created if it doesn’t exist). This function requires that your system has access to <code>rsync</code>..</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
 <span class="co">#&gt; 0</span>
 <span class="co">#&gt; [1] 0</span></code></pre></div>
-<p>These are JSON files, which are slow to load and parse into data frames. We can cache them to fast-loading CSVs in the “./hathi-ef” directory using the function <code><a href="../reference/cache_htids.html">cache_htids()</a></code>:</p>
+<p>The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs in the “./hathi-ef” directory using the function <code><a href="../reference/cache_htids.html">cache_htids()</a></code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
 <span class="co">#&gt; Caching ./hathi-ef/coo/32696/coo.31924062496165.json.bz2 to csv.gz, file 1 of 23...</span>
@@ -416,7 +421,7 @@
 <span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span>
 <span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
-<p>These are available now in your <code>./hathi-ef</code> directory. The convenience function <code><a href="../reference/find_cached_htids.html">find_cached_htids()</a></code>, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file path, and whether the file exists or not (i.e., whether it was downloaded successfully and cached).</p>
+<p>The convenience function <code><a href="../reference/find_cached_htids.html">find_cached_htids()</a></code>, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file paths of the cached files, and whether each file exists or not (i.e., whether it was downloaded successfully and cached).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cached_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_cached_htids.html">find_cached_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
 
@@ -435,7 +440,7 @@
 <span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span>
 <span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
-<p>The reason for an <code>exists</code> column is that sometimes extracted features files are not downloaded successfully – they are not available in the Hathi Trust rsync server for whatever reason – and so need to be excluded from further analysis. In any case these files can now be loaded into R very quickly:</p>
+<p>The reason for an <code>exists</code> column is that sometimes extracted features files are not downloaded successfully – they are not available in the Hathi Trust rsync server for whatever reason – and so need to be excluded from further analysis (by filtering the returned dataset via <code>cached_files %&gt;% filter(exists)</code>, for examples). In any case these files can now be loaded into R very quickly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">cached_files</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
@@ -458,7 +463,11 @@
 <span class="co">#&gt;  9 coo.31924062496165 "s"       UNK       3 body        1</span>
 <span class="co">#&gt; 10 coo.31924062496165 "1\\\\\\" UNK       1 body        1</span>
 <span class="co">#&gt; # ... with 2,812,226 more rows</span></code></pre></div>
-<p>This large data frame can be converted into a <code>quanteda::dfm</code> document-feature matrix using the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the “body” section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.</p>
+</div>
+<div class="section level3">
+<h3 id="creating-a-document-term-matrix-and-fitting-the-model">Creating a document-term matrix and fitting the model<a class="anchor" aria-label="anchor" href="#creating-a-document-term-matrix-and-fitting-the-model"></a>
+</h3>
+<p>This large data frame can be converted into a <code>quanteda::dfm()</code> document-feature matrix using the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the “body” section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span>
@@ -592,7 +601,7 @@
 <span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
 <span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;,</span>
 <span class="co">#&gt; #   subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;, editions &lt;chr&gt;, label &lt;chr&gt;</span></code></pre></div>
-<p>We can visualize the topic distribution per book:</p>
+<p>We can now visualize the topic distribution per book:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span>
 
@@ -630,7 +639,8 @@
 <div class="figure">
 <img src="images/topic-modeling-unnamed-chunk-15-1.png" alt=""><p class="caption">Figure 1</p>
 </div>
-<p>We can see here some broad patterns: volume 2 of <em>Democracy in America</em> has more “abstract” topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus (which means each page shows more of topic 19).</p>
+<p>We can see here some broad patterns: volume 2 of <em>Democracy in America</em> has more “abstract” topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition of the book clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus, which increases the proportion of certain topics on the page not common in other editions; etc. More could be said here, but this is just a starting point!</p>
+</div>
 </div>
   </div>
 
