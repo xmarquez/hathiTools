@@ -87,7 +87,7 @@ tocqueville_meta %>%
 |Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.                                                                                                                         |    9999|Gallimard 1952-                                       |["Tocqueville, Alexis de 1805-1859"]                                                                                                                                 |fre      |
 |Uber die Demokratie in Amerika / Alexis de Tocqueville ; ausgewahlt und herausgeben von J.P. Mayer.                                                                                                 |    1985|Reclam, 1985.                                         |["Tocqueville, Alexis de 1805-1859 "]                                                                                                                                |ger      |
 
-The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the [workset_builder] function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
+The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the `workset_builder()` function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
 
 
 ```r

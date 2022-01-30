@@ -43,7 +43,7 @@ tocqueville_meta %>%
 
 ```
 
-The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the [workset_builder] function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
+The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the `workset_builder()` function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
 
 ```{r}
 tocqueville2 <- workset_builder("democracy", name = "Alexis de Tocqueville")
@@ -114,7 +114,7 @@ cached_files <- find_cached_htids(tocqueville4)
 cached_files
 ```
 
-Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (`exists = FALSE`). In any case these files can now be loaded into R very quickly:
+The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis. In any case these files can now be loaded into R very quickly:
 
 ```{r, message = FALSE}
 tocqueville_ef <- cached_files %>%
