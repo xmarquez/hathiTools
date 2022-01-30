@@ -1,2 +1,3 @@
 *.html
 *.R
+articles/simple_word_vector_models_ef_cache/*

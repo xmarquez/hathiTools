@@ -6,9 +6,11 @@ title: "Topic Modeling using the Hathi Trust Extracted Features Files"
 
 The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models. This vignette explains how one can use these files to do basic topic modeling of many volumes.
 
-## An example: A Page-level Topic Model of different editions of Tocqueville's "Democracy in America"
+## An example: A page-level topic model of different editions of Tocqueville's *Democracy in America*
 
-Suppose you are interested in creating a topic model of Alexis de Tocqueville's "Democracy in America". There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is one way of understanding how these translations and editions vary.
+Alexis de Tocqueville's *Democracy in America* is a very influential text. Ever since its original publication in 1835, it has been translated into multiple languages and republished many times. In this vignette, we use the Hathi Trust extracted features files of its many editions to train a page-level topic model that can help visualize how these translations and editions vary.
+
+### Selecting the sample
 
 As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust [Workset Builder](https://solr2.htrc.illinois.edu/solr-ef/):
 
@@ -42,12 +44,11 @@ There are over 400 volumes which list Tocqueville as an author. Many of these ar
 set.seed(14)
 tocqueville_meta <- get_workset_meta(tocqueville %>%
                                        slice_sample(n = 20))
-#> Getting download key...
-#> Downloading metadata for 20 volumes. This might take some time.
+#> Metadata has already been downloaded. Returning cached metadata.
 #> Rows: 20 Columns: 36
-#> -- Column specification --------------------------------------------------------------------------------------------------------------------------
+#> -- Column specification -------------------------------------------------------------------------------------------------------------------------
 #> Delimiter: ","
-#> chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...
+#> chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn...
 #> dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber
 #> dttm  (2): dateCreated, lastUpdateDate
 #> 
@@ -55,7 +56,7 @@ tocqueville_meta <- get_workset_meta(tocqueville %>%
 #> i Specify the column types or set `show_col_types = FALSE` to quiet this message.
 tocqueville_meta %>%
   select(title, pubDate, imprint, names, language) %>%
-  mutate(title = iconv(title, from = "UTF-8", to = "ASCII//TRANSLIT") %>%
+  mutate(title = iconv(title, from = "UTF-8", to = "ASCII//TRANSLIT") %>% # Needed so that the table below displays properly
            str_remove_all("`") %>%
            str_remove_all("\\?")) %>%
   knitr::kable()
@@ -86,7 +87,7 @@ tocqueville_meta %>%
 |Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.                                                                                                                         |    9999|Gallimard 1952-                                       |["Tocqueville, Alexis de 1805-1859"]                                                                                                                                 |fre      |
 |Uber die Demokratie in Amerika / Alexis de Tocqueville ; ausgewahlt und herausgeben von J.P. Mayer.                                                                                                 |    1985|Reclam, 1985.                                         |["Tocqueville, Alexis de 1805-1859 "]                                                                                                                                |ger      |
 
-The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the `workset_builder()` function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
+The function `workset_builder()` by default returns a data frame with column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the function just returned the number of pages in each volume. If we instead search for the volumes where Tocqueville is an author that *also* mention the word "democracy", the function returns both the volume id and the number of pages that contain the term.
 
 
 ```r
@@ -109,9 +110,7 @@ tocqueville2
 #> # ... with 212 more rows
 ```
 
-This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word "democracy" (most of them!).
-
-The resulting data frame also includes a column for the number of times the term "democracy" is mentioned, but not exact pages. Yet it's also possible to get the exact page sequence numbers where the term appears:
+This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word "democracy" (most of them!). It's also possible to get the exact page sequence numbers where the term appears:
 
 
 ```r
@@ -134,14 +133,14 @@ tocqueville3
 #> # ... with 17,041 more rows
 ```
 
-We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain).
+We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the acual page shown on the Hathi Trust website).
 
 ```r
 browse_htids(tocqueville3)
 
 ```
 
-For our topic modeling exercise, I will focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title:
+For our topic modeling exercise, we will focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title.
 
 
 ```r
@@ -213,8 +212,9 @@ tocqueville_meta %>%
 #> 1        14       14
 ```
 
+### Downloading and caching the associated Extracted Features files
 
-We first download the "extracted features" files for these texts via `rsync`. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist):
+We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist). This function requires that your system has access to `rsync`..
 
 
 
@@ -224,7 +224,7 @@ rsync_from_hathi(tocqueville4)
 #> [1] 0
 ```
 
-These are JSON files, which are slow to load and parse into data frames. We can cache them to fast-loading CSVs in the "./hathi-ef" directory using the function `cache_htids()`:
+The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs in the "./hathi-ef" directory using the function `cache_htids()`:
 
 
 ```r
@@ -250,7 +250,7 @@ cache_htids(tocqueville4)
 #> # ... with 13 more rows
 ```
 
-These are available now in your `./hathi-ef` directory. The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file path, and whether the file exists or not (i.e., whether it was downloaded successfully and cached).
+The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file paths of the cached files, and whether each file exists or not (i.e., whether it was downloaded successfully and cached).
 
 
 ```r
@@ -273,7 +273,7 @@ cached_files
 #> # ... with 13 more rows
 ```
 
-The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis. In any case these files can now be loaded into R very quickly:
+The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis (by filtering the returned dataset via `cached_files %>% filter(exists)`, for examples). In any case these files can now be loaded into R very quickly:
 
 
 ```r
@@ -300,7 +300,9 @@ tocqueville_ef
 #> # ... with 2,812,226 more rows
 ```
 
-This large data frame can be converted into a `quanteda::dfm` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
+### Creating a document-term matrix and fitting the model
+
+This large data frame can be converted into a `quanteda::dfm()` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
 
 
 ```r
@@ -452,7 +454,7 @@ tidy_model
 #> #   subjectTemporal <chr>, subjectGeographic <chr>, subjectOccupation <chr>, subjectCartographics <chr>, editions <chr>, label <chr>
 ```
 
-We can visualize the topic distribution per book:
+We can now visualize the topic distribution per book:
 
 
 ```r
@@ -493,4 +495,4 @@ tidy_model %>%
 
 ![Figure 1](images/topic-modeling-unnamed-chunk-15-1.png)
 
-We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus (which means each page shows more of topic 19).
+We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition of the book clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus, which increases the proportion of certain topics on the page not common in other editions; etc. More could be said here, but this is just a starting point!
