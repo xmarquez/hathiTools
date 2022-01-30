@@ -15,8 +15,7 @@ As a starting point, we can download the IDs of all volumes where Alexis the Toc
 
 ```r
 library(hathiTools)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 
 tocqueville <- workset_builder(name = "Alexis de Tocqueville")
 tocqueville
@@ -274,7 +273,7 @@ cached_files
 #> # ... with 13 more rows
 ```
 
-Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (`exists = FALSE`). In any case these files can now be loaded into R very quickly:
+The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis. In any case these files can now be loaded into R very quickly:
 
 
 ```r

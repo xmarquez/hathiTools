@@ -21,8 +21,7 @@ As a starting point, we can download the IDs of all volumes where Alexis the Toc
 
 ```{r setup}
 library(hathiTools)
-library(dplyr)
-library(ggplot2)
+library(tidyverse)
 
 tocqueville <- workset_builder(name = "Alexis de Tocqueville")
 tocqueville
