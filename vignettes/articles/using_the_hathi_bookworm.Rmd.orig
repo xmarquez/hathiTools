@@ -144,7 +144,7 @@ res4 <- query_bookworm(word = "democracy",
 res4
 ```
 
-If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on "Creating and Using Hathi Trust Worksets" for more.
+If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on see the article "[Topic Models Using Hathi Extracted Features](topic_models_using_hathi_ef)" for more examples of how to use this facility.
 
 We can investigate further any of these volumes by downloading their associated "Extracted Features" file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, `r res4$title[2]`, available at `r res4$url[2]`, as a nice tidy `tibble` suitable for analysis with a package like `{tidytext}`.
 
@@ -173,6 +173,7 @@ meta <- get_workset_meta(res4, metadata_dir = tmp)
 
 meta
 ```
+
 And browse interactively these titles on the Hathi Trust website:
 
 ```r
