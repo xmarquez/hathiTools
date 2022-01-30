@@ -184,7 +184,7 @@ If you want to download lots of volumes and have [rsync](https://linux.die.net/m
 
 One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
 
-```{r, fig.cap="Figure 4" }
+```{r, fig.cap="Figure 4"}
 res5 <- query_bookworm(counttype = "TotalTexts",
                        groups = c("date_year", "language"),
                        lims = c(1500,2000))

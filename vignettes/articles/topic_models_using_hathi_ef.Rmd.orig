@@ -221,7 +221,7 @@ tidy_model
 
 We can visualize the topic distribution per book:
 
-```{r, fig.width=14, fig.height=12, fig.cap = "Figure 1"}
+```{r, fig.width=14, fig.height=12, fig.cap = "Figure 1", cache = FALSE}
 library(ggtext)
 
 
