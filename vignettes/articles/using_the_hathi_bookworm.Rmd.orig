@@ -5,7 +5,7 @@ title: "Using the Hathi Trust Bookworm Tool"
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "vignettes/articles/using-hathi-bookworm-",
+  fig.path = "images/using-the-hathi-bookworm-",
   comment = "#>"
 )
 ```
@@ -39,7 +39,7 @@ res
 
 Which can be used for plotting:
 
-```{r}
+```{r, fig.cap="Figure 1"}
 res %>%
   mutate(counttype = case_when(counttype == "WordsPerMillion" ~ "Words per million",
                                TRUE ~ "Percent of volumes containing word")) %>%
@@ -60,7 +60,7 @@ The trends are clear: "democracy" becomes a much more salient term during the 19
 
 We can also look at the frequency of democracy *relative* to another word (e.g., dictatorship) across time by using `counttype = "WordsRatio"`:
 
-```{r}
+```{r, fig.cap="Figure 2"}
 res2 <- query_bookworm(word = "democracy", compare_to = "dictatorship",
                           lims = c(1900, 2000), counttype = "WordsRatio")
 
@@ -78,7 +78,7 @@ res2 %>%
 
 We can also explore the kinds of books where 'democracy' is mentioned in the 20th century. This query groups the volumes that mention 'democracy' by both the year of publication and the volume classification in the Hathi Trust metadata:
 
-```{r}
+```{r, fig.cap="Figure 3"}
 res2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"),
                           lims = c(1900,2000))
 
@@ -185,7 +185,7 @@ If you want to download lots of volumes and have [rsync](https://linux.die.net/m
 
 One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
 
-```{r }
+```{r, fig.cap="Figure 4" }
 res5 <- query_bookworm(counttype = "TotalTexts",
                        groups = c("date_year", "language"),
                        lims = c(1500,2000))
