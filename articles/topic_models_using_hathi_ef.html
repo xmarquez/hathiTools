@@ -89,8 +89,7 @@
 <p>As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xmarquez.github.io/hathiTools">hathiTools</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 
 <span class="va">tocqueville</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
 <span class="va">tocqueville</span>
@@ -112,7 +111,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>
 <span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-                                       <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
+                                       <span class="fu">slice_sample</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Getting download key...</span>
 <span class="co">#&gt; Downloading metadata for 20 volumes. This might take some time.</span>
 <span class="co">#&gt; Rows: 20 Columns: 36</span>
@@ -125,8 +124,8 @@
 <span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
 <span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 <span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">select</span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"`"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"\\?"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
@@ -288,7 +287,7 @@
 </tr>
 </tbody>
 </table>
-<p>The returned workset above contains a column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the [workset_builder] function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word “democracy”:</p>
+<p>The returned workset above contains a column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the <code><a href="../reference/workset_builder.html">workset_builder()</a></code> function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word “democracy”:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
 
@@ -384,8 +383,8 @@
 <p>There are 23 volumes listed here, but many are the same book; sometimes the title has just been entered slightly differently in different cataloguing systems, or republished multiple times, or it’s another volume of the same edition. We find 14 distinct bibliographical records with 14 distinct titles which we can investigate:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_records <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">hathitrustRecordNumber</span><span class="op">)</span>,
-            n_titles <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">title</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">summarise</span><span class="op">(</span>n_records <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">hathitrustRecordNumber</span><span class="op">)</span>,
+            n_titles <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">title</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 1 x 2</span>
 <span class="co">#&gt;   n_records n_titles</span>
 <span class="co">#&gt;       &lt;int&gt;    &lt;int&gt;</span>
@@ -436,11 +435,11 @@
 <span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span>
 <span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
-<p>Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (<code>exists = FALSE</code>). In any case these files can now be loaded into R very quickly:</p>
+<p>The reason for an <code>exists</code> column is that sometimes extracted features files are not downloaded successfully – they are not available in the Hathi Trust rsync server for whatever reason – and so need to be excluded from further analysis. In any case these files can now be loaded into R very quickly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">cached_files</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">local_loc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pull</span><span class="op">(</span><span class="va">local_loc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">set_names</span><span class="op">(</span><span class="va">cached_files</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="va">cached_files</span><span class="op">$</span><span class="va">exists</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">map_df</span><span class="op">(</span><span class="fu">vroom</span><span class="fu">::</span><span class="va"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span>, .id <span class="op">=</span> <span class="st">"htid"</span><span class="op">)</span>
 
@@ -478,28 +477,28 @@
                       <span class="st">"Mayer-Lawrence"</span>, <span class="st">"Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span><span class="op">)</span>
 
 <span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="va">enumerationChronology</span>, <span class="va">pubDate</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="va">enumerationChronology</span>, <span class="va">pubDate</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">section</span> <span class="op">==</span> <span class="st">"body"</span>, <span class="op">!</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">token</span>, <span class="st">"[^[:alnum:]]"</span><span class="op">)</span>,
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">section</span> <span class="op">==</span> <span class="st">"body"</span>, <span class="op">!</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">token</span>, <span class="st">"[^[:alnum:]]"</span><span class="op">)</span>,
          <span class="fu">str_detect</span><span class="op">(</span><span class="va">POS</span>, <span class="st">"NN|NOUN"</span><span class="op">)</span>, <span class="fu">str_length</span><span class="op">(</span><span class="va">token</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>text_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">htid</span>, <span class="va">page</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">text_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>num_tokens <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">htid</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>prop_page <span class="op">=</span> <span class="va">page</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">page</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">num_tokens</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This selects pages with at least 10 tokens</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This adds the metadata</span>
-              <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>htid <span class="op">=</span> <span class="va">volumeIdentifier</span><span class="op">)</span><span class="op">)</span>
+  <span class="fu">mutate</span><span class="op">(</span>text_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">htid</span>, <span class="va">page</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">text_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>num_tokens <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">htid</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>prop_page <span class="op">=</span> <span class="va">page</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">page</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">num_tokens</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This selects pages with at least 10 tokens</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This adds the metadata</span>
+              <span class="fu">rename</span><span class="op">(</span>htid <span class="op">=</span> <span class="va">volumeIdentifier</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "htid"</span>
 
 <span class="va">tocqueville_dfm</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">cast_dfm</span><span class="op">(</span><span class="va">text_id</span>, <span class="va">token</span>, <span class="va">count</span><span class="op">)</span>
 
 <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">token</span>, <span class="op">-</span><span class="va">POS</span>, <span class="op">-</span><span class="va">count</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/distinct.html" class="external-link">distinct</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">token</span>, <span class="op">-</span><span class="va">POS</span>, <span class="op">-</span><span class="va">count</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
 
 <span class="va">tocqueville_dfm</span>
 <span class="co">#&gt; Document-feature matrix of: 12,216 documents, 28,880 features (99.76% sparse) and 42 docvars.</span>
@@ -545,23 +544,23 @@
                    document_names <span class="op">=</span>  <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span><span class="op">$</span><span class="va">text_id</span><span class="op">)</span>
 
 <span class="va">docs</span> <span class="op">&lt;-</span> <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>document <span class="op">=</span> <span class="va">text_id</span><span class="op">)</span>
+  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>document <span class="op">=</span> <span class="va">text_id</span><span class="op">)</span>
 
 <span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">docs</span><span class="op">)</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "document"</span>
 
 <span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu">labelTopics</span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html" class="external-link">as_tibble</a></span><span class="op">(</span>.name_repair <span class="op">=</span> <span class="st">"unique"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/everything.html" class="external-link">everything</a></span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"topic"</span>, values_to <span class="op">=</span> <span class="st">"word"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">topic</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">word</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>topic <span class="op">=</span> <span class="fu">str_remove</span><span class="op">(</span><span class="va">topic</span>, <span class="fu">fixed</span><span class="op">(</span><span class="st">"..."</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">as_tibble</span><span class="op">(</span>.name_repair <span class="op">=</span> <span class="st">"unique"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"topic"</span>, values_to <span class="op">=</span> <span class="st">"word"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">group_by</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">summarise</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">word</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>topic <span class="op">=</span> <span class="fu">str_remove</span><span class="op">(</span><span class="va">topic</span>, <span class="fu">fixed</span><span class="op">(</span><span class="st">"..."</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">topic</span><span class="op">)</span>
+  <span class="fu">arrange</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span>
 <span class="co">#&gt; New names:</span>
 <span class="co">#&gt; * `` -&gt; ...1</span>
 <span class="co">#&gt; * `` -&gt; ...2</span>
@@ -571,7 +570,7 @@
 <span class="co">#&gt; * ...</span>
 
 <span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate-joins.html" class="external-link">left_join</a></span><span class="op">(</span><span class="va">labels</span><span class="op">)</span>
+  <span class="fu">left_join</span><span class="op">(</span><span class="va">labels</span><span class="op">)</span>
 <span class="co">#&gt; Joining, by = "topic"</span>
 
 <span class="va">tidy_model</span>
@@ -599,7 +598,7 @@
 
 
 <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>editions <span class="op">=</span> <span class="fu">str_replace_all</span><span class="op">(</span><span class="va">editions</span>, <span class="st">"NA"</span>, <span class="st">"1 vol. edition"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu">str_replace_all</span><span class="op">(</span><span class="va">editions</span>, <span class="st">"NA"</span>, <span class="st">"1 vol. edition"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"V\\.[ ]?"</span>, <span class="st">"v."</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
            <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"v\\. "</span>, <span class="st">"v."</span><span class="op">)</span>,
          editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="st">"HT#"</span>, <span class="va">hathitrustRecordNumber</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
