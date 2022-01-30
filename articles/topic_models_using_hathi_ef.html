@@ -5,13 +5,13 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Creating Hathi Trust Worksets and Downloading Extracted Features Files • hathiTools</title>
+<title>Topic Modeling using the Hathi Trust Extracted Features Files • hathiTools</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha256-bZLfwXAP04zRMK2BjiO8iu9pf4FbLqX6zitd+tIvLhE=" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="../bootstrap-toc.css">
 <script src="../bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../pkgdown.js"></script><meta property="og:title" content="Creating Hathi Trust Worksets and Downloading Extracted Features Files">
+<script src="../pkgdown.js"></script><meta property="og:title" content="Topic Modeling using the Hathi Trust Extracted Features Files">
 <meta property="og:description" content="hathiTools">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -50,10 +50,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+      <a href="../articles/topic_models_using_hathi_ef.html">Topic Modeling using the Hathi Trust Extracted Features Files</a>
     </li>
     <li>
-      <a href="../articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+      <a href="../articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
     </li>
   </ul>
 </li>
@@ -68,27 +68,25 @@
 
       
 
-      </header><script src="using_worksets_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="topic_models_using_hathi_ef_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Creating Hathi Trust Worksets and Downloading Extracted Features Files</h1>
+      <h1 data-toc-skip>Topic Modeling using the Hathi Trust Extracted Features Files</h1>
             
       
       
-      <div class="hidden name"><code>using_worksets.Rmd</code></div>
+      <div class="hidden name"><code>topic_models_using_hathi_ef.Rmd</code></div>
 
     </div>
 
     
     
-<p>The Hathi Trust digital library makes available “extracted features” files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level “bags of words” are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models.</p>
-<p>Hathi Trust also makes it possible to create “worksets” (collections of volume IDs) where all of the volumes meet specified criteria (e.g., they contain specific words, or have a certain publication date, or were written by particular people). One can then use these worksets to download the full metadata and extracted features files for further analysis (and, if necessary, to request the full texts of these volumes).</p>
-<p>This package provides a function, <code><a href="../reference/workset_builder.html">workset_builder()</a></code>, which queries the SOLR endpoint of the <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a> to load Hathi Trust IDs and metadata directly into R. Once you have a satisfactory workset of the volumes you want to analyze, you can then use the function <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> to download the extracted features files for all the volumes in the workset, and easily cache them in a format suitable for further modeling.</p>
+<p>The Hathi Trust digital library makes available “extracted features” files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level “bags of words” are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models. This vignette explains how one can use these files to do basic topic modeling of many volumes.</p>
 <div class="section level2">
-<h2 id="an-example-topic-models-of-alexis-de-tocqueville">An example: Topic Models of Alexis de Tocqueville<a class="anchor" aria-label="anchor" href="#an-example-topic-models-of-alexis-de-tocqueville"></a>
+<h2 id="an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america">An example: A Page-level Topic Model of different editions of Tocqueville’s “Democracy in America”<a class="anchor" aria-label="anchor" href="#an-example-a-page-level-topic-model-of-different-editions-of-tocquevilles-democracy-in-america"></a>
 </h2>
-<p>Suppose you are interested in creating a topic model of Alexis de Tocqueville’s “Democracy in America”. There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is a good way of understanding how these translations and editions vary.</p>
-<p>As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Workset Builder:</p>
+<p>Suppose you are interested in creating a topic model of Alexis de Tocqueville’s “Democracy in America”. There are multiple translations of this text, and a topic model trained on one translation may not look like another one; a topic model of different translations and editions is one way of understanding how these translations and editions vary.</p>
+<p>As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xmarquez.github.io/hathiTools">hathiTools</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span>
@@ -110,8 +108,188 @@
 <span class="co">#&gt;  9 aeu.ark:/13960/t3qv43c3w   516</span>
 <span class="co">#&gt; 10 aeu.ark:/13960/t6252fd09   382</span>
 <span class="co">#&gt; # ... with 407 more rows</span></code></pre></div>
-<p>The returned <code><a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble::tibble</a></code> contains a column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, it just returns the number of pages for the volume. There are many options here; for example, we could instead search for the volumes where Tocqueville is an author that mention the word “democracy”:</p>
+<p>There are over 400 volumes which list Tocqueville as an author. Many of these are the same, but digitised from different libraries, or different editions of the same text, and some are in different languages (French and English, for example). We can get a glimpse of the variety by downloading the metadata for a sample of 20 volumes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>
+<span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+                                       <span class="fu"><a href="https://dplyr.tidyverse.org/reference/slice.html" class="external-link">slice_sample</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; Getting download key...</span>
+<span class="co">#&gt; Downloading metadata for 20 volumes. This might take some time.</span>
+<span class="co">#&gt; Rows: 20 Columns: 36</span>
+<span class="co">#&gt; -- Column specification --------------------------------------------------------------------------------------------------------------------------</span>
+<span class="co">#&gt; Delimiter: ","</span>
+<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...</span>
+<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
+<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
+<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
+<span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"`"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"\\?"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
+  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<table class="table">
+<colgroup>
+<col width="45%">
+<col width="1%">
+<col width="12%">
+<col width="38%">
+<col width="2%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">title</th>
+<th align="right">pubDate</th>
+<th align="left">imprint</th>
+<th align="left">names</th>
+<th align="left">language</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Democracy in America / by Alexis de Tocqueville ; translated by Henry Reeve ; with an original preface and notes by John C. Spencer.</td>
+<td align="right">1841</td>
+<td align="left">J. &amp; H.G. Langley, 1841.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Spencer, John C. (John Canfield) 1788-1855”,“Reeve, Henry 1813-1895”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="even">
+<td align="left">L’Ancien Regime.</td>
+<td align="right">1904</td>
+<td align="left">Clarendon Press, [1904]</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Headlam, G. W.”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">Democracy in America / by Alexis de Tocqueville ; translated by Henry Reeve ; with an original preface and notes by John C. Spencer.</td>
+<td align="right">1845</td>
+<td align="left">J &amp; H. G. Langley, 1845.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Spencer, John C. (John Canfield) 1788-1855”,“Reeve, Henry 1813-1895 trl”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="even">
+<td align="left">Oeuvres completes / publiees par Madame de Tocqueville.</td>
+<td align="right">1866</td>
+<td align="left">[publisher not identified], 1861-1866.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Beaumont, Gustave de 1802-1866”,“Tocqueville, Mary Mottley.”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">Ouvres completes d’Alexis de Tocqueville / publiees par Madame de Tocqueville.</td>
+<td align="right">9999</td>
+<td align="left">M. Le´vy fre`res, 1864-</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Tocqueville, Marie Motley Cle´rel de.”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">Rapport fait au nom de la Commission chargee d’examiner la proposition de M. de Tracy, relative aux esclaves des colonies / par M. A. de Tocqueville depute de la Manche.</td>
+<td align="right">1839</td>
+<td align="left">A. Henry, imprimeur de la Chambre des députés, 1839].</td>
+<td align="left">[“France Chambre des députés. Commission chargée d’examiner la proposition de M. de Tracy, relative aux esclaves de colonies.”,“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">De la democratie en Amerique.</td>
+<td align="right">1864</td>
+<td align="left">M. Lévy, 1864.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Tocqueville, Mary Mottley ed. ”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">Democracy in America, by Alexis de Tocqueville. The Henry Reeve text as rev. by Francis Bowen, now further corr. and edited, with introd., editorial notes, and bibliographies by Phillips Bradley.</td>
+<td align="right">1963</td>
+<td align="left">A.A. Knopf, 1963 [c1945]</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Reeve, Henry 1813-1895”,“Bradley, Phillips 1894-1982”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="odd">
+<td align="left">Tocqueville’s America, the great quotations / edited by Frederick Kershner, Jr, with an introduction and annotations.</td>
+<td align="right">1983</td>
+<td align="left">Ohio University Press, c1983.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Kershner, Frederick.”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="even">
+<td align="left">Democracy in America / by Alexis de Tocqueville; translated by Henry Reeve.</td>
+<td align="right">1878</td>
+<td align="left">G. Adlard, 1878.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Reeve, Henry 1813-1895”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="odd">
+<td align="left">Nouvelle correspondance entierement inedite / de Alexis de Tocqueville.</td>
+<td align="right">1866</td>
+<td align="left">Michel Lèvy Fréres, Libraires éditeurs, 1866.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Lèvy, Michel (Hermanos de), (Paris) ed. ”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.</td>
+<td align="right">9999</td>
+<td align="left">Gallimard 1952-</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.</td>
+<td align="right">9999</td>
+<td align="left">Gallimard 1952-</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">De la democratie en Amerique par Alexis de Tocqueville.</td>
+<td align="right">1850</td>
+<td align="left">Pagnerre, 1850.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.</td>
+<td align="right">9999</td>
+<td align="left">Gallimard 1952-</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">Democracy in America / by Alexis de Tocqueville ; translated by Henry Reeve ; with an original preface and notes by John C. Spencer.</td>
+<td align="right">1845</td>
+<td align="left">J &amp; H. G. Langley, 1845.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Spencer, John C. (John Canfield) 1788-1855”,“Reeve, Henry 1813-1895 trl”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="odd">
+<td align="left">The Old Regime and the Revolution / by Alexis de Tocqueville ; tr. by John Bonner.</td>
+<td align="right">1856</td>
+<td align="left">Harper &amp; Brothers, 1856.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”,“Bonner, John 1828-1899 tr.”]</td>
+<td align="left">eng</td>
+</tr>
+<tr class="even">
+<td align="left">De la democratie en Amerique. Par Alexis de Tocqueville, … Revue avec le plus grand soin et augmentee de la preface mise en tete des ouvres completes. Tome premier-[troisieme]</td>
+<td align="right">1888</td>
+<td align="left">Calmann Levy, 1888.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="odd">
+<td align="left">Ouvres completes. Ed. definitive, publiee sous la direction de J.-P. Mayer.</td>
+<td align="right">9999</td>
+<td align="left">Gallimard 1952-</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">fre</td>
+</tr>
+<tr class="even">
+<td align="left">Uber die Demokratie in Amerika / Alexis de Tocqueville ; ausgewahlt und herausgeben von J.P. Mayer.</td>
+<td align="right">1985</td>
+<td align="left">Reclam, 1985.</td>
+<td align="left">[“Tocqueville, Alexis de 1805-1859”]</td>
+<td align="left">ger</td>
+</tr>
+</tbody>
+</table>
+<p>The returned workset above contains a column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the [workset_builder] function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word “democracy”:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
 
 <span class="va">tocqueville2</span>
@@ -131,7 +309,7 @@
 <span class="co">#&gt; # ... with 212 more rows</span></code></pre></div>
 <p>This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word “democracy” (most of them!).</p>
 <p>The resulting data frame also includes a column for the number of times the term “democracy” is mentioned, but not exact pages. Yet it’s also possible to get the exact page sequence numbers where the term appears:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 
 <span class="va">tocqueville3</span>
@@ -139,21 +317,21 @@
 <span class="co">#&gt;    htid                     id                                  </span>
 <span class="co">#&gt;    &lt;chr&gt;                    &lt;chr&gt;                               </span>
 <span class="co">#&gt;  1 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000033</span>
-<span class="co">#&gt;  2 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000239</span>
+<span class="co">#&gt;  2 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000344</span>
 <span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000230</span>
 <span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000124</span>
-<span class="co">#&gt;  5 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000122</span>
+<span class="co">#&gt;  5 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000203</span>
 <span class="co">#&gt;  6 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000114</span>
-<span class="co">#&gt;  7 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000035</span>
+<span class="co">#&gt;  7 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000324</span>
 <span class="co">#&gt;  8 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000113</span>
 <span class="co">#&gt;  9 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000249</span>
 <span class="co">#&gt; 10 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000018</span>
 <span class="co">#&gt; # ... with 17,041 more rows</span></code></pre></div>
-<p>We can browse any of these pages interactively on the Hathi Trust website:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">tocqueville3</span><span class="op">)</span></code></pre></div>
-<p>But for our purposes, we want instead to focus on volumes of Tocqueville published since 1950 (better OCR!) with “Democracy in America” in the title:</p>
+<p>We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">tocqueville3</span><span class="op">)</span></code></pre></div>
+<p>For our topic modeling exercise, I will focus on volumes of Tocqueville published since 1950 (better OCR!) with “Democracy in America” in the title:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, pub_date <span class="op">=</span> <span class="fl">1950</span><span class="op">:</span><span class="fl">2020</span>, title <span class="op">=</span> <span class="st">"Democracy in America"</span><span class="op">)</span>
 <span class="va">tocqueville4</span>
 <span class="co">#&gt; # A tibble: 23 x 2</span>
@@ -171,9 +349,10 @@
 <span class="co">#&gt; 10 mdp.39015010933128   486</span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
 <p>We can download their full metadata as follows (it’s a slow download, so use with care if you have a lot of Hathi Trust ids!):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-<span class="co">#&gt; Metadata has already been downloaded. Returning cached metadata.</span>
+<span class="co">#&gt; Getting download key...</span>
+<span class="co">#&gt; Downloading metadata for 23 volumes. This might take some time.</span>
 <span class="co">#&gt; Rows: 23 Columns: 36</span>
 <span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
 <span class="co">#&gt; Delimiter: ","</span>
@@ -203,7 +382,7 @@
 <span class="co">#&gt; #   subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;, subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;,</span>
 <span class="co">#&gt; #   subjectCartographics &lt;chr&gt;</span></code></pre></div>
 <p>There are 23 volumes listed here, but many are the same book; sometimes the title has just been entered slightly differently in different cataloguing systems, or republished multiple times, or it’s another volume of the same edition. We find 14 distinct bibliographical records with 14 distinct titles which we can investigate:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>n_records <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">hathitrustRecordNumber</span><span class="op">)</span>,
             n_titles <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/n_distinct.html" class="external-link">n_distinct</a></span><span class="op">(</span><span class="va">title</span><span class="op">)</span><span class="op">)</span>
@@ -212,15 +391,18 @@
 <span class="co">#&gt;       &lt;int&gt;    &lt;int&gt;</span>
 <span class="co">#&gt; 1        14       14</span></code></pre></div>
 <p>We first download the “extracted features” files for these texts via <code>rsync</code>. The <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> function attempts to do this automatically (to the <code>/hathi-ef</code> directory by default, which will be created if it doesn’t exist):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
 <span class="co">#&gt; 0</span>
 <span class="co">#&gt; [1] 0</span></code></pre></div>
 <p>These are JSON files, which are slow to load and parse into data frames. We can cache them to fast-loading CSVs in the “./hathi-ef” directory using the function <code><a href="../reference/cache_htids.html">cache_htids()</a></code>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-<span class="co">#&gt; All HTIDs have already been cached to csv.gz format.</span>
-<span class="co">#&gt; Returning data frame with file locations.</span>
+<span class="co">#&gt; Caching ./hathi-ef/coo/32696/coo.31924062496165.json.bz2 to csv.gz, file 1 of 23...</span>
+<span class="co">#&gt; Caching ./hathi-ef/mdp/31034/mdp.39015000939747.json.bz2 to csv.gz, file 6 of 23...</span>
+<span class="co">#&gt; Caching ./hathi-ef/mdp/31142/mdp.39015015647921.json.bz2 to csv.gz, file 11 of 23...</span>
+<span class="co">#&gt; Caching ./hathi-ef/uc1/35105/uc1.31158011108353.json.bz2 to csv.gz, file 16 of 23...</span>
+<span class="co">#&gt; Caching ./hathi-ef/uc1/l747/uc1.l0073944373.json.bz2 to csv.gz, file 21 of 23...</span>
 <span class="co">#&gt; # A tibble: 23 x 3</span>
 <span class="co">#&gt;    htid               local_loc                                      exists</span>
 <span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                                          &lt;lgl&gt; </span>
@@ -236,7 +418,7 @@
 <span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
 <p>These are available now in your <code>./hathi-ef</code> directory. The convenience function <code><a href="../reference/find_cached_htids.html">find_cached_htids()</a></code>, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file path, and whether the file exists or not (i.e., whether it was downloaded successfully and cached).</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">cached_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_cached_htids.html">find_cached_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
 
 <span class="va">cached_files</span>
@@ -255,196 +437,12 @@
 <span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
 <span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
 <p>Sometimes extracted features files are not downloaded successfully (they are not available in the Hathi Trust rsync server for whatever reason), and so need to exclude them from further analysis (<code>exists = FALSE</code>). In any case these files can now be loaded into R very quickly:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">cached_files</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">local_loc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">set_names</span><span class="op">(</span><span class="va">cached_files</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="va">cached_files</span><span class="op">$</span><span class="va">exists</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">map_df</span><span class="op">(</span><span class="fu">vroom</span><span class="fu">::</span><span class="va"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span>, .id <span class="op">=</span> <span class="st">"htid"</span><span class="op">)</span>
-<span class="co">#&gt; Rows: 91027 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 207398 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 114140 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 113562 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 108232 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 115411 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 113929 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 97506 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 47208 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 108277 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 107473 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 113106 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 208497 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 117297 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 163163 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 119781 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 123557 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 129845 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 90270 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 199903 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 98870 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 111767 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="co">#&gt; Rows: 112017 Columns: 5</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr (3): token, POS, section</span>
-<span class="co">#&gt; dbl (2): count, page</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
 
 <span class="va">tocqueville_ef</span>
 <span class="co">#&gt; # A tibble: 2,812,236 x 6</span>
@@ -461,10 +459,15 @@
 <span class="co">#&gt;  9 coo.31924062496165 "s"       UNK       3 body        1</span>
 <span class="co">#&gt; 10 coo.31924062496165 "1\\\\\\" UNK       1 body        1</span>
 <span class="co">#&gt; # ... with 2,812,226 more rows</span></code></pre></div>
-<p>This large DF can be converted into a <code>quanteda::dfm</code> document-feature matrix using the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the “body” section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<p>This large data frame can be converted into a <code>quanteda::dfm</code> document-feature matrix using the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the “body” section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span>
+<span class="co">#&gt; Package version: 3.1.0</span>
+<span class="co">#&gt; Unicode version: 13.0</span>
+<span class="co">#&gt; ICU version: 69.1</span>
+<span class="co">#&gt; Parallel computing: 12 of 12 threads used.</span>
+<span class="co">#&gt; See https://quanteda.io for tutorials and examples.</span>
 
 <span class="va">tocqueville_meta</span><span class="op">$</span><span class="va">editions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Nolla-Shleifer"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
                       <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
@@ -509,9 +512,9 @@
 <span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span>
 <span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    0     0            0       0      0</span>
 <span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 28,870 more features ]</span></code></pre></div>
-<p>We can use this dfm in a variety of ways. Here I train a page-level topic model using the <a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a> package, using only the English texts of Tocqueville.</p>
-<p>First we subset the dfm, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<p>We can use this document-feature matrix in a variety of ways. Here I train a page-level topic model using the <a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a> package, using only the English texts of Tocqueville.</p>
+<p>First we subset the document-feature matrix, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tocqueville_dfm_eng</span> <span class="op">&lt;-</span> <span class="fu">dfm_subset</span><span class="op">(</span><span class="va">tocqueville_dfm</span>, subset <span class="op">=</span> <span class="va">language</span> <span class="op">==</span> <span class="st">"eng"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">dfm_tolower</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
   <span class="fu">dfm_trim</span><span class="op">(</span><span class="fl">20000</span>, termfreq_type <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
@@ -528,14 +531,16 @@
 <span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span>
 <span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    1     0            0       0      0</span>
 <span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 25,144 more features ]</span></code></pre></div>
-<p>We then fit a structural topic model with 20 topics. This takes a while; normally you’d do some sensitivity analysis and check whether the model works better with more or fewer topics (see <a href="https://juliasilge.com/blog/evaluating-stm/" class="external-link">this very useful article by Julia Silge</a> on training, evaluating, and interpreting topic models). I also don’t incorporate any prevalence correlates (I want this article to run relatiely quickly!), but this is trivial to do given that the metadata is incorporated into the document-feature matrix.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<p>We then fit a structural topic model with 20 topics. This takes a while; normally you’d also do some sensitivity analysis and check whether the model works better with more or fewer topics, but this model is only illustrative (see <a href="https://juliasilge.com/blog/evaluating-stm/" class="external-link">this very useful article by Julia Silge</a> on training, evaluating, and interpreting topic models). I also don’t incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a></span><span class="op">)</span>
+<span class="co">#&gt; stm v1.3.6 successfully loaded. See ?stm for help. </span>
+<span class="co">#&gt;  Papers, resources, and other materials at structuraltopicmodel.com</span>
 
 <span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">stm</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span>, K <span class="op">=</span> <span class="fl">20</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
 <span class="co"># model &lt;- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE, prevalence = ~editions) # With prevalence covariates</span></code></pre></div>
 <p>We then tidy this model using the tidiers from the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="fu">tidy</span><span class="op">(</span><span class="va">model</span>, matrix <span class="op">=</span> <span class="st">"gamma"</span>,
                    document_names <span class="op">=</span>  <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span><span class="op">$</span><span class="va">text_id</span><span class="op">)</span>
 
@@ -588,8 +593,8 @@
 <span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
 <span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;,</span>
 <span class="co">#&gt; #   subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;, editions &lt;chr&gt;, label &lt;chr&gt;</span></code></pre></div>
-<p>We can now visualize the topic distribution per book:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<p>We can visualize the topic distribution per book:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span>
 
 
@@ -624,9 +629,9 @@
        fill <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <div class="figure">
-<img src="articles/articles/figures/using-hathi-worksets-unnamed-chunk-15-1.png" alt=""><p class="caption">plot of chunk unnamed-chunk-15</p>
+<img src="images/topic-modeling-unnamed-chunk-15-1.png" alt=""><p class="caption">Figure 1</p>
 </div>
-<p>We can see here some broad patterns: volume 2 has more “abstract” topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages; etc.</p>
+<p>We can see here some broad patterns: volume 2 of <em>Democracy in America</em> has more “abstract” topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus (which means each page shows more of topic 19).</p>
 </div>
   </div>
 

@@ -50,10 +50,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
+      <a href="articles/topic_models_using_hathi_ef.html">Topic Modeling using the Hathi Trust Extracted Features Files</a>
     </li>
     <li>
-      <a href="articles/using_worksets.html">Creating Hathi Trust Worksets and Downloading Extracted Features Files</a>
+      <a href="articles/using_the_hathi_bookworm.html">Using the Hathi Trust Bookworm Tool</a>
     </li>
   </ul>
 </li>
@@ -75,7 +75,7 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a tool similar to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a> and the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. It also allows you to download and process the <a href="https://analytics.hathitrust.org/datasets" class="external-link">Hathi Trust Extracted Features</a> files, which contain per-page word counts and part-of-speech information for over 15 million digitised volumes, including many of those originally digitised by Google for its Google Books project.</p>
+<p>This package allows you to interact with various free data resources made available by the Hathi Trust digital library, including the Hathi Trust <a href="https://bookworm.htrc.illinois.edu/develop/" class="external-link">Bookworm</a>, a tool similar to the <a href="https://books.google.com/ngrams" class="external-link">Google ngram viewer</a> and the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>. It also allows you to download and process the <a href="https://analytics.hathitrust.org/datasets" class="external-link">Hathi Trust Extracted Features files</a>, which contain per-page word counts and part-of-speech information for over 15 million digitised volumes, including many of those originally digitised by Google for its Google Books project.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
@@ -127,7 +127,8 @@
   <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span>, subtitle <span class="op">=</span> <span class="st">"10 year rolling average, books published between 1760-2000"</span>,
        title <span class="op">=</span> <span class="st">"Frequency of 'democracy' and 'monarchy' in the HathiTrust corpus"</span><span class="op">)</span> <span class="op">+</span>
   <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p><img src="reference/figures/README-example-1.png" width="100%"> There are more than 13 million texts in the bookworm database.</p>
+<p><img src="reference/figures/README-example-1.png" width="100%"></p>
+<p>There are more than 13 million texts in the bookworm database.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">total_texts</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,
                           lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">2020</span><span class="op">)</span><span class="op">)</span>
@@ -161,7 +162,7 @@
        x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
 <span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.</span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
-<p>See <code><a href="articles/using_the_hathi_bookworm.html">vignette("using_the_hathi_bookworm")</a></code> for more on how to query the bookworm to get word frequencies grouped by particular fields and limited to specific categories.</p>
+<p>See the article “<a href="articles/using_the_hathi_bookworm">Using the Hathi Bookworm</a>” for more on how to query the bookworm to get word frequencies grouped by particular fields and/or limited to specific categories.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-worksets-of-hathi-trust-ids">Creating Worksets of Hathi Trust IDs<a class="anchor" aria-label="anchor" href="#creating-worksets-of-hathi-trust-ids"></a>
@@ -205,7 +206,7 @@
 <p>We can browse these volumes interactively in the Hathi Trust website:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">result2</span><span class="op">)</span></code></pre></div>
-<p>See the vignette <code><a href="articles/using_worksets.html">vignette("using_worksets")</a></code> for more on creating and working with worksets.</p>
+<p>See the article “<a href="topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on creating and using with worksets for specific analysis purposes.</p>
 </div>
 <div class="section level2">
 <h2 id="downloading-extracted-feature-files-for-specific-hathi-trust-volumes">Downloading extracted feature files for specific Hathi Trust volumes<a class="anchor" aria-label="anchor" href="#downloading-extracted-feature-files-for-specific-hathi-trust-volumes"></a>
@@ -292,11 +293,11 @@
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp2HbLJ0\file4ec04d7a329f data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpCEOgEB\file60d0600439d3 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
 <p>There’s a convenience function that will attempt to do this for you in one command.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>This requires having rsync installed; see the vignette <code><a href="articles/using_worksets.html">vignette("using_worksets")</a></code> for more on rsyncing large numbers of Hathi Trust IDs.</p>
+<p>This requires having rsync installed; see the article “<a href="topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
 <p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
 </div>
 <div class="section level2">

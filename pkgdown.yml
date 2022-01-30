@@ -2,9 +2,9 @@ pandoc: 2.7.3
 pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
+  topic_models_using_hathi_ef: topic_models_using_hathi_ef.html
   using_the_hathi_bookworm: using_the_hathi_bookworm.html
-  using_worksets: using_worksets.html
-last_built: 2022-01-29T21:09Z
+last_built: 2022-01-30T03:40Z
 urls:
   reference: https://xmarquez.github.io/hathiTools/reference
   article: https://xmarquez.github.io/hathiTools/articles
