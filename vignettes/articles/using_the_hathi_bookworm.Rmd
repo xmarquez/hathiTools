@@ -203,18 +203,18 @@ res4 <- query_bookworm(word = "democracy",
 
 res4
 #> # A tibble: 100 x 3
-#>    htid                      title                                                                       url                                       
-#>    <chr>                     <chr>                                                                       <chr>                                     
-#>  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=nc~
-#>  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=uc~
-#>  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=md~
-#>  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=md~
-#>  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=uc~
-#>  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=md~
-#>  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=md~
-#>  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=uc~
-#>  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=ui~
-#> 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=uc~
+#>    htid                      title                                                                       url                                      
+#>    <chr>                     <chr>                                                                       <chr>                                    
+#>  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=n~
+#>  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=u~
+#>  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=m~
+#>  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=m~
+#>  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=u~
+#>  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=m~
+#>  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=m~
+#>  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=u~
+#>  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=u~
+#> 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=u~
 #> # ... with 90 more rows
 ```
 
@@ -229,7 +229,7 @@ tmp <- tempdir()
 
 extracted_features <- get_hathi_counts(res4$htid[2], dir = tmp)
 #> Rows: 18763 Columns: 5
-#> -- Column specification ---------------------------------------------------------------------------------------------------------------------------
+#> -- Column specification --------------------------------------------------------------------------------------------------------------------------
 #> Delimiter: ","
 #> chr (3): token, POS, section
 #> dbl (2): count, page
@@ -284,9 +284,9 @@ We can also get the metadata for all of these volumes at the same time:
 meta <- get_workset_meta(res4, metadata_dir = tmp)
 #> Metadata has already been downloaded. Returning cached metadata.
 #> Rows: 100 Columns: 36
-#> -- Column specification ---------------------------------------------------------------------------------------------------------------------------
+#> -- Column specification --------------------------------------------------------------------------------------------------------------------------
 #> Delimiter: ","
-#> chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn, ...
+#> chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...
 #> dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber
 #> dttm  (2): dateCreated, lastUpdateDate
 #> 
@@ -295,23 +295,23 @@ meta <- get_workset_meta(res4, metadata_dir = tmp)
 
 meta
 #> # A tibble: 100 x 36
-#>    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title          genre    pubDate pubPlace typeOfResource bibliographicFo~ language
-#>    <chr>                 <dbl> <chr>             <chr>            <chr>          <chr>      <dbl> <chr>    <chr>          <chr>            <chr>   
-#>  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching demo~ "[\"bib~    1941 ncu      text           BK               eng     
-#>  2 http://catal~           1.3 uc1.$b67929       pd               The education~ "[\"bib~    1941 dcu      text           BK               eng     
-#>  3 http://catal~           1.3 mdp.390150627637~ pd               The education~ "[\"bib~    1941 dcu      text           BK               eng     
-#>  4 http://catal~           1.3 mdp.390150682979~ pd               The education~ "[\"bib~    1941 dcu      text           BK               eng     
-#>  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvania ~ "[\"not~    1941 pau      text           BK               eng     
-#>  6 http://catal~           1.3 mdp.390150358861~ ic               Education in ~ "[\"not~    1941 mau      text           BK               eng     
-#>  7 http://catal~           1.3 mdp.390150316655~ pd               Education and~ "[\"not~    1941 dcu      text           BK               eng     
-#>  8 http://catal~           1.3 uc1.$b67928       pd               Education and~ "[\"not~    1941 dcu      text           BK               eng     
-#>  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings o~ "[\"con~    1941 onc      text           SE               eng     
-#> 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in d~ "[\"bib~    1941 nyu      text           BK               eng     
+#>    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title         genre    pubDate pubPlace typeOfResource bibliographicFo~ language
+#>    <chr>                 <dbl> <chr>             <chr>            <chr>         <chr>      <dbl> <chr>    <chr>          <chr>            <chr>   
+#>  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching dem~ "[\"bib~    1941 ncu      text           BK               eng     
+#>  2 http://catal~           1.3 uc1.$b67929       pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     
+#>  3 http://catal~           1.3 mdp.390150627637~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     
+#>  4 http://catal~           1.3 mdp.390150682979~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     
+#>  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvania~ "[\"not~    1941 pau      text           BK               eng     
+#>  6 http://catal~           1.3 mdp.390150358861~ ic               Education in~ "[\"not~    1941 mau      text           BK               eng     
+#>  7 http://catal~           1.3 mdp.390150316655~ pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     
+#>  8 http://catal~           1.3 uc1.$b67928       pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     
+#>  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings ~ "[\"con~    1941 onc      text           SE               eng     
+#> 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in ~ "[\"bib~    1941 nyu      text           BK               eng     
 #> # ... with 90 more rows, and 25 more variables: dateCreated <dttm>, lastUpdateDate <dttm>, imprint <chr>, isbn <chr>, issn <chr>, oclc <chr>,
-#> #   lccn <chr>, classification <chr>, handleUrl <chr>, hathitrustRecordNumber <dbl>, sourceInstitutionRecordNumber <chr>, sourceInstitution <chr>,
-#> #   accessProfile <chr>, enumerationChronology <chr>, governmentDocument <chr>, names <chr>, issuance <chr>, subjectGenre <chr>,
-#> #   subjectTopic <chr>, subjectName <chr>, subjectTitleInfo <chr>, subjectTemporal <chr>, subjectGeographic <chr>, subjectOccupation <chr>,
-#> #   subjectCartographics <chr>
+#> #   lccn <chr>, classification <chr>, handleUrl <chr>, hathitrustRecordNumber <dbl>, sourceInstitutionRecordNumber <chr>,
+#> #   sourceInstitution <chr>, accessProfile <chr>, enumerationChronology <chr>, governmentDocument <chr>, names <chr>, issuance <chr>,
+#> #   subjectGenre <chr>, subjectTopic <chr>, subjectName <chr>, subjectTitleInfo <chr>, subjectTemporal <chr>, subjectGeographic <chr>,
+#> #   subjectOccupation <chr>, subjectCartographics <chr>
 ```
 And browse interactively these titles on the Hathi Trust website:
 

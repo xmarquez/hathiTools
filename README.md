@@ -14,11 +14,11 @@ Trust [Bookworm](https://bookworm.htrc.illinois.edu/develop/), a tool
 similar to the [Google ngram viewer](https://books.google.com/ngrams)
 and the Hathi Trust [Workset Builder
 2.0](https://solr2.htrc.illinois.edu/solr-ef/). It also allows you to
-download and process the [Hathi Trust Extracted
-Features](https://analytics.hathitrust.org/datasets) files, which
-contain per-page word counts and part-of-speech information for over 15
-million digitised volumes, including many of those originally digitised
-by Google for its Google Books project.
+download and process the [Hathi Trust Extracted Features
+files](https://analytics.hathitrust.org/datasets), which contain
+per-page word counts and part-of-speech information for over 15 million
+digitised volumes, including many of those originally digitised by
+Google for its Google Books project.
 
 ## Installation
 
@@ -76,8 +76,9 @@ result %>%
   theme_bw()
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" /> There are
-more than 13 million texts in the bookworm database.
+<img src="man/figures/README-example-1.png" width="100%" />
+
+There are more than 13 million texts in the bookworm database.
 
 ``` r
 total_texts <- query_bookworm(counttype = c("TotalTexts"), groups = c("date_year", "language"),
@@ -115,8 +116,9 @@ total_texts %>%
 
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
-See `vignette("using_the_hathi_bookworm")` for more on how to query the
-bookworm to get word frequencies grouped by particular fields and
+See the article “[Using the Hathi
+Bookworm](articles/using_the_hathi_bookworm)” for more on how to query
+the bookworm to get word frequencies grouped by particular fields and/or
 limited to specific categories.
 
 ## Creating Worksets of Hathi Trust IDs
@@ -171,8 +173,9 @@ We can browse these volumes interactively in the Hathi Trust website:
 browse_htids(result2)
 ```
 
-See the vignette `vignette("using_worksets")` for more on creating and
-working with worksets.
+See the article “[Topic Models Using Hathi Extracted
+Features](topic_models_using_hathi_ef)” for more on creating and using
+with worksets for specific analysis purposes.
 
 ## Downloading extracted feature files for specific Hathi Trust volumes
 
@@ -271,7 +274,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp2HbLJ0\file4ec04d7a329f data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpCEOgEB\file60d0600439d3 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
@@ -281,9 +284,10 @@ one command.
 rsync_from_hathi(head(result3))
 ```
 
-This requires having rsync installed; see the vignette
-`vignette("using_worksets")` for more on rsyncing large numbers of Hathi
-Trust IDs.
+This requires having rsync installed; see the article “[Topic Models
+Using Hathi Extracted Features](topic_models_using_hathi_ef)” for more
+on rsyncing large numbers of Hathi Trust JSON extracted features files
+and caching them to other formats for analysis.
 
 It is also possible to download the big
 “[hathifile](https://www.hathitrust.org/hathifiles)” to get basic

@@ -28,7 +28,22 @@ tocqueville <- workset_builder(name = "Alexis de Tocqueville")
 tocqueville
 ```
 
-The returned `tibble::tibble` contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, it just returns the number of pages for the volume. There are many options here; for example, we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
+There are over 400 volumes which list Tocqueville as an author. Many of these are the same, but digitised from different libraries, or different editions of the same text, and some are in different languages (French and English, for example). We can get a glimpse of the variety by downloading the metadata for a sample of 20 volumes:
+
+```{r tocqueville_meta}
+set.seed(14)
+tocqueville_meta <- get_workset_meta(tocqueville %>%
+                                       slice_sample(n = 20))
+tocqueville_meta %>%
+  select(title, pubDate, imprint, names, language) %>%
+  mutate(title = iconv(title, from = "UTF-8", to = "ASCII//TRANSLIT") %>%
+           str_remove_all("`") %>%
+           str_remove_all("\\?")) %>%
+  knitr::kable()
+
+```
+
+The returned workset above contains a column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the [workset_builder] function just returned the number of pages in the volume. But we could instead search for the volumes where Tocqueville is an author that mention the word "democracy":
 
 ```{r}
 tocqueville2 <- workset_builder("democracy", name = "Alexis de Tocqueville")
@@ -36,6 +51,7 @@ tocqueville2 <- workset_builder("democracy", name = "Alexis de Tocqueville")
 tocqueville2
 
 ```
+
 This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word "democracy" (most of them!).
 
 The resulting data frame also includes a column for the number of times the term "democracy" is mentioned, but not exact pages. Yet it's also possible to get the exact page sequence numbers where the term appears:
@@ -89,6 +105,7 @@ These are JSON files, which are slow to load and parse into data frames. We can 
 ```{r}
 cache_htids(tocqueville4)
 ```
+
 These are available now in your `./hathi-ef` directory. The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file path, and whether the file exists or not (i.e., whether it was downloaded successfully and cached).
 
 ```{r}
@@ -108,7 +125,8 @@ tocqueville_ef <- cached_files %>%
 
 tocqueville_ef
 ```
-This large DF can be converted into a `quanteda::dfm` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
+
+This large data frame can be converted into a `quanteda::dfm` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
 
 ```{r}
 library(tidytext)
@@ -148,9 +166,9 @@ docvars(tocqueville_dfm) <- tocqueville_ef %>%
 tocqueville_dfm
 ```
 
-We can use this dfm in a variety of ways. Here I train a page-level topic model using the `{stm}` package, using only the English texts of Tocqueville.
+We can use this document-feature matrix in a variety of ways. Here I train a page-level topic model using the `{stm}` package, using only the English texts of Tocqueville.
 
-First we subset the dfm, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.
+First we subset the document-feature matrix, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.
 
 ```{r}
 tocqueville_dfm_eng <- dfm_subset(tocqueville_dfm, subset = language == "eng") %>%
@@ -161,7 +179,7 @@ tocqueville_dfm_eng <- dfm_subset(tocqueville_dfm, subset = language == "eng") %
 tocqueville_dfm_eng
 ```
 
-We then fit a structural topic model with 20 topics. This takes a while; normally you'd do some sensitivity analysis and check whether the model works better with more or fewer topics (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
+We then fit a structural topic model with 20 topics. This takes a while; normally you'd also do some sensitivity analysis and check whether the model works better with more or fewer topics, but this model is only illustrative (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
 
 
 ```{r}
@@ -202,9 +220,9 @@ tidy_model <- tidy_model %>%
 tidy_model
 ```
 
-We can now visualize the topic distribution per book:
+We can visualize the topic distribution per book:
 
-```{r, fig.width=14, fig.height=12}
+```{r, fig.width=14, fig.height=12, fig.cap = "Figure 1"}
 library(ggtext)
 
 
@@ -241,4 +259,4 @@ tidy_model %>%
 
 ```
 
-We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages; etc.
+We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus (which means each page shows more of topic 19).
