@@ -274,7 +274,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpCEOgEB\file60d0600439d3 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmpgxddh9\file4b5c259a2696 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
@@ -285,9 +285,9 @@ rsync_from_hathi(head(result3))
 ```
 
 This requires having rsync installed; see the article “[Topic Models
-Using Hathi Extracted Features](topic_models_using_hathi_ef)” for more
-on rsyncing large numbers of Hathi Trust JSON extracted features files
-and caching them to other formats for analysis.
+Using Hathi Extracted Features](articles/topic_models_using_hathi_ef)”
+for more on rsyncing large numbers of Hathi Trust JSON extracted
+features files and caching them to other formats for analysis.
 
 It is also possible to download the big
 “[hathifile](https://www.hathitrust.org/hathifiles)” to get basic

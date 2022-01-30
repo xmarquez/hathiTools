@@ -153,7 +153,7 @@ There's a convenience function that will attempt to do this for you in one comma
 rsync_from_hathi(head(result3))
 ```
 
-This requires having rsync installed; see the article "[Topic Models Using Hathi Extracted Features](topic_models_using_hathi_ef)" for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.
+This requires having rsync installed; see the article "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef)" for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.
 
 It is also possible to download the big "[hathifile](https://www.hathitrust.org/hathifiles)" to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.
 
