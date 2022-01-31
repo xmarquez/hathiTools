@@ -75,6 +75,9 @@ get_hathi_counts <- function(htid,
 
 #' Reads the metadata of a single downloaded Hathi Trust extracted features file
 #'
+#' This function uses code authored by Ben Schmidt, from his Hathidy
+#' package ([https://github.com/bmschmidt/edinburgh/](https://github.com/HumanitiesDataAnalysis/hathidy)).
+#'
 #' Note that if you want to extract the metadata of more than one Hathi Trust ID
 #' at a time, it is best to simply query the Workset Builder database using
 #' [get_workset_meta]. Using [get_workset_meta] also guarantees you'll get a

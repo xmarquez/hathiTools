@@ -18,6 +18,10 @@ the file does not exist, this function will first attempt to download it.}
 a \link{tibble} with metadata.
 }
 \description{
+This function uses code authored by Ben Schmidt, from his Hathidy
+package (\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
+}
+\details{
 Note that if you want to extract the metadata of more than one Hathi Trust ID
 at a time, it is best to simply query the Workset Builder database using
 \link{get_workset_meta}. Using \link{get_workset_meta} also guarantees you'll get a
