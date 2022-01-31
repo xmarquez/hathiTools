@@ -37,6 +37,7 @@ rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
     }
   }
 
+  htids <- unique(htids)
 
   hathi_ef_directory <- fs::dir_create(dir)
 
