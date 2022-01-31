@@ -117,7 +117,7 @@ Retrieves word frequency data from the Hathi Trust Bookworm Server at
 https://bookworm.htrc.illinois.edu/develop/, with options to group according
 to various forms of metadata and to limit according to that same metadata.
 This funciton uses code authored by Ben Schmidt
-(https://github.com/bmschmidt/edinburgh/).
+\url{https://github.com/bmschmidt/edinburgh/}.
 }
 \examples{
 \dontrun{
