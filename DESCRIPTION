@@ -32,9 +32,10 @@ Imports:
     digest
 Depends: 
     R (>= 2.10)
-URL: https://xmarquez.github.io/hathiTools
+URL: https://github.com/xmarquez/hathiTools
 Suggests: 
     testthat (>= 3.0.0),
     arrow,
     rmarkdown
 Config/testthat/edition: 3
+BugReports: https://github.com/xmarquez/hathiTools/issues
