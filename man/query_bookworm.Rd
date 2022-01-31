@@ -116,8 +116,8 @@ parameter, the word (if any), and the counts and counttypes. For \code{method = 
 Retrieves word frequency data from the Hathi Trust Bookworm Server at
 https://bookworm.htrc.illinois.edu/develop/, with options to group according
 to various forms of metadata and to limit according to that same metadata.
-This funciton uses code authored by Ben Schmidt
-\url{https://github.com/bmschmidt/edinburgh/}.
+This function uses code authored by Ben Schmidt
+(from \url{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
 \dontrun{

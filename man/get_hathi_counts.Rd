@@ -32,7 +32,7 @@ a \link{tibble} with the extracted features.
 }
 \description{
 This function uses code authored by Ben Schmidt, from his Hathidy
-package \href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}.
+package (\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
 \dontrun{
