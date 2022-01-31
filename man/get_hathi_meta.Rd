@@ -18,8 +18,12 @@ the file does not exist, this function will first attempt to download it.}
 a \link{tibble} with metadata.
 }
 \description{
-This function uses code authored by Ben Schmidt, from his Hathidy
-package (\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
+Given a single Hathi Trust ID, this function returns a \link{tibble} with its
+metadata information. If the HT EF file corresponding to this ID has not been
+downloaded already, it first attempts to download it directly from the Hathi
+Trust server. This function uses code authored by Ben Schmidt, from his
+Hathidy package
+(\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
 }
 \details{
 Note that if you want to extract the metadata of more than one Hathi Trust ID

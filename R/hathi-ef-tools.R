@@ -26,8 +26,13 @@ download_hathi_ef <- function(htid,
 
 #' Reads the downloaded extracted features file for a given Hathi Trust id
 #'
-#' This function uses code authored by Ben Schmidt, from his Hathidy
-#' package ([https://github.com/bmschmidt/edinburgh/](https://github.com/HumanitiesDataAnalysis/hathidy)).
+#' Given a single Hathi Trust ID, this function returns a [tibble] with its
+#' per-page word count and part of speech information, and caches the results to
+#' the `getOption("hathiTools.ef.dir")` directory (by default "./hathi-ef"). If
+#' the file has not been cached already, it first attempts to download it
+#' directly from the Hathi Trust server. This function uses code authored by Ben
+#' Schmidt, from his Hathidy package
+#' ([https://github.com/bmschmidt/edinburgh/](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be loaded into memory. If it hasn't been downloaded, the function will
@@ -77,8 +82,12 @@ get_hathi_counts <- function(htid,
 
 #' Reads the metadata of a single downloaded Hathi Trust extracted features file
 #'
-#' This function uses code authored by Ben Schmidt, from his Hathidy
-#' package ([https://github.com/bmschmidt/edinburgh/](https://github.com/HumanitiesDataAnalysis/hathidy)).
+#' Given a single Hathi Trust ID, this function returns a [tibble] with its
+#' metadata information. If the HT EF file corresponding to this ID has not been
+#' downloaded already, it first attempts to download it directly from the Hathi
+#' Trust server. This function uses code authored by Ben Schmidt, from his
+#' Hathidy package
+#' ([https://github.com/bmschmidt/edinburgh/](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #' Note that if you want to extract the metadata of more than one Hathi Trust ID
 #' at a time, it is best to simply query the Workset Builder database using

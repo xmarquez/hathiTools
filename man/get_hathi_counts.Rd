@@ -31,8 +31,13 @@ csv suitable for use with the package
 a \link{tibble} with the extracted features.
 }
 \description{
-This function uses code authored by Ben Schmidt, from his Hathidy
-package (\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
+Given a single Hathi Trust ID, this function returns a \link{tibble} with its
+per-page word count and part of speech information, and caches the results to
+the \code{getOption("hathiTools.ef.dir")} directory (by default "./hathi-ef"). If
+the file has not been cached already, it first attempts to download it
+directly from the Hathi Trust server. This function uses code authored by Ben
+Schmidt, from his Hathidy package
+(\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
 \dontrun{
