@@ -97,6 +97,8 @@
 #'   parameter, the word (if any), and the counts and counttypes. For `method =
 #'   "search_result"`, a workset that can be used in [browse_htids] and
 #'   [get_workset_meta].
+#' @author Ben Schmidt
+#'
 #' @export
 #'
 #' @examples

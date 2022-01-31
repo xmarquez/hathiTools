@@ -133,3 +133,6 @@ result5 <- query_bookworm(word = "democracy", groups = "date_year", date_year = 
   class = "Education", method = "search_results")
 }
 }
+\author{
+Ben Schmidt
+}

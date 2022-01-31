@@ -39,3 +39,6 @@ tmp <- tempdir()
 get_hathi_meta("mdp.39015001796443", dir = tmp)
 }
 }
+\author{
+Ben Schmidt
+}

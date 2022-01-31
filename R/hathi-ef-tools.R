@@ -43,6 +43,8 @@ download_hathi_ef <- function(htid,
 #'   csv suitable for use with the package
 #'   [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
+#' @author Ben Schmidt
+#'
 #' @return a [tibble] with the extracted features.
 #' @export
 #'
@@ -92,6 +94,7 @@ get_hathi_counts <- function(htid,
 #'   the file does not exist, this function will first attempt to download it.
 #'
 #' @return a [tibble] with metadata.
+#' @author Ben Schmidt
 #' @export
 #'
 #' @examples

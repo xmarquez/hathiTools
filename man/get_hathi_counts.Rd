@@ -45,3 +45,6 @@ get_hathi_counts("aeu.ark:/13960/t3qv43c3w", dir = tmp)
 
 }
 }
+\author{
+Ben Schmidt
+}
