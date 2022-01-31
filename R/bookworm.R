@@ -1,11 +1,11 @@
 #' Queries the Hathi Trust Bookworm Server at
-#' https://bookworm.htrc.illinois.edu/develop/
+#' [https://bookworm.htrc.illinois.edu/develop/](https://bookworm.htrc.illinois.edu/develop/)
 #'
-#' Retrieves word frequency data from the Hathi Trust Bookworm Server at
-#' https://bookworm.htrc.illinois.edu/develop/, with options to group according
-#' to various forms of metadata and to limit according to that same metadata.
-#' This function uses code authored by Ben Schmidt
-#' (from [https://github.com/bmschmidt/edinburgh/](https://github.com/bmschmidt/edinburgh/)).
+#' This function retrieves word frequency data from the Hathi Trust Bookworm
+#' Server at https://bookworm.htrc.illinois.edu/develop/, with options to group
+#' the results according to various forms of metadata and to limit according to
+#' that same metadata. It uses code authored by Ben Schmidt (from
+#' [https://github.com/bmschmidt/edinburgh/](https://github.com/bmschmidt/edinburgh/)).
 #'
 #' @param word At least one term to get frequencies for. Can be a vector of
 #'   strings.

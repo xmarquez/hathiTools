@@ -3,7 +3,7 @@
 \name{query_bookworm}
 \alias{query_bookworm}
 \title{Queries the Hathi Trust Bookworm Server at
-https://bookworm.htrc.illinois.edu/develop/}
+\url{https://bookworm.htrc.illinois.edu/develop/}}
 \usage{
 query_bookworm(
   word,
@@ -113,11 +113,11 @@ parameter, the word (if any), and the counts and counttypes. For \code{method = 
 \link{get_workset_meta}.
 }
 \description{
-Retrieves word frequency data from the Hathi Trust Bookworm Server at
-https://bookworm.htrc.illinois.edu/develop/, with options to group according
-to various forms of metadata and to limit according to that same metadata.
-This function uses code authored by Ben Schmidt
-(from \url{https://github.com/bmschmidt/edinburgh/}).
+This function retrieves word frequency data from the Hathi Trust Bookworm
+Server at https://bookworm.htrc.illinois.edu/develop/, with options to group
+the results according to various forms of metadata and to limit according to
+that same metadata. It uses code authored by Ben Schmidt (from
+\url{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
 \dontrun{
