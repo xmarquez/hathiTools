@@ -58,7 +58,14 @@
   </ul>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/xmarquez/hathiTools/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -74,7 +81,7 @@
       <h1 data-toc-skip>Using the Hathi Trust Bookworm Tool</h1>
             
       
-      
+      <small class="dont-index">Source: <a href="https://github.com/xmarquez/hathiTools/blob/HEAD/vignettes/articles/using_the_hathi_bookworm.Rmd" class="external-link"><code>vignettes/articles/using_the_hathi_bookworm.Rmd</code></a></small>
       <div class="hidden name"><code>using_the_hathi_bookworm.Rmd</code></div>
 
     </div>
@@ -85,7 +92,7 @@
 <p>This package offers one function, <code><a href="../reference/query_bookworm.html">query_bookworm()</a></code>, that makes it relatively easy to retrieve word frequency and other data from the Hathi Trust Bookworm into R, and to use it for exploratory analyses of word frequency trends.</p>
 <p>For example, suppose we are interested in the changing frequencies of terms like “democracy”, “dictatorship”, “monarchy”, and so on. We can download the frequency of these terms (according to various metrics) with a single call:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://xmarquez.github.io/hathiTools">hathiTools</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xmarquez/hathiTools" class="external-link">hathiTools</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/slider" class="external-link">slider</a></span><span class="op">)</span> <span class="co"># For moving averages</span>
 
