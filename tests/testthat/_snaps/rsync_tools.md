@@ -2,6 +2,8 @@
 
     Code
       rsync_result <- rsync_from_hathi(poetry$htid[1:10], dir = dir)
+    Message <simpleMessage>
+      Creating directory to sync JSON EF files at ./hathi-ef
     Output
       0 
 
