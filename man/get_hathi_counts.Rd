@@ -31,7 +31,8 @@ csv suitable for use with the package
 a \link{tibble} with the extracted features.
 }
 \description{
-Reads the downloaded extracted features file for a given Hathi Trust id
+This function uses code authored by Ben Schmidt, from his Hathidy
+package (https://github.com/HumanitiesDataAnalysis/hathidy).
 }
 \examples{
 \dontrun{

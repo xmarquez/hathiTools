@@ -12,3 +12,4 @@
 ^hathi-ef$
 ^vignettes/articles$
 ^cache$
+^LICENSE\.md$

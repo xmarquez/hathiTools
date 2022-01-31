@@ -26,6 +26,9 @@ download_hathi_ef <- function(htid,
 
 #' Reads the downloaded extracted features file for a given Hathi Trust id
 #'
+#' This function uses code authored by Ben Schmidt, from his Hathidy
+#' package (https://github.com/HumanitiesDataAnalysis/hathidy).
+#'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
 #'   to be loaded into memory. If it hasn't been downloaded, the function will
 #'   try to download it first.
