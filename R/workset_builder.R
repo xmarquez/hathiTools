@@ -238,7 +238,7 @@ workset_builder <- function(token, genre, title,
 #' API is experimental, and so this function can fail at any time if the API
 #' changes.
 #'
-#' Also, be mindful that dowloading a large number of metadata records can take
+#' Be mindful that downloading a large number of metadata records can take
 #' quite some time. In practice I have found that downloading full metadata from
 #' more than about 1000 records is a dicey proposition; if you need metadata for
 #' many thousands of records, you are probably better off using the big

@@ -108,7 +108,8 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
   }
   meta <- load_json(htid, dir = dir)$metadata
 
-  length_zero_cols <- meta %>% purrr::map_lgl(~{length(.) == 0})
+  length_zero_cols <- meta %>%
+    purrr::map_lgl(~{length(.) == 0})
   meta_names <- names(meta)
   meta_names <- meta_names[ !length_zero_cols ]
   meta <- meta[ !length_zero_cols]
@@ -118,7 +119,11 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
       tidyr::unnest(value) %>%
       dplyr::mutate(value = as.character(value))
   }
-  meta <- meta %>% purrr::map(flatten_data) %>% dplyr::bind_rows(.id = "field")
+
+  meta <- meta %>%
+    purrr::map(flatten_data) %>%
+    dplyr::bind_rows(.id = "field")
+
   meta$htid <- htid
   meta
 }
