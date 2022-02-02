@@ -28,7 +28,7 @@ This package is not yet on CRAN. Install from GitHub as follows:
 if(!require(remotes)) { 
   install.packages("remotes") 
 }
-remotes::install("xmarquez/hathiTools")
+remotes::install_github("xmarquez/hathiTools")
 ```
 
 ## Downloading word frequencies
@@ -278,7 +278,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpgP5dJs\file74703ec16099 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwP05uz\file96ac146b16dd data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in

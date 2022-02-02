@@ -29,7 +29,7 @@ This package is not yet on CRAN. Install from GitHub as follows:
 if(!require(remotes)) { 
   install.packages("remotes") 
 }
-remotes::install("xmarquez/hathiTools")
+remotes::install_github("xmarquez/hathiTools")
 ```
 
 ## Downloading word frequencies
