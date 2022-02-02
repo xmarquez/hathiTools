@@ -26,6 +26,9 @@ This package allows you to interact with various free data resources made availa
 This package is not yet on CRAN. Install from GitHub as follows:
 
 ``` r
+if(!require(remotes)) { 
+  install.packages("remotes") 
+}
 remotes::install("xmarquez/hathiTools")
 ```
 
@@ -36,6 +39,7 @@ The simplest task to use the package for is to download word frequencies from th
 ```{r example}
 library(hathiTools)
 library(tidyverse)
+library(slider) ## For rolling averages
 
 result <- query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000), counttype = c("WordsPerMillion", "TextPercent"))
 
@@ -43,7 +47,7 @@ result
 
 result %>%
   group_by(word, counttype) %>%
-  mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
+  mutate(rolling_avg = slide_dbl(value, mean, .before = 10, .after = 10)) %>%
   ggplot(aes(x = date_year, color = word)) +
   geom_line(aes(y = value), alpha = 0.3) +
   geom_line(aes(x = date_year, y = rolling_avg)) +

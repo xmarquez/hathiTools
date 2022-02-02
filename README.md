@@ -25,6 +25,9 @@ Google for its Google Books project.
 This package is not yet on CRAN. Install from GitHub as follows:
 
 ``` r
+if(!require(remotes)) { 
+  install.packages("remotes") 
+}
 remotes::install("xmarquez/hathiTools")
 ```
 
@@ -45,6 +48,7 @@ library(tidyverse)
 #> -- Conflicts ------------------------------------------ tidyverse_conflicts() --
 #> x dplyr::filter() masks stats::filter()
 #> x dplyr::lag()    masks stats::lag()
+library(slider) ## For rolling averages
 
 result <- query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000), counttype = c("WordsPerMillion", "TextPercent"))
 
@@ -66,7 +70,7 @@ result
 
 result %>%
   group_by(word, counttype) %>%
-  mutate(rolling_avg = slider::slide_dbl(value, mean, .before = 10, .after = 10)) %>%
+  mutate(rolling_avg = slide_dbl(value, mean, .before = 10, .after = 10)) %>%
   ggplot(aes(x = date_year, color = word)) +
   geom_line(aes(y = value), alpha = 0.3) +
   geom_line(aes(x = date_year, y = rolling_avg)) +
@@ -274,7 +278,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp6vxdYj\file81547b30298b data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpgP5dJs\file74703ec16099 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
