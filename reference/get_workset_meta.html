@@ -96,15 +96,161 @@ download will have a different name.</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>A <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble::tibble</a> with the Hathi Trust metadata for all the volumes
-in the workset or the vector of htids.</p>
-    </div>
+in the workset or the vector of htids. #'   This tibble can contain the
+following fields (taken from
+<a href="https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329" class="external-link">https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329</a>):</p><dl><dt>htBibUrl</dt>
+<dd><p>The Hathi Trust Bibliographic URL for the volume, which
+will point to the volume in the HathiTrust Digital Library. E.g.
+"http://catalog.hathitrust.org/api/volumes/full/htid/aeu.ark:/13960/t00z8277t.json"</p></dd>
+
+
+<dt>schemaVersion</dt>
+<dd><p>The schema version for the metadata block of the
+Extracted Features file. A URL linking to the schema.
+"https://schemas.hathitrust.org/Extracted
+Features_Schema_MetadataSubSchema_v_3.0"</p></dd>
+
+
+<dt>volumeIdentifier</dt>
+<dd><p>The Hathi Trust ID</p></dd>
+
+
+<dt>rightsAttributes</dt>
+<dd><p>The copyright status of the volume.</p></dd>
+
+
+<dt>title</dt>
+<dd><p>The title of the volume.</p></dd>
+
+
+<dt>genre</dt>
+<dd><p>Information about the volume's genre, as determined by the
+cataloger of the work. Values are derived from the Genre/Form Field in the
+MARC record.</p></dd>
+
+
+<dt>pubDate</dt>
+<dd><p>The year in which that edition of the volume was first
+published.</p></dd>
+
+
+<dt>pubPlace</dt>
+<dd><p>Named list column.  Information about where the volume was
+first published. Includes id, type, and name. <code>type</code> is taken from the
+Bibframe Instance's provisionActivity's place rdf:about node, which are
+derived from the country codes in the MARC 008 field.</p></dd>
+
+
+<dt>typeOfResource</dt>
+<dd><p>Type of resource, e.g., "text".</p></dd>
+
+
+<dt>bibliographicFormat</dt>
+<dd><p>Bibliographic format (e.g. "BK").</p></dd>
+
+
+<dt>language</dt>
+<dd><p>The cataloger-determined language or languages of the
+volume. Taken from the Bibframe Work's language's identifiedBy's value
+node, which is derived from the Language Code field in the MARC record.
+This may differ from the automatically detected language of any given page
+in the page-level metadata returned by <a href="get_hathi_page_meta.html">get_hathi_page_meta</a></p></dd>
+
+
+<dt>dateCreated</dt>
+<dd><p>The date on which the metadata portion of the Extracted
+Features file is generated, in YYYYMMDD format</p></dd>
+
+
+<dt>lastUpdateDate</dt>
+<dd><p>The most recent date the volume's copyright status
+was updated.</p></dd>
+
+
+<dt>imprint</dt>
+<dd><p>Information about the publisher of the volume.</p></dd>
+
+
+<dt>isbn</dt>
+<dd><p>The ISBN of the volume (when a book).</p></dd>
+
+
+<dt>issn</dt>
+<dd><p>The ISSN of the volume (when a journal).</p></dd>
+
+
+<dt>oclc</dt>
+<dd><p>The OCLC number for the volume. An OCLC number is an identifier
+assigned to items as they are cataloged in a library.</p></dd>
+
+
+<dt>lccn</dt>
+<dd><p>The Library of Congress Control Number for the volume. An LCCN
+is a unique number that is assigned during cataloging.</p></dd>
+
+
+<dt>classification</dt>
+<dd><p>Library classification.</p></dd>
+
+
+<dt>handleUrl</dt>
+<dd><p>The Handle URL for the volume, which will point to the
+volume in the HathiTrust Digital Library. E.g.
+"http://hdl.handle.net/2027/mdp.39015062779023"</p></dd>
+
+
+<dt>hathiTrustRecordNumber</dt>
+<dd><p>The Hathi Trust Bibliographic record ID
+number.</p></dd>
+
+
+<dt>sourceInstitutionRecordNumber</dt>
+<dd><p>The source institution record ID
+number.</p></dd>
+
+
+<dt>sourceInstitution</dt>
+<dd><p>The source institution.</p></dd>
+
+
+<dt>accessProfile</dt>
+<dd><p>Type of access rights.</p></dd>
+
+
+<dt>enumerationChronology</dt>
+<dd><p>Information regarding which volume, issue,
+and/or year the HathiTrust volume was published.</p></dd>
+
+
+<dt>governmentDocument</dt>
+<dd><p>Whether the item is a government document.</p></dd>
+
+
+<dt>names</dt>
+<dd><p>Contains information regarding the author(s), editor(s), or
+other agents involved in creating the volume.</p></dd>
+
+
+<dt>issuance</dt>
+<dd><p>The cataloger-determined resource type of the volume (e.g.,
+monographic, etc.).</p></dd>
+
+
+<dt>subjectGenre, subjectName, subjectTitleInfo, subjectTemporal,
+subjectGeographic, subjectOccupation, subjectCartographics</dt>
+<dd><p>Columns
+containing subject info, if present.</p></dd>
+
+
+
+</dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>Be mindful that downloading a large number of metadata records can take
-quite some time. In practice I have found that downloading full metadata from
-more than about 1000 records is a dicey proposition; if you need metadata for
-many thousands of records, you are probably better off using the big
-hathifile (see <a href="download_hathifile.html">download_hathifile</a> and <a href="load_raw_hathifile.html">load_raw_hathifile</a>).</p>
+    <p>Be mindful that downloading a large number of metadata records can take quite
+some time. In practice I have found that downloading full metadata from more
+than about 1000 records is a dicey proposition; if you need metadata for many
+thousands of records, you are probably better off using the big hathifile
+(see <a href="download_hathifile.html">download_hathifile</a> and <a href="load_raw_hathifile.html">load_raw_hathifile</a>).</p>
     </div>
 
     <div id="ref-examples">

@@ -248,22 +248,36 @@
 <code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
 
 <span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 30 x 3</span>
-<span class="co">#&gt;    field         value                                         htid             </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                         &lt;chr&gt;            </span>
-<span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Met~ aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t0~ aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  3 type          DataFeedItem                                  aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  4 type          Book                                          aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  5 dateCreated   20200209                                      aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  6 title         De la démocratie en Amérique                  aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/66474207             aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Person  aeu.ark:/13960/t~</span>
-<span class="co">#&gt;  9 contributor   Tocqueville, Alexis de, 1805-1859.            aeu.ark:/13960/t~</span>
-<span class="co">#&gt; 10 pubDate       1848                                          aeu.ark:/13960/t~</span>
-<span class="co">#&gt; # ... with 20 more rows</span></code></pre></div>
-<p>We can also get the metadata for many or all of these books at the same time:</p>
+<span class="co">#&gt; # A tibble: 1 x 20</span>
+<span class="co">#&gt;   htid    schemaVersion     id      type  dateCreated title  contributor pubDate</span>
+<span class="co">#&gt;   &lt;chr&gt;   &lt;chr&gt;             &lt;chr&gt;   &lt;lis&gt;       &lt;int&gt; &lt;chr&gt;  &lt;list&gt;        &lt;int&gt;</span>
+<span class="co">#&gt; 1 aeu.ar~ https://schemas.~ http:/~ &lt;lis~    20200209 De la~ &lt;named lis~    1848</span>
+<span class="co">#&gt; # ... with 12 more variables: publisher &lt;list&gt;, pubPlace &lt;list&gt;,</span>
+<span class="co">#&gt; #   language &lt;chr&gt;, accessRights &lt;chr&gt;, accessProfile &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sourceInstitution &lt;list&gt;, mainEntityOfPage &lt;list&gt;, oclc &lt;chr&gt;, isbn &lt;chr&gt;,</span>
+<span class="co">#&gt; #   genre &lt;list&gt;, typeOfResource &lt;chr&gt;, lastRightsUpdateDate &lt;int&gt;</span></code></pre></div>
+<p>Including the page-level metadata for any volume:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">page_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_hathi_page_meta.html">get_hathi_page_meta</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
+
+<span class="va">page_meta</span>
+<span class="co">#&gt; # A tibble: 419 x 9</span>
+<span class="co">#&gt;    htid        seq version     tokenCount lineCount emptyLineCount sentenceCount</span>
+<span class="co">#&gt;    &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;            &lt;int&gt;     &lt;int&gt;          &lt;int&gt;         &lt;int&gt;</span>
+<span class="co">#&gt;  1 aeu.ark:~     1 fe52f777f9~         81        84             43             3</span>
+<span class="co">#&gt;  2 aeu.ark:~     2 405716a1c9~         26        21             11             4</span>
+<span class="co">#&gt;  3 aeu.ark:~     3 43d6c5e061~        519       243            119            10</span>
+<span class="co">#&gt;  4 aeu.ark:~     4 6a9a839662~        475       110             30            14</span>
+<span class="co">#&gt;  5 aeu.ark:~     5 d41d8cd98f~          0         0              0             0</span>
+<span class="co">#&gt;  6 aeu.ark:~     6 d09c7eb2c7~          6         7              4            NA</span>
+<span class="co">#&gt;  7 aeu.ark:~     7 c01b3bec4e~         35         8              4            NA</span>
+<span class="co">#&gt;  8 aeu.ark:~     8 3724eff37d~         68        30             14            NA</span>
+<span class="co">#&gt;  9 aeu.ark:~     9 7f9e924394~          4         4              2            NA</span>
+<span class="co">#&gt; 10 aeu.ark:~    10 34189de832~          8         6              3             1</span>
+<span class="co">#&gt; # ... with 409 more rows, and 2 more variables: calculatedLanguage &lt;chr&gt;,</span>
+<span class="co">#&gt; #   sectionStats &lt;list&gt;</span></code></pre></div>
+<p>We can also get the metadata for many or all of these books at the same time:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">result3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">]</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
 <span class="co">#&gt; Getting download key...</span>
 <span class="co">#&gt; Downloading metadata for 10 volumes. This might take some time.</span>
@@ -300,13 +314,13 @@
 <span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;lgl&gt;,</span>
 <span class="co">#&gt; #   governmentDocument &lt;lgl&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, ...</span></code></pre></div>
 <p>One can also turn a workset into a list of htids for downloading their extracted features via rsync:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span>
 
 <span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwP05uz\file96ac146b16dd data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
+<span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwjWflz\file206c41b84c7a data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></code></pre></div>
 <p>There’s a convenience function that will attempt to do this for you in one command.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">result3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p>This requires having rsync installed; see the article “<a href="articles/topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
 <p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
