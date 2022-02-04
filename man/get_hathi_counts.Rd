@@ -28,15 +28,15 @@ csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
 \value{
-a \link{tibble} with the extracted features.
+a \link[tibble:tibble]{tibble} with the extracted features.
 }
 \description{
-Given a single Hathi Trust ID, this function returns a \link{tibble} with its
-per-page word count and part of speech information, and caches the results to
-the \code{getOption("hathiTools.ef.dir")} directory (by default "./hathi-ef"). If
-the file has not been cached already, it first attempts to download it
-directly from the Hathi Trust server. This function uses code authored by Ben
-Schmidt, from his Hathidy package
+Given a single Hathi Trust ID, this function returns a
+\link[tibble:tibble]{tibble} with its per-page word count and part of speech
+information, and caches the results to the \code{getOption("hathiTools.ef.dir")}
+directory (by default "./hathi-ef"). If the file has not been cached already,
+it first attempts to download it directly from the Hathi Trust server. This
+function uses code authored by Ben Schmidt, from his Hathidy package
 (\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \examples{

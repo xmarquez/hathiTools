@@ -7,16 +7,17 @@
 get_hathi_page_meta(htid, dir = getOption("hathiTools.ef.dir"))
 }
 \arguments{
-\item{htid}{The Hathi Trust id of the item whose extracted features files are
-to be downloaded.}
+\item{htid}{The Hathi Trust id of the item whose metadata is to be read.}
 
-\item{dir}{The directory where the file is saved. Defaults to
-\code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/" on load. If
-the file does not exist, this function will first attempt to download it.}
+\item{dir}{The directory where the JSON file for the extracted features is
+saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
+"./hathi-ef/" on load. If the file does not exist, this function will first
+attempt to download it.}
 }
 \value{
-A \link{tibble} with the page-level metadata for the corresponding Hathi
-Trust ID. The page-level metadata contains the following fields (taken from
+A \link[tibble:tibble]{tibble} with the page-level metadata for the
+corresponding Hathi Trust ID. The page-level metadata contains the
+following fields (taken from
 \url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329}):
 
 \describe{
@@ -43,9 +44,9 @@ algorithm.}
 
 \item{sentenceCount}{The total number of sentences detected on the page.}
 
-\item{sectionStats}{A \link{tibble} column with stats for each of the sections
-of the page ("header", "body", and "footer"). This tibble has the following
-fields:
+\item{sectionStats}{A \link[tibble:tibble]{tibble} column with stats for each
+of the sections of the page ("header", "body", and "footer"). This tibble
+has the following fields:
 \itemize{
 \item section: The seciton of the page.
 \item sectiontokenCount: The total number of tokens detected in the section of
@@ -58,12 +59,12 @@ section of the page.
 section of the page.
 \item sectioncapAlphaSeq The longest length of the alphabetical sequence of
 capital characters starting a line. Only available for the "body" section.
-\item beginCharCount A \link{tibble} column with the first non-White Space
-characters detected on lines in the section (beginChar) and their
+\item beginCharCount A \link[tibble:tibble]{tibble} column with the first non-White
+Space characters detected on lines in the section (beginChar) and their
 occurrence counts (beginCharCount).
-\item endCharCount An \link{tibble} column of the last non-White Space characters on
-detected lines in the section (endChar) and their occurrence counts
-(endCharCount). }
+\item endCharCount An \link[tibble:tibble]{tibble} column of the last non-White
+Space characters on detected lines in the section (endChar) and their
+occurrence counts (endCharCount). }
 }
 
 }

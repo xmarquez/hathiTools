@@ -8,12 +8,12 @@ features file}
 get_hathi_meta(htid, dir = getOption("hathiTools.ef.dir"))
 }
 \arguments{
-\item{htid}{The Hathi Trust id of the item whose extracted features files are
-to be downloaded.}
+\item{htid}{The Hathi Trust id of the item whose metadata is to be read.}
 
-\item{dir}{The directory where the file is saved. Defaults to
-\code{getOption("hathiTools.ef.dir")}, which is just "./hathi-ef/" on load. If
-the file does not exist, this function will first attempt to download it.}
+\item{dir}{The directory where the JSON file for the extracted features is
+saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
+"./hathi-ef/" on load. If the file does not exist, this function will first
+attempt to download it.}
 }
 \value{
 A \link[tibble:tibble]{tibble} with metadata with the volume-level

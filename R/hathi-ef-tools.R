@@ -26,12 +26,12 @@ download_hathi_ef <- function(htid,
 
 #' Reads the downloaded extracted features file for a given Hathi Trust id
 #'
-#' Given a single Hathi Trust ID, this function returns a [tibble] with its
-#' per-page word count and part of speech information, and caches the results to
-#' the `getOption("hathiTools.ef.dir")` directory (by default "./hathi-ef"). If
-#' the file has not been cached already, it first attempts to download it
-#' directly from the Hathi Trust server. This function uses code authored by Ben
-#' Schmidt, from his Hathidy package
+#' Given a single Hathi Trust ID, this function returns a
+#' [tibble][tibble::tibble] with its per-page word count and part of speech
+#' information, and caches the results to the `getOption("hathiTools.ef.dir")`
+#' directory (by default "./hathi-ef"). If the file has not been cached already,
+#' it first attempts to download it directly from the Hathi Trust server. This
+#' function uses code authored by Ben Schmidt, from his Hathidy package
 #' ([https://github.com/HumanitiesDataAnalysis/hathidy](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #' @param htid The Hathi Trust id of the item whose extracted features files are
@@ -50,7 +50,7 @@ download_hathi_ef <- function(htid,
 #'
 #' @author Ben Schmidt
 #'
-#' @return a [tibble] with the extracted features.
+#' @return a [tibble][tibble::tibble] with the extracted features.
 #' @export
 #'
 #' @examples
@@ -97,11 +97,11 @@ get_hathi_counts <- function(htid,
 #'simple metadata for large numbers of htids by downloading the big hathifile
 #'using [download_hathifile] and then filtering it.
 #'
-#'@param htid The Hathi Trust id of the item whose extracted features files are
-#'  to be downloaded.
-#'@param dir The directory where the file is saved. Defaults to
-#'  `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/" on load. If
-#'  the file does not exist, this function will first attempt to download it.
+#'@param htid The Hathi Trust id of the item whose metadata is to be read.
+#'@param dir The directory where the JSON file for the extracted features is
+#'  saved. Defaults to `getOption("hathiTools.ef.dir")`, which is just
+#'  "./hathi-ef/" on load. If the file does not exist, this function will first
+#'  attempt to download it.
 #'
 #'@return A [tibble][tibble::tibble] with metadata with the volume-level
 #'  metadata for the corresponding Hathi Trust ID. This [tibble][tibble::tibble]
@@ -263,8 +263,9 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'
 #' @inheritParams get_hathi_meta
 #'
-#' @return A [tibble] with the page-level metadata for the corresponding Hathi
-#'   Trust ID. The page-level metadata contains the following fields (taken from
+#' @return A [tibble][tibble::tibble] with the page-level metadata for the
+#'   corresponding Hathi Trust ID. The page-level metadata contains the
+#'   following fields (taken from
 #'   [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329)):
 #'
 #'   \describe{
@@ -291,9 +292,9 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'
 #'   \item{sentenceCount}{The total number of sentences detected on the page.}
 #'
-#'   \item{sectionStats}{A [tibble] column with stats for each of the sections
-#'   of the page ("header", "body", and "footer"). This tibble has the following
-#'   fields:
+#'   \item{sectionStats}{A [tibble][tibble::tibble] column with stats for each
+#'   of the sections of the page ("header", "body", and "footer"). This tibble
+#'   has the following fields:
 #'
 #'   * section: The seciton of the page.
 #'
@@ -312,13 +313,13 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'   * sectioncapAlphaSeq The longest length of the alphabetical sequence of
 #'   capital characters starting a line. Only available for the "body" section.
 #'
-#'   * beginCharCount A [tibble] column with the first non-White Space
-#'   characters detected on lines in the section (beginChar) and their
+#'   * beginCharCount A [tibble][tibble::tibble] column with the first non-White
+#'   Space characters detected on lines in the section (beginChar) and their
 #'   occurrence counts (beginCharCount).
 #'
-#'   * endCharCount An [tibble] column of the last non-White Space characters on
-#'   detected lines in the section (endChar) and their occurrence counts
-#'   (endCharCount). }
+#'   * endCharCount An [tibble][tibble::tibble] column of the last non-White
+#'   Space characters on detected lines in the section (endChar) and their
+#'   occurrence counts (endCharCount). }
 #'
 #'   }
 #'
@@ -558,7 +559,7 @@ parse_page_meta <- function(page) {
     dplyr::left_join(endCharCount, by = "section")
 
   page <- page[to_parse] %>%
-    purrr::discard(is.null) %>%
+    purrr::compact() %>%
     tibble::as_tibble_row() %>%
     dplyr::mutate(seq = as.numeric(seq),
                   sectionStats = list(sectionStats))
