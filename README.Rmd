@@ -135,6 +135,14 @@ meta <- get_hathi_meta(result3$htid[2], dir = tmp)
 meta
 ```
 
+Including the page-level metadata for any volume:
+
+```{r}
+page_meta <- get_hathi_page_meta(result3$htid[2], dir = tmp)
+
+page_meta
+```
+
 We can also get the metadata for many or all of these books at the same time:
 
 ```{r}

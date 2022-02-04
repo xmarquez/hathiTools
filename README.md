@@ -224,6 +224,29 @@ meta
 #> #   genre <list>, typeOfResource <chr>, lastRightsUpdateDate <int>
 ```
 
+Including the page-level metadata for any volume:
+
+``` r
+page_meta <- get_hathi_page_meta(result3$htid[2], dir = tmp)
+
+page_meta
+#> # A tibble: 419 x 9
+#>    htid        seq version     tokenCount lineCount emptyLineCount sentenceCount
+#>    <chr>     <dbl> <chr>            <int>     <int>          <int>         <int>
+#>  1 aeu.ark:~     1 fe52f777f9~         81        84             43             3
+#>  2 aeu.ark:~     2 405716a1c9~         26        21             11             4
+#>  3 aeu.ark:~     3 43d6c5e061~        519       243            119            10
+#>  4 aeu.ark:~     4 6a9a839662~        475       110             30            14
+#>  5 aeu.ark:~     5 d41d8cd98f~          0         0              0             0
+#>  6 aeu.ark:~     6 d09c7eb2c7~          6         7              4            NA
+#>  7 aeu.ark:~     7 c01b3bec4e~         35         8              4            NA
+#>  8 aeu.ark:~     8 3724eff37d~         68        30             14            NA
+#>  9 aeu.ark:~     9 7f9e924394~          4         4              2            NA
+#> 10 aeu.ark:~    10 34189de832~          8         6              3             1
+#> # ... with 409 more rows, and 2 more variables: calculatedLanguage <chr>,
+#> #   sectionStats <list>
+```
+
 We can also get the metadata for many or all of these books at the same
 time:
 
@@ -272,7 +295,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpYlm14N\file23c4413a5767 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwjWflz\file206c41b84c7a data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
