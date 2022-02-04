@@ -78,8 +78,8 @@ from his Hathidy package
 }
 \details{
 Note that if you want to extract the page-level metadata of more than one
-Hathi Trust ID at a time, it is best to download the JSON files for these
-HTIDs first using \link{rsync_from_hathi} and then running \link{cache_htids_pagemeta}.
+Hathi Trust ID at a time, it may be best to download the JSON files for these
+HTIDs first using \link{rsync_from_hathi} and then running this function.
 }
 \examples{
 \dontrun{

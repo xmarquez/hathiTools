@@ -188,11 +188,13 @@ cache_htids <- function(htids,
                                         dir = dir,
                                         cache_type = cache_type)
 
+  total_file_locs <- nrow(cached_file_locs)
+
   to_cache <- cached_file_locs %>%
     dplyr::left_join(json_file_locs, by = "htid") %>%
     dplyr::filter(!exists.x, exists.y)
 
-  if(nrow(to_cache) == 0) {
+  if(nrow(to_cache) < total_file_locs) {
     non_existent_json <- cached_file_locs %>%
       dplyr::left_join(json_file_locs, by = "htid") %>%
       dplyr::filter(!exists.y) %>%
@@ -204,22 +206,17 @@ cache_htids <- function(htids,
       nrow()
 
     if(non_existent_json > 0) {
-      message("No HTIDs can be cached, since their JSON EF files have not been downloaded yet to ", dir)
+      message(non_existent_json, " HTIDs cannot be cached, since their JSON EF files have not been downloaded yet to ", dir)
       message("Try using rsync_from_hathi(htids) to download them.")
     }
     if(cached_already > 0) {
-      message("All HTIDs have already been cached to ", cache_type, " format.")
-      message("Returning data frame with file locations.")
+      message(cached_already, " HTIDs have already been cached to ", cache_type, " format.")
     }
     if(!keep_json) {
       message("Now deleting associated JSON files!")
       fs::file_delete(json_file_locs$local_loc)
     }
     return(find_cached_htids(htids, dir = dir, cache_type = cache_type))
-  }
-
-  if(nrow(to_cache) > 0 && nrow(to_cache) < nrow(cached_file_locs)) {
-    message("Some files have already been cached. Caching the rest.")
   }
 
   json_files <- to_cache$local_loc.y[to_cache$exists.y]
@@ -246,6 +243,27 @@ cache_htids <- function(htids,
 
 }
 
+cache_htids_meta <- function(htids) {
+  if("workset_hathi" %in% class(htids)) {
+    htids <- htids$htid
+  } else if("data.frame" %in% class(htids)) {
+    if(!"htid" %in% names(htids)) {
+      stop("Cannot find a column named 'htid' in the data frame of htids")
+    }
+    htids <- htids$htid
+  } else if(!is.character(htids)) {
+    stop("htids must be a character vector, a workset produced via workset_builder",
+         ", or a data frame with a column named 'htid' and containing the htids.")
+
+  }
+
+  json_file_locs <-  find_cached_htids(htids,
+                                       dir = dir,
+                                       cache_type = "none")
+
+
+
+}
 
 #' Finds cached Extracted Features files for a set of HT ids
 #'

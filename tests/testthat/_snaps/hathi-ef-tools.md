@@ -103,18 +103,12 @@
     Code
       ef
     Output
-      # A tibble: 30 x 3
-         field         value                                         htid             
-         <chr>         <chr>                                         <chr>            
-       1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Met~ aeu.ark:/13960/t~
-       2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t3~ aeu.ark:/13960/t~
-       3 type          DataFeedItem                                  aeu.ark:/13960/t~
-       4 type          Book                                          aeu.ark:/13960/t~
-       5 dateCreated   20200209                                      aeu.ark:/13960/t~
-       6 title         Democracy in America                          aeu.ark:/13960/t~
-       7 contributor   http://www.viaf.org/viaf/66474207             aeu.ark:/13960/t~
-       8 contributor   http://id.loc.gov/ontologies/bibframe/Person  aeu.ark:/13960/t~
-       9 contributor   Tocqueville, Alexis de, 1805-1859             aeu.ark:/13960/t~
-      10 pubDate       1838                                          aeu.ark:/13960/t~
-      # ... with 20 more rows
+      # A tibble: 1 x 20
+        htid    schemaVersion     id       type  dateCreated title contributor pubDate
+        <chr>   <chr>             <chr>    <lis>       <int> <chr> <list>        <int>
+      1 aeu.ar~ https://schemas.~ http://~ <lis~    20200209 Demo~ <named lis~    1838
+      # ... with 12 more variables: publisher <list>, pubPlace <list>,
+      #   language <chr>, accessRights <chr>, accessProfile <chr>,
+      #   sourceInstitution <list>, mainEntityOfPage <list>, oclc <chr>, isbn <chr>,
+      #   genre <list>, typeOfResource <chr>, lastRightsUpdateDate <int>
 

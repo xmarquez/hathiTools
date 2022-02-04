@@ -90,9 +90,9 @@ get_hathi_counts <- function(htid,
 #'([https://github.com/HumanitiesDataAnalysis/hathidy](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #'Note that if you want to extract the metadata of more than one Hathi Trust ID
-#'at a time, it is best to simply query the Workset Builder database using
+#'at a time, it may be best to simply query the Workset Builder database using
 #'[get_workset_meta], or to download the JSON files for these HTIDs first using
-#'[rsync_from_hathi] and then running [cache_htids_meta]. It is also possible to
+#'[rsync_from_hathi] and then running this function. It is also possible to
 #'get simple metadata for large numbers of htids by downloading the big
 #'hathifile using [download_hathifile] and then filtering it.
 #'
@@ -257,8 +257,8 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #' ([https://github.com/HumanitiesDataAnalysis/hathidy](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #' Note that if you want to extract the page-level metadata of more than one
-#' Hathi Trust ID at a time, it is best to download the JSON files for these
-#' HTIDs first using [rsync_from_hathi] and then running [cache_htids_pagemeta].
+#' Hathi Trust ID at a time, it may be best to download the JSON files for these
+#' HTIDs first using [rsync_from_hathi] and then running this function.
 #'
 #' @inheritParams get_hathi_meta
 #'
@@ -506,7 +506,7 @@ parse_listified_book <- function(listified_version) {
 }
 
 parse_page_meta <- function(page) {
-  seq <- NULL
+  seq <- section <- beginChar <- beginCount <- endChar <- endCount <- NULL
   to_parse <- names(page)[!names(page) %in% c("body", "header", "footer")]
   beginCharCount <- page[c("body", "header", "footer")] %>%
     purrr::compact() %>%

@@ -140,9 +140,9 @@ from his Hathidy package
 }
 \details{
 Note that if you want to extract the metadata of more than one Hathi Trust ID
-at a time, it is best to simply query the Workset Builder database using
+at a time, it may be best to simply query the Workset Builder database using
 \link{get_workset_meta}, or to download the JSON files for these HTIDs first using
-\link{rsync_from_hathi} and then running \link{cache_htids_meta}. It is also possible to
+\link{rsync_from_hathi} and then running this function. It is also possible to
 get simple metadata for large numbers of htids by downloading the big
 hathifile using \link{download_hathifile} and then filtering it.
 }
