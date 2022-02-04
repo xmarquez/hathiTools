@@ -2,7 +2,8 @@
 % Please edit documentation in R/hathi-ef-tools.R
 \name{get_hathi_meta}
 \alias{get_hathi_meta}
-\title{Reads the metadata of a single downloaded Hathi Trust extracted features file}
+\title{Reads the volume-level metadata of a single downloaded Hathi Trust extracted
+features file}
 \usage{
 get_hathi_meta(htid, dir = getOption("hathiTools.ef.dir"))
 }
@@ -15,9 +16,9 @@ to be downloaded.}
 the file does not exist, this function will first attempt to download it.}
 }
 \value{
-A \link{tibble} with metadata with the volume-level metadata for the
-corresponding Hathi Trust ID. This \link{tibble} can contain the following fields
-(taken from
+A \link[tibble:tibble]{tibble} with metadata with the volume-level
+metadata for the corresponding Hathi Trust ID. This \link[tibble:tibble]{tibble}
+can contain the following fields (taken from
 \url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329};
 if the field is \code{NULL}, it is not returned, so the metadata can contain
 fewer fields):
@@ -131,20 +132,20 @@ is a unique number that is assigned during cataloging.}
 }
 }
 \description{
-Given a single Hathi Trust ID, this function returns a \link{tibble} with its
-volume-level metadata information. If the HT EF file corresponding to this ID
-has not been downloaded already, it first attempts to download it directly
-from the Hathi Trust server. This function uses code authored by Ben Schmidt,
-from his Hathidy package
+Given a single Hathi Trust ID, this function returns a
+\link[tibble:tibble]{tibble} with its volume-level metadata information. If the HT
+EF file corresponding to this ID has not been downloaded already, it first
+attempts to download it directly from the Hathi Trust server. This function
+uses code authored by Ben Schmidt, from his Hathidy package
 (\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \details{
 Note that if you want to extract the metadata of more than one Hathi Trust ID
 at a time, it may be best to simply query the Workset Builder database using
 \link{get_workset_meta}, or to download the JSON files for these HTIDs first using
-\link{rsync_from_hathi} and then running this function. It is also possible to
-get simple metadata for large numbers of htids by downloading the big
-hathifile using \link{download_hathifile} and then filtering it.
+\link{rsync_from_hathi} and then running this function. It is also possible to get
+simple metadata for large numbers of htids by downloading the big hathifile
+using \link{download_hathifile} and then filtering it.
 }
 \examples{
 \dontrun{

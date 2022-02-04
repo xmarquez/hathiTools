@@ -2,7 +2,7 @@
 % Please edit documentation in R/hathi-ef-tools.R
 \name{get_hathi_page_meta}
 \alias{get_hathi_page_meta}
-\title{Extract the page-level metadata of a single Hathi Trust ID}
+\title{Reads the page-level metadata of a single Hathi Trust Extracted Features file}
 \usage{
 get_hathi_page_meta(htid, dir = getOption("hathiTools.ef.dir"))
 }
@@ -17,7 +17,7 @@ the file does not exist, this function will first attempt to download it.}
 \value{
 A \link{tibble} with the page-level metadata for the corresponding Hathi
 Trust ID. The page-level metadata contains the following fields (taken from
-\url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329})
+\url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329}):
 
 \describe{
 
@@ -69,11 +69,11 @@ detected lines in the section (endChar) and their occurrence counts
 }
 }
 \description{
-Given a single Hathi Trust ID, this function returns a \link{tibble} with its
-page-level metadata information. If the HT EF file corresponding to this ID
-has not been downloaded already, it first attempts to download it directly
-from the Hathi Trust server. This function uses code authored by Ben Schmidt,
-from his Hathidy package
+Given a single Hathi Trust ID, this function returns a
+\link[tibble:tibble]{tibble} with its page-level metadata information. If the HT
+EF file corresponding to this ID has not been downloaded already, it first
+attempts to download it directly from the Hathi Trust server. This function
+uses code authored by Ben Schmidt, from his Hathidy package
 (\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \details{

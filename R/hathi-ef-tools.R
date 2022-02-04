@@ -80,21 +80,22 @@ get_hathi_counts <- function(htid,
     dplyr::mutate(htid = htid, .before = dplyr::everything())
 }
 
-#'Reads the metadata of a single downloaded Hathi Trust extracted features file
+#'Reads the volume-level metadata of a single downloaded Hathi Trust extracted
+#'features file
 #'
-#'Given a single Hathi Trust ID, this function returns a [tibble] with its
-#'volume-level metadata information. If the HT EF file corresponding to this ID
-#'has not been downloaded already, it first attempts to download it directly
-#'from the Hathi Trust server. This function uses code authored by Ben Schmidt,
-#'from his Hathidy package
+#'Given a single Hathi Trust ID, this function returns a
+#'[tibble][tibble::tibble] with its volume-level metadata information. If the HT
+#'EF file corresponding to this ID has not been downloaded already, it first
+#'attempts to download it directly from the Hathi Trust server. This function
+#'uses code authored by Ben Schmidt, from his Hathidy package
 #'([https://github.com/HumanitiesDataAnalysis/hathidy](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #'Note that if you want to extract the metadata of more than one Hathi Trust ID
 #'at a time, it may be best to simply query the Workset Builder database using
 #'[get_workset_meta], or to download the JSON files for these HTIDs first using
-#'[rsync_from_hathi] and then running this function. It is also possible to
-#'get simple metadata for large numbers of htids by downloading the big
-#'hathifile using [download_hathifile] and then filtering it.
+#'[rsync_from_hathi] and then running this function. It is also possible to get
+#'simple metadata for large numbers of htids by downloading the big hathifile
+#'using [download_hathifile] and then filtering it.
 #'
 #'@param htid The Hathi Trust id of the item whose extracted features files are
 #'  to be downloaded.
@@ -102,11 +103,11 @@ get_hathi_counts <- function(htid,
 #'  `getOption("hathiTools.ef.dir")`, which is just "./hathi-ef/" on load. If
 #'  the file does not exist, this function will first attempt to download it.
 #'
-#'@return A [tibble] with metadata with the volume-level metadata for the
-#'  corresponding Hathi Trust ID. This [tibble] can contain the following fields
-#'  (taken from
+#'@return A [tibble][tibble::tibble] with metadata with the volume-level
+#'  metadata for the corresponding Hathi Trust ID. This [tibble][tibble::tibble]
+#'  can contain the following fields (taken from
 #'  [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329);
-#'  if the field is `NULL`, it is not returned, so the metadata can contain
+#'   if the field is `NULL`, it is not returned, so the metadata can contain
 #'  fewer fields):
 #'
 #'  \describe{
@@ -247,13 +248,13 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
   meta
 }
 
-#' Extract the page-level metadata of a single Hathi Trust ID
+#' Reads the page-level metadata of a single Hathi Trust Extracted Features file
 #'
-#' Given a single Hathi Trust ID, this function returns a [tibble] with its
-#' page-level metadata information. If the HT EF file corresponding to this ID
-#' has not been downloaded already, it first attempts to download it directly
-#' from the Hathi Trust server. This function uses code authored by Ben Schmidt,
-#' from his Hathidy package
+#' Given a single Hathi Trust ID, this function returns a
+#' [tibble][tibble::tibble] with its page-level metadata information. If the HT
+#' EF file corresponding to this ID has not been downloaded already, it first
+#' attempts to download it directly from the Hathi Trust server. This function
+#' uses code authored by Ben Schmidt, from his Hathidy package
 #' ([https://github.com/HumanitiesDataAnalysis/hathidy](https://github.com/HumanitiesDataAnalysis/hathidy)).
 #'
 #' Note that if you want to extract the page-level metadata of more than one
@@ -264,7 +265,7 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'
 #' @return A [tibble] with the page-level metadata for the corresponding Hathi
 #'   Trust ID. The page-level metadata contains the following fields (taken from
-#'   [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329))
+#'   [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329)):
 #'
 #'   \describe{
 #'
