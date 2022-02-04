@@ -214,20 +214,14 @@ And we can extract the metadata for any of them as well:
 meta <- get_hathi_meta(result3$htid[2], dir = tmp)
 
 meta
-#> # A tibble: 30 x 3
-#>    field         value                                         htid             
-#>    <chr>         <chr>                                         <chr>            
-#>  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_Met~ aeu.ark:/13960/t~
-#>  2 id            http://hdl.handle.net/2027/aeu.ark:/13960/t0~ aeu.ark:/13960/t~
-#>  3 type          DataFeedItem                                  aeu.ark:/13960/t~
-#>  4 type          Book                                          aeu.ark:/13960/t~
-#>  5 dateCreated   20200209                                      aeu.ark:/13960/t~
-#>  6 title         De la démocratie en Amérique                  aeu.ark:/13960/t~
-#>  7 contributor   http://www.viaf.org/viaf/66474207             aeu.ark:/13960/t~
-#>  8 contributor   http://id.loc.gov/ontologies/bibframe/Person  aeu.ark:/13960/t~
-#>  9 contributor   Tocqueville, Alexis de, 1805-1859.            aeu.ark:/13960/t~
-#> 10 pubDate       1848                                          aeu.ark:/13960/t~
-#> # ... with 20 more rows
+#> # A tibble: 1 x 20
+#>   htid    schemaVersion     id      type  dateCreated title  contributor pubDate
+#>   <chr>   <chr>             <chr>   <lis>       <int> <chr>  <list>        <int>
+#> 1 aeu.ar~ https://schemas.~ http:/~ <lis~    20200209 De la~ <named lis~    1848
+#> # ... with 12 more variables: publisher <list>, pubPlace <list>,
+#> #   language <chr>, accessRights <chr>, accessProfile <chr>,
+#> #   sourceInstitution <list>, mainEntityOfPage <list>, oclc <chr>, isbn <chr>,
+#> #   genre <list>, typeOfResource <chr>, lastRightsUpdateDate <int>
 ```
 
 We can also get the metadata for many or all of these books at the same
@@ -278,7 +272,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:10], tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpwP05uz\file96ac146b16dd data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\RtmpYlm14N\file23c4413a5767 data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
