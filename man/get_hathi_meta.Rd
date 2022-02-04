@@ -15,23 +15,136 @@ to be downloaded.}
 the file does not exist, this function will first attempt to download it.}
 }
 \value{
-a \link{tibble} with metadata.
+A \link{tibble} with metadata with the volume-level metadata for the
+corresponding Hathi Trust ID. This \link{tibble} can contain the following fields
+(taken from
+\url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329};
+if the field is \code{NULL}, it is not returned, so the metadata can contain
+fewer fields):
+
+\describe{
+
+\item{schemaVersion}{The schema version for the metadata block of the
+Extracted Features file. A URL linking to the schema.
+"https://schemas.hathitrust.org/Extracted
+Features_Schema_MetadataSubSchema_v_3.0"}
+
+\item{id}{The Handle URL for the volume, which will point to the volume in
+the HathiTrust Digital Library. E.g.
+"http://hdl.handle.net/2027/mdp.39015062779023"}
+
+\item{type}{Either "Book", "PublicationVolume", or "CreativeWork" depending
+on the value found in the Issuance field of the corresponding Bibframe
+record. When the Bibframe Issuance value is 'mono', the Book type is
+assigned. When the value is 'serl', the PublicationVolume type is assigned.
+In all other cases the CreativeWork type is assigned. The Bibframe Issuance
+is derived from a variety of fields in the MARC record, including Control
+Fields and Physical Description Fields.}
+
+\item{dateCreated}{The date on which the metadata portion of the Extracted
+Features file is generated, in YYYYMMDD format}
+
+\item{title}{The title of the volume when the type (above) is "Book" or
+"CreativeWork".}
+
+\item{alternateTitle}{An alternate title for a bibliographic entity
+described by the Extracted Features file.}
+
+\item{enumerationChronology}{Information regarding which volume, issue,
+and/or year the HathiTrust volume was published.}
+
+\item{publisher}{Named list column. Information about the publisher of the
+volume described by the Extracted Features file. Includes type, name, and
+id. \code{type} is either "Organization" or "Person". \code{id} is a URL identifying
+the publisher, such as a Handle URL, ORCID, etc. \code{name} is derived from the
+Imprint field in the MARC record.}
+
+\item{pubPlace}{Named list column.  Information about where the volume was
+first published. Includes id, type, and name. \code{type} is taken from the
+Bibframe Instance's provisionActivity's place rdf:about node, which are
+derived from the country codes in the MARC 008 field.}
+
+\item{pubDate}{The year in which that edition of the volume was first
+published.}
+
+\item{genre}{List column. Information about the volume's genre, as
+determined by the cataloger of the work. Values are derived from the
+Genre/Form Field in the MARC record.}
+
+\item{category}{List column. The volume's topic or topics.Derived from the
+Bibframe Work's ClassificationLcc node. Represents the natural language
+label for the Library of Congress Classification (LCC) value based upon the
+Library of Congress's LCC standard documentation.}
+
+\item{language}{The cataloger-determined language or languages of the
+volume. Taken from the Bibframe Work's language's identifiedBy's value node,
+which is derived from the Language Code field in the MARC record. This may
+differ from the automatically detected language of any given page in the
+page-level metadata returned by \link{get_hathi_page_meta}}
+
+\item{accessRights}{The copyright status of the volume. Corresponds to
+attributes in HathiTrust's accessRights database. Derived from a
+HathiTrust-local MARC field (974r) that is added to bibliographic records as
+they are processed at HathiTrust.}
+
+\item{lastRightsUpdateDate}{The most recent date the volume's copyright
+status was updated.}
+
+\item{Contributor}{List column. Contains information regarding the
+author(s), editor(s), or other agents involved in creating the volume.
+Consists of id, type, and name. id is a URL taken from the Bibframe agent
+that links to an authorities database (e.g., VIAF). type is either the
+Person or Organization. Taken from the Bibframe agent type. name is The name
+of the person or organization who created the volume. Taken from the
+Bibframe agent's label. Derived from a variety of fields in the MARC record,
+including Main Entry Fields, Title and Title-Related Fields, and Added Entry
+Fields.}
+
+\item{typeOfResource}{The cataloger-determined resource type of the volume
+(e.g., text, image, etc.).}
+
+\item{sourceInstitution}{List column. An array containing information about
+the institution that contributed the volume to HathiTrust. Always has a type
+node and a name node. \code{id} is a URL identifying the source institution.
+\code{name} is the name of the source institution.}
+
+\item{mainEntityOfPage}{List columns. An array of URLs linking to various
+metadata records describing the volume represented by the Extracted Features
+file. The array typically contains 3 URLs that point to the HathiTrust
+Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
+bibliographic record, and the HathiTrust catalog record.}
+
+\item{oclc}{The OCLC number for the volume. An OCLC number is an identifier
+assigned to items as they are cataloged in a library.}
+
+\item{lcc}{The Library of Congress Classification number for the volume. An
+LCC number is a type of call number that would be used to locate an item on
+a library shelf.}
+
+\item{lccn}{The Library of Congress Control Number for the volume. An LCCN
+is a unique number that is assigned during cataloging.}
+
+\item{issn}{The ISSN of the volume (when a journal).}
+
+\item{isbn}{The ISBN of the volume (when a book).}
+
+}
 }
 \description{
 Given a single Hathi Trust ID, this function returns a \link{tibble} with its
-metadata information. If the HT EF file corresponding to this ID has not been
-downloaded already, it first attempts to download it directly from the Hathi
-Trust server. This function uses code authored by Ben Schmidt, from his
-Hathidy package
-(\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
+volume-level metadata information. If the HT EF file corresponding to this ID
+has not been downloaded already, it first attempts to download it directly
+from the Hathi Trust server. This function uses code authored by Ben Schmidt,
+from his Hathidy package
+(\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \details{
 Note that if you want to extract the metadata of more than one Hathi Trust ID
 at a time, it is best to simply query the Workset Builder database using
-\link{get_workset_meta}. Using \link{get_workset_meta} also guarantees you'll get a
-rectangular data with HT ids in the rows. It is also possible to get simple
-metadata for large numbers of htids by downloading the big hathifile using
-\link{download_hathifile} and then filtering it.
+\link{get_workset_meta}, or to download the JSON files for these HTIDs first using
+\link{rsync_from_hathi} and then running \link{cache_htids_meta}. It is also possible to
+get simple metadata for large numbers of htids by downloading the big
+hathifile using \link{download_hathifile} and then filtering it.
 }
 \examples{
 \dontrun{
@@ -45,4 +158,6 @@ get_hathi_meta("mdp.39015001796443", dir = tmp)
 }
 \author{
 Ben Schmidt
+
+Xavier Marquez
 }

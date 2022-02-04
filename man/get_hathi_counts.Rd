@@ -37,7 +37,7 @@ the \code{getOption("hathiTools.ef.dir")} directory (by default "./hathi-ef"). I
 the file has not been cached already, it first attempts to download it
 directly from the Hathi Trust server. This function uses code authored by Ben
 Schmidt, from his Hathidy package
-(\href{https://github.com/HumanitiesDataAnalysis/hathidy}{https://github.com/bmschmidt/edinburgh/}).
+(\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \examples{
 \dontrun{

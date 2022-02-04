@@ -27,7 +27,99 @@ download will have a different name.}
 }
 \value{
 A \link[tibble:tibble]{tibble::tibble} with the Hathi Trust metadata for all the volumes
-in the workset or the vector of htids.
+in the workset or the vector of htids. #'   This \link{tibble} can contain the
+following fields (taken from
+\url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329}):
+
+\describe{
+
+\item{htBibUrl}{The Hathi Trust Bibliographic URL for the volume, which
+will point to the volume in the HathiTrust Digital Library. E.g.
+"http://catalog.hathitrust.org/api/volumes/full/htid/aeu.ark:/13960/t00z8277t.json"}
+
+\item{schemaVersion}{The schema version for the metadata block of the
+Extracted Features file. A URL linking to the schema.
+"https://schemas.hathitrust.org/Extracted
+Features_Schema_MetadataSubSchema_v_3.0"}
+
+\item{volumeIdentifier}{The Hathi Trust ID}
+
+\item{rightsAttributes}{The copyright status of the volume.}
+
+\item{title}{The title of the volume.}
+
+\item{genre}{Information about the volume's genre, as determined by the
+cataloger of the work. Values are derived from the Genre/Form Field in the
+MARC record.}
+
+\item{pubDate}{The year in which that edition of the volume was first
+published.}
+
+\item{pubPlace}{Named list column.  Information about where the volume was
+first published. Includes id, type, and name. \code{type} is taken from the
+Bibframe Instance's provisionActivity's place rdf:about node, which are
+derived from the country codes in the MARC 008 field.}
+
+\item{typeOfResource}{Type of resource, e.g., "text".}
+
+\item{bibliographicFormat}{Bibliographic format (e.g. "BK").}
+
+\item{language}{The cataloger-determined language or languages of the
+volume. Taken from the Bibframe Work's language's identifiedBy's value
+node, which is derived from the Language Code field in the MARC record.
+This may differ from the automatically detected language of any given page
+in the page-level metadata returned by \link{get_hathi_page_meta}}
+
+\item{dateCreated}{The date on which the metadata portion of the Extracted
+Features file is generated, in YYYYMMDD format}
+
+\item{lastUpdateDate}{The most recent date the volume's copyright status
+was updated.}
+
+\item{imprint}{Information about the publisher of the volume.}
+
+\item{isbn}{The ISBN of the volume (when a book).}
+
+\item{issn}{The ISSN of the volume (when a journal).}
+
+\item{oclc}{The OCLC number for the volume. An OCLC number is an identifier
+assigned to items as they are cataloged in a library.}
+
+\item{lccn}{The Library of Congress Control Number for the volume. An LCCN
+is a unique number that is assigned during cataloging.}
+
+\item{classification}{Library classification.}
+
+\item{handleUrl}{The Handle URL for the volume, which will point to the
+volume in the HathiTrust Digital Library. E.g.
+"http://hdl.handle.net/2027/mdp.39015062779023"}
+
+\item{hathiTrustRecordNumber}{The Hathi Trust Bibliographic record ID
+number.}
+
+\item{sourceInstitutionRecordNumber}{The source institution record ID
+number.}
+
+\item{sourceInstitution}{The source institution.}
+
+\item{accessProfile}{Type of access rights.}
+
+\item{enumerationChronology}{Information regarding which volume, issue,
+and/or year the HathiTrust volume was published.}
+
+\item{governmentDocument}{Whether the item is a government document.}
+
+\item{names}{Contains information regarding the author(s), editor(s), or
+other agents involved in creating the volume.}
+
+\item{issuance}{The cataloger-determined resource type of the volume (e.g.,
+monographic, etc.).}
+
+\item{subjectGenre, subjectName, subjectTitleInfo, subjectTemporal,
+subjectGeographic, subjectOccupation, subjectCartographics}{Columns
+containing subject info, if present.}
+
+}
 }
 \description{
 Queries the SOLR endpoint of the Workset Builder 2.0 (beta) at
@@ -36,11 +128,11 @@ API is experimental, and so this function can fail at any time if the API
 changes.
 }
 \details{
-Be mindful that downloading a large number of metadata records can take
-quite some time. In practice I have found that downloading full metadata from
-more than about 1000 records is a dicey proposition; if you need metadata for
-many thousands of records, you are probably better off using the big
-hathifile (see \link{download_hathifile} and \link{load_raw_hathifile}).
+Be mindful that downloading a large number of metadata records can take quite
+some time. In practice I have found that downloading full metadata from more
+than about 1000 records is a dicey proposition; if you need metadata for many
+thousands of records, you are probably better off using the big hathifile
+(see \link{download_hathifile} and \link{load_raw_hathifile}).
 }
 \examples{
 \dontrun{
