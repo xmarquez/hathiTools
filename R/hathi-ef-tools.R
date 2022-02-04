@@ -103,7 +103,7 @@ get_hathi_counts <- function(htid,
 #'  "./hathi-ef/" on load. If the file does not exist, this function will first
 #'  attempt to download it.
 #'
-#'@return A [tibble][tibble::tibble] with metadata with the volume-level
+#'@return A [tibble][tibble::tibble] with the volume-level
 #'  metadata for the corresponding Hathi Trust ID. This [tibble][tibble::tibble]
 #'  can contain the following fields (taken from
 #'  [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329);

@@ -16,7 +16,7 @@ saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 attempt to download it.}
 }
 \value{
-A \link[tibble:tibble]{tibble} with metadata with the volume-level
+A \link[tibble:tibble]{tibble} with the volume-level
 metadata for the corresponding Hathi Trust ID. This \link[tibble:tibble]{tibble}
 can contain the following fields (taken from
 \url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329};
