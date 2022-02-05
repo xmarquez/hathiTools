@@ -143,9 +143,10 @@ workset_builder <- function(token, genre, title,
   }
 
   if(!missing(title)) {
-    title <- stringr::str_split(title, " ") %>%
+    title <- stringr::str_split(title, "[ [:punct:]]") %>%
       unlist() %>%
       unique()
+    title <- title[ title != "" ]
     title <- stringr::str_c("(volumetitle_txt:", title, ")")
     title <- paste(title, collapse = " AND ")
     if(token_query != "") {
@@ -160,10 +161,11 @@ workset_builder <- function(token, genre, title,
   }
 
   if(!missing(name)) {
-    name <- stringr::str_split(name, " ") %>%
+    name <- stringr::str_split(name, "[ [:punct:]]") %>%
       unlist() %>%
       unique()
-    name <- stringr::str_c("(volumenames_txt:", name, ")")
+    name <- name[ name != "" ]
+    name <- stringr::str_c("(volumenames_txt:(\"", name, "\"))")
     name <- paste(name, collapse = " AND ")
     if(token_query != "") {
       token_query <- paste0("(",
