@@ -10,7 +10,8 @@ query_bookworm(
   groups = "date_year",
   ignore_case = TRUE,
   counttype = "WordsPerMillion",
-  method = c("return_json", "returnPossibleFields", "search_results"),
+  method = c("data", "returnPossibleFields", "search_results"),
+  format = c("json", "csv", "tsv", "feather"),
   lims = c(1920, 2000),
   compare_to,
   as_json = FALSE,
@@ -18,11 +19,12 @@ query_bookworm(
 )
 }
 \arguments{
-\item{word}{At least one term to get frequencies for. Can be a vector of
-strings.}
+\item{word}{Term to get frequencies for. Can be a vector of strings. It can
+be left empty if one is interested primarily in statistics about the corpus
+as a whole.}
 
-\item{groups}{At least one category to group results by. The default is
-\code{date_year}, which groups results by year.}
+\item{groups}{Category to group results by. The default is \code{date_year}, which
+groups results by year.}
 
 \item{ignore_case}{Default is \code{TRUE}, ignores case in search.}
 
@@ -53,13 +55,15 @@ derive \code{TextPercent} locally, if you prefer).
 
 \code{SumWords}: equal to \code{TotalWords + WordCount}
 
-\code{TextRatio}: equal to \code{TextCount/TotalTexts} Currently does not work. Will
-throw an error in this version.
+\code{TextRatio}: equal to \code{TextCount/TotalTexts}.
 
-\code{SumTexts}: equal to \code{TextCount + TotalTexts} Currently does not work. Will
-throw an error in this version.}
+\code{SumTexts}: equal to \code{TextCount + TotalTexts}
 
-\item{method}{Type of results to return. Can be \code{return_json} (the default -
+It is possible to combine some of these - e.g., counttype = c("TextCount",
+"TextPercent"). But it is not possible to combine \verb{Text-} counts with
+\verb{Word-} counts in this version of the API.}
+
+\item{method}{Type of results to return. Can be \code{data} (the default -
 automatically converted to a proper \link{tibble} when possible; the JSON is
 structured as "nested dicts for each grouping in \code{groups} pointing to an
 array consisting of the results for each count in \code{counttype}", according
@@ -97,15 +101,13 @@ to use the raw json to produce a different data structure.}
 \item{...}{Additional parameters passed to the query builder; these would be
 the fields that method = \code{returnPossibleFields} returns, including fields
 to group the query by (e.g., groups = "class"). At the date of this
-writing, these fields were: language, publication_country,
-publication_state, subclass, narrow_class, class, resource_type,
-target_audience, scanner, first_author_birth, first_author_name,
-contributing_library, literary_form, cataloguing_source,
-first_author_death, first_place, first_publisher, is_gov, subject_places,
-date_year, and record_date_year. These are not documented, and in some
-cases one must know the exact string to search for; for example, a search
-with \code{first_author_name = "Tocqueville"} won't find anything, but a search
-with \code{first_author_name = "Tocqueville, Alexis de 1805-1859."} may.}
+writing, these fields were: lc_classes, lc_subclass, fiction_nonfiction,
+genres, languages, htsource, digitization_agent_code, mainauthor,
+publisher, format, is_gov_doc, page_count_bin, word_count_bin,
+publication_country, publication_state, publication_place. These are not
+documented, and in some cases one must know the exact string to search for;
+for example, a search with \code{mainauthor = "Tocqueville"} won't find
+anything, but a search with \code{mainauthor = "Tocqueville, Alexis de 1805-1859."} may.}
 }
 \value{
 A tidy \link{tibble} whenever possible, with columns for each grouping

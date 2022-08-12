@@ -7,10 +7,11 @@
 #' that same metadata. It uses code authored by Ben Schmidt (from
 #' [https://github.com/bmschmidt/edinburgh/](https://github.com/bmschmidt/edinburgh/)).
 #'
-#' @param word At least one term to get frequencies for. Can be a vector of
-#'   strings.
-#' @param groups At least one category to group results by. The default is
-#'   `date_year`, which groups results by year.
+#' @param word Term to get frequencies for. Can be a vector of strings. It can
+#'   be left empty if one is interested primarily in statistics about the corpus
+#'   as a whole.
+#' @param groups Category to group results by. The default is `date_year`, which
+#'   groups results by year.
 #' @param ignore_case Default is `TRUE`, ignores case in search.
 #' @param counttype The default is words per million, `counttype =
 #'   "WordsPerMillion"`. According to the [API
@@ -42,12 +43,15 @@
 #'
 #'   `SumWords`: equal to `TotalWords + WordCount`
 #'
-#'   `TextRatio`: equal to `TextCount/TotalTexts` Currently does not work. Will
-#'   throw an error in this version.
+#'   `TextRatio`: equal to `TextCount/TotalTexts`.
 #'
-#'   `SumTexts`: equal to `TextCount + TotalTexts` Currently does not work. Will
-#'   throw an error in this version.
-#' @param method Type of results to return. Can be `return_json` (the default -
+#'   `SumTexts`: equal to `TextCount + TotalTexts`
+#'
+#'   It is possible to combine some of these - e.g., counttype = c("TextCount",
+#'   "TextPercent"). But it is not possible to combine `Text-` counts with
+#'   `Word-` counts in this version of the API.
+#'
+#' @param method Type of results to return. Can be `data` (the default -
 #'   automatically converted to a proper [tibble] when possible; the JSON is
 #'   structured as "nested dicts for each grouping in `groups` pointing to an
 #'   array consisting of the results for each count in `counttype`", according
@@ -83,15 +87,14 @@
 #' @param ... Additional parameters passed to the query builder; these would be
 #'   the fields that method = `returnPossibleFields` returns, including fields
 #'   to group the query by (e.g., groups = "class"). At the date of this
-#'   writing, these fields were: language, publication_country,
-#'   publication_state, subclass, narrow_class, class, resource_type,
-#'   target_audience, scanner, first_author_birth, first_author_name,
-#'   contributing_library, literary_form, cataloguing_source,
-#'   first_author_death, first_place, first_publisher, is_gov, subject_places,
-#'   date_year, and record_date_year. These are not documented, and in some
-#'   cases one must know the exact string to search for; for example, a search
-#'   with `first_author_name = "Tocqueville"` won't find anything, but a search
-#'   with `first_author_name = "Tocqueville, Alexis de 1805-1859."` may.
+#'   writing, these fields were: lc_classes, lc_subclass, fiction_nonfiction,
+#'   genres, languages, htsource, digitization_agent_code, mainauthor,
+#'   publisher, format, is_gov_doc, page_count_bin, word_count_bin,
+#'   publication_country, publication_state, publication_place. These are not
+#'   documented, and in some cases one must know the exact string to search for;
+#'   for example, a search with `mainauthor = "Tocqueville"` won't find
+#'   anything, but a search with `mainauthor = "Tocqueville, Alexis de
+#'   1805-1859."` may.
 #'
 #' @return A tidy [tibble] whenever possible, with columns for each grouping
 #'   parameter, the word (if any), and the counts and counttypes. For `method =
@@ -117,17 +120,26 @@
 query_bookworm <- function(word, groups = "date_year",
                            ignore_case =  TRUE,
                            counttype = "WordsPerMillion",
-                           method = c("return_json", "returnPossibleFields", "search_results"),
+                           method = c("data", "returnPossibleFields", "search_results"),
+                           format = c("json", "csv", "tsv", "feather"),
                            lims = c(1920, 2000),
                            compare_to,
                            as_json = FALSE, ...) {
 
-  method <- match.arg(method, c("return_json", "returnPossibleFields", "search_results"))
+  method <- match.arg(method, c("data", "returnPossibleFields", "search_results"))
+
+  format <- match.arg(format, c("json", "csv", "tsv", "feather"))
 
   counttype <- match.arg(counttype, c("WordsPerMillion", "WordCount",
                                       "TextCount", "TextPercent", "TotalTexts",
                                       "TotalWords", "WordsRatio", "SumWords",
                                       "TextRatio", "SumTexts"), several.ok = TRUE)
+
+
+  if(any(stringr::str_detect(counttype, "Word")) &&
+     any(stringr::str_detect(counttype, "Text"))) {
+    stop("Cannot combine word and text counttypes")
+  }
 
   if(ignore_case) {
     words_collation = "Case_Insensitive"
@@ -139,7 +151,7 @@ query_bookworm <- function(word, groups = "date_year",
     stop("`compare_to` only supports comparisons to one term at a time")
   }
 
-  if(length(lims) > 2) {
+  if(length(lims) != 2) {
     stop("Lims must be a two-element vector of years")
   }
   stopifnot(is.numeric(lims))
@@ -161,20 +173,29 @@ query_bookworm <- function(word, groups = "date_year",
                             words_collation = words_collation,
                             counttype = counttype, method = method,
                             lims = lims, compare_to = compare_to,
+                            format = format,
                             ...)
 
   result <- httr::GET(query)
 
   if(httr::http_error(result)) {
-    message(stringr::str_glue("Error. Status code: {result$status_code}"))
+    stop(stringr::str_glue("Error. Status code: {result$status_code}"))
   }
 
-  result <- httr::content(result, as = "text", encoding = "UTF-8")
+  result <- httr::content(result, as = "parsed", encoding = "UTF-8")
 
-  result <- stringr::str_replace_all(result, stringr::fixed("[Infinity]"), "[]")
+#  result <- stringr::str_replace_all(result, stringr::fixed("[Infinity]"), "[]")
 
-  if(stringr::str_detect(result, "Database error. Try checking field names.+status.+error")) {
-    stop("Database error. Try checking field names, if necessary using method = returnPossibleFields")
+  if(!is.null(result$status) && stringr::str_detect(result$status, "error")) {
+    stop(result$message)
+  }
+
+  if(!is.null(result$data) && any(stringr::str_detect(unlist(result$data), "\"status\":\"error\",\"message\""))) {
+    msg <- result$data %>%
+      unlist() %>%
+      unique() %>%
+      paste(collapse = "\n ")
+    stop(msg)
   }
 
   if(as_json) {
@@ -183,12 +204,14 @@ query_bookworm <- function(word, groups = "date_year",
   }
 
   if(method == "returnPossibleFields") {
-    data <- jsonlite::fromJSON(result)
-    return(tibble::as_tibble(data))
+    data <- result %>%
+      purrr::map_depth(.depth = 1, unlist) %>%
+      purrr::map_df(tibble::as_tibble_row)
+    return(data)
   }
 
-  if(method == "return_json") {
-    data <- jsonlite::fromJSON(result, simplifyDataFrame = FALSE) %>%
+  if(method == "data") {
+    data <- result$data %>%
       unlistify(words = word, groups = groups, counttype = counttype)
 
     if(is.null(data)) {
@@ -212,15 +235,21 @@ query_bookworm <- function(word, groups = "date_year",
       data$is_gov <- toupper(data$is_gov) %>%
         as.logical()
     }
+    if(!is.null(lims) && !("date_year" %in% names(data))) {
+      data$min_year <- min(lims)
+      data$max_year <- max(lims)
+    }
 
   }
 
   if(method == "search_results") {
-    data <- jsonlite::fromJSON(result, simplifyDataFrame = TRUE)
-    data <- tibble(links = data) %>%
-      dplyr::mutate(htid = stringr::str_extract(links, "(?<=id=).+?(?=>)"),
-                    title = stringr::str_extract(links, "(?<=<em>).+(?=</em>)"),
-                    url = stringr::str_extract(links, "http.+?(?=>)")) %>%
+    data <- result %>%
+      purrr::map_df(~tibble(url = xml2::read_html(.) %>%
+                              xml2::xml_find_all(".//@href") %>%
+                              xml2::xml_text(),
+                            htid = stringr::str_extract(url, "[^/]+$"),
+                            title = xml2::read_html(.) %>%
+                              xml2::xml_text())) %>%
       dplyr::select(htid, title, url)
 
     class(data) <- c("hathi_workset", class(data))
@@ -237,15 +266,16 @@ unlistify <- function(res, words, groups, counttype) {
   if(is.null(unlist(res))) {
     return(NULL)
   }
+  res <- res %>%
+    purrr::map_depth(.depth = length(groups) + 1, unlist)
   for(i in length(groups):1) {
     res <- res %>%
       purrr::map_depth(fix_names,
                        .depth = i) %>%
       purrr::map_depth(.f = function(x) {
         purrr::map_dfr(x, ~dplyr::as_tibble(.x), .id = groups[i])
-        },
-        .depth = i)
-
+      },
+      .depth = i)
   }
   names(res) <- words
   res <- res %>%
@@ -273,12 +303,17 @@ build_json_query <- function(word, groups,
                              lims,
                              method,
                              compare_to,
-                             database = "Bookworm2016",
+                             database = "Bookworm2021",
+                             format,
                              ...) {
 
-  query <- list()
+  word <- word[ word != ""]
 
-  query[["method"]] <- jsonlite::unbox(method)
+  if(length(word) == 0) {
+    word <- NULL
+  }
+
+  query <- list()
 
   query[["words_collation"]] <- jsonlite::unbox(words_collation)
 
@@ -304,6 +339,17 @@ build_json_query <- function(word, groups,
       }
     }
     query[["search_limits"]] <- search_limits
+  } else {
+    search_limits <- vector("list", 1)
+    if(!is.null(lims)) {
+      search_limits[[1]]$date_year$`$gte` <- lims[1]
+      search_limits[[1]]$date_year$`$lte` <- lims[2]
+      }
+      for (limit in names(additional_lims)) {
+        # limit_id <- paste0(limit, "__id")
+        search_limits[[1]][[limit]] <- additional_lims[[limit]]
+      }
+    query[["search_limits"]] <- search_limits
   }
 
   if(!missing(compare_to) && !is.null(word)) {
@@ -319,20 +365,25 @@ build_json_query <- function(word, groups,
         compare_limits[[i]][[limit]] <- additional_lims[[limit]]
       }
     }
-    query[["compare_limits"]] <- compare_limits
+    query[["compare_limits"]] <- purrr::flatten(compare_limits)
   }
+
+  query[["method"]] <- jsonlite::unbox(method)
+
+  query[["format"]] <- jsonlite::unbox(format)
 
   query <- jsonlite::toJSON(query)
 
-  # message(query)
+  message(query)
 
   query <- utils::URLencode(query, reserved = TRUE)
 
-  query <- paste0("https://bookworm.htrc.illinois.edu/cgi-bin/dbbindings.py?query=",query)
+  query <- paste0("https://bookworm.htrc.illinois.edu/develop/cgi-bin?query=",query)
 
   # message(query)
 
   query
+
 }
 
 
