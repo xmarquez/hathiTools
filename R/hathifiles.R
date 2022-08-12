@@ -53,7 +53,7 @@ download_hathifile <- function(url = "https://www.hathitrust.org/hathifiles",
   json_file_catalog <- jsonlite::fromJSON(json_file_name) %>%
     tibble::as_tibble() %>%
     dplyr::mutate(dplyr::across(c(modified, created),
-                                ~as.Date(.x, format = "%Y-%m-%dT%T"))) %>%
+                                ~as.Date(.x, format = "%Y-%m-%d %T"))) %>%
     dplyr::filter(full == full_catalog)
 
   url <- json_file_catalog %>%
