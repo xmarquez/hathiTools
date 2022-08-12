@@ -153,7 +153,7 @@ and/or year the HathiTrust volume was published.</p></dd>
 
 
 <dt>publisher</dt>
-<dd><p>Named list column. Information about the publisher of the
+<dd><p>Information about the publisher of the
 volume described by the Extracted Features file. Includes type, name, and
 id. <code>type</code> is either "Organization" or "Person". <code>id</code> is a URL identifying
 the publisher, such as a Handle URL, ORCID, etc. <code>name</code> is derived from the
@@ -161,7 +161,7 @@ Imprint field in the MARC record.</p></dd>
 
 
 <dt>pubPlace</dt>
-<dd><p>Named list column.  Information about where the volume was
+<dd><p>Information about where the volume was
 first published. Includes id, type, and name. <code>type</code> is taken from the
 Bibframe Instance's provisionActivity's place rdf:about node, which are
 derived from the country codes in the MARC 008 field.</p></dd>
@@ -173,13 +173,13 @@ published.</p></dd>
 
 
 <dt>genre</dt>
-<dd><p>List column. Information about the volume's genre, as
+<dd><p>Information about the volume's genre, as
 determined by the cataloger of the work. Values are derived from the
 Genre/Form Field in the MARC record.</p></dd>
 
 
 <dt>category</dt>
-<dd><p>List column. The volume's topic or topics.Derived from the
+<dd><p>The volume's topic or topics.Derived from the
 Bibframe Work's ClassificationLcc node. Represents the natural language
 label for the Library of Congress Classification (LCC) value based upon the
 Library of Congress's LCC standard documentation.</p></dd>
@@ -206,7 +206,7 @@ status was updated.</p></dd>
 
 
 <dt>Contributor</dt>
-<dd><p>List column. Contains information regarding the
+<dd><p>Contains information regarding the
 author(s), editor(s), or other agents involved in creating the volume.
 Consists of id, type, and name. id is a URL taken from the Bibframe agent
 that links to an authorities database (e.g., VIAF). type is either the
@@ -223,14 +223,14 @@ Fields.</p></dd>
 
 
 <dt>sourceInstitution</dt>
-<dd><p>List column. An array containing information about
+<dd><p>An array containing information about
 the institution that contributed the volume to HathiTrust. Always has a type
 node and a name node. <code>id</code> is a URL identifying the source institution.
 <code>name</code> is the name of the source institution.</p></dd>
 
 
 <dt>mainEntityOfPage</dt>
-<dd><p>List columns. An array of URLs linking to various
+<dd><p>An array of URLs linking to various
 metadata records describing the volume represented by the Extracted Features
 file. The array typically contains 3 URLs that point to the HathiTrust
 Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full

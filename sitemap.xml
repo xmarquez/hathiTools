@@ -37,6 +37,9 @@
     <loc>https://xmarquez.github.io/hathiTools/reference/cache_htids.html</loc>
   </url>
   <url>
+    <loc>https://xmarquez.github.io/hathiTools/reference/clear_cache.html</loc>
+  </url>
+  <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/download_hathifile.html</loc>
   </url>
   <url>
@@ -80,6 +83,9 @@
   </url>
   <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/query_bookworm.html</loc>
+  </url>
+  <url>
+    <loc>https://xmarquez.github.io/hathiTools/reference/read_cached_htids.html</loc>
   </url>
   <url>
     <loc>https://xmarquez.github.io/hathiTools/reference/rsync_from_hathi.html</loc>
