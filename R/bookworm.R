@@ -76,6 +76,9 @@
 #'   `LOG(1-RAND())/sum(main.count)` that should mimic a weighted random
 #'   ordering for most distributions, but in some cases it may not behave as
 #'   intended."
+#' @param format Format of returned results. In theory the Bookworm should be
+#'   able to return results as "json", "tsv", "csv", or even "feather";
+#'   currently only "json" works.
 #' @param lims Min and max year as a two-element numeric vector. Default is
 #'   `c(1920, 2000)`.
 #' @param compare_to A word to compare relative frequencies to. Currently this

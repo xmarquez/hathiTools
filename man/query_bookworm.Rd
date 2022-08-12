@@ -87,6 +87,10 @@ ordering for most distributions, but in some cases it may not behave as
 intended."
 }}
 
+\item{format}{Format of returned results. In theory the Bookworm should be
+able to return results as "json", "tsv", "csv", or even "feather";
+currently only "json" works.}
+
 \item{lims}{Min and max year as a two-element numeric vector. Default is
 \code{c(1920, 2000)}.}
 
