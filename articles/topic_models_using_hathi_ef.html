@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -101,46 +101,46 @@
 </h3>
 <p>As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder</a>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xmarquez/hathiTools" class="external-link">hathiTools</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
-
-<span class="va">tocqueville</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
-<span class="va">tocqueville</span>
-<span class="co">#&gt; # A tibble: 417 x 2</span>
-<span class="co">#&gt;    htid                         n</span>
-<span class="co">#&gt;    &lt;chr&gt;                    &lt;int&gt;</span>
-<span class="co">#&gt;  1 aeu.ark:/13960/t00z8277t   506</span>
-<span class="co">#&gt;  2 aeu.ark:/13960/t0ms4jd0t   419</span>
-<span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s   455</span>
-<span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh9p   445</span>
-<span class="co">#&gt;  5 aeu.ark:/13960/t18k8252g   386</span>
-<span class="co">#&gt;  6 aeu.ark:/13960/t23b7448p   649</span>
-<span class="co">#&gt;  7 aeu.ark:/13960/t2h717j0v   607</span>
-<span class="co">#&gt;  8 aeu.ark:/13960/t2k65c727   543</span>
-<span class="co">#&gt;  9 aeu.ark:/13960/t3qv43c3w   516</span>
-<span class="co">#&gt; 10 aeu.ark:/13960/t6252fd09   382</span>
-<span class="co">#&gt; # ... with 407 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xmarquez/hathiTools" class="external-link">hathiTools</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span></span>
+<span><span class="va">tocqueville</span></span>
+<span><span class="co">#&gt; # A tibble: 417 x 2</span></span>
+<span><span class="co">#&gt;    htid                         n</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                    &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 aeu.ark:/13960/t00z8277t   506</span></span>
+<span><span class="co">#&gt;  2 aeu.ark:/13960/t0ms4jd0t   419</span></span>
+<span><span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s   455</span></span>
+<span><span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh9p   445</span></span>
+<span><span class="co">#&gt;  5 aeu.ark:/13960/t18k8252g   386</span></span>
+<span><span class="co">#&gt;  6 aeu.ark:/13960/t23b7448p   649</span></span>
+<span><span class="co">#&gt;  7 aeu.ark:/13960/t2h717j0v   607</span></span>
+<span><span class="co">#&gt;  8 aeu.ark:/13960/t2k65c727   543</span></span>
+<span><span class="co">#&gt;  9 aeu.ark:/13960/t3qv43c3w   516</span></span>
+<span><span class="co">#&gt; 10 aeu.ark:/13960/t6252fd09   382</span></span>
+<span><span class="co">#&gt; # ... with 407 more rows</span></span></code></pre></div>
 <p>There are over 400 volumes which list Tocqueville as an author. Many of these are the same, but digitised from different libraries, or different editions of the same text, and some are in different languages (French and English, for example). We can get a glimpse of the variety by downloading the metadata for a sample of 20 volumes:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span>
-<span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-                                       <span class="fu">slice_sample</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Metadata has already been downloaded. Returning cached metadata.</span>
-<span class="co">#&gt; Rows: 20 Columns: 36</span>
-<span class="co">#&gt; -- Column specification -------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn...</span>
-<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
-<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">select</span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># Needed so that the table below displays properly</span>
-           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"`"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"\\?"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">14</span><span class="op">)</span></span>
+<span><span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>                                       <span class="fu">slice_sample</span><span class="op">(</span>n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Metadata has already been downloaded. Returning cached metadata.</span></span>
+<span><span class="co">#&gt; Rows: 20 Columns: 36</span></span>
+<span><span class="co">#&gt; -- Column specification -------------------------------------------------------------------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Delimiter: ","</span></span>
+<span><span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn...</span></span>
+<span><span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span></span>
+<span><span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">title</span>, <span class="va">pubDate</span>, <span class="va">imprint</span>, <span class="va">names</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/iconv.html" class="external-link">iconv</a></span><span class="op">(</span><span class="va">title</span>, from <span class="op">=</span> <span class="st">"UTF-8"</span>, to <span class="op">=</span> <span class="st">"ASCII//TRANSLIT"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># Needed so that the table below displays properly</span></span>
+<span>           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"`"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>           <span class="fu">str_remove_all</span><span class="op">(</span><span class="st">"\\?"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html" class="external-link">kable</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <table class="table">
 <colgroup>
 <col width="45%">
@@ -301,351 +301,351 @@
 </table>
 <p>The function <code><a href="../reference/workset_builder.html">workset_builder()</a></code> by default returns a data frame with column for the Hathi Trust id and a column for how many times the <code>token</code> key is mentioned; since we didn’t include any tokens to search for in our query, the function just returned the number of pages in each volume. If we instead search for the volumes where Tocqueville is an author that <em>also</em> mention the word “democracy”, the function returns both the volume id and the number of pages that contain the term.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span>
-
-<span class="va">tocqueville2</span>
-<span class="co">#&gt; # A tibble: 222 x 2</span>
-<span class="co">#&gt;    htid                         n</span>
-<span class="co">#&gt;    &lt;chr&gt;                    &lt;int&gt;</span>
-<span class="co">#&gt;  1 aeu.ark:/13960/t0wq0sh3s    84</span>
-<span class="co">#&gt;  2 aeu.ark:/13960/t18k8252g    99</span>
-<span class="co">#&gt;  3 aeu.ark:/13960/t23b7448p   177</span>
-<span class="co">#&gt;  4 aeu.ark:/13960/t2h717j0v   162</span>
-<span class="co">#&gt;  5 aeu.ark:/13960/t3qv43c3w    92</span>
-<span class="co">#&gt;  6 aeu.ark:/13960/t6349g80j   103</span>
-<span class="co">#&gt;  7 aeu.ark:/13960/t6xw5gz6x   154</span>
-<span class="co">#&gt;  8 aeu.ark:/13960/t9p27mv8b   154</span>
-<span class="co">#&gt;  9 aeu.ark:/13960/t9r21rt6x    95</span>
-<span class="co">#&gt; 10 aeu.ark:/13960/t9x06xb4h   167</span>
-<span class="co">#&gt; # ... with 212 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville2</span></span>
+<span><span class="co">#&gt; # A tibble: 222 x 2</span></span>
+<span><span class="co">#&gt;    htid                         n</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                    &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 aeu.ark:/13960/t0wq0sh3s    84</span></span>
+<span><span class="co">#&gt;  2 aeu.ark:/13960/t18k8252g    99</span></span>
+<span><span class="co">#&gt;  3 aeu.ark:/13960/t23b7448p   177</span></span>
+<span><span class="co">#&gt;  4 aeu.ark:/13960/t2h717j0v   162</span></span>
+<span><span class="co">#&gt;  5 aeu.ark:/13960/t3qv43c3w    92</span></span>
+<span><span class="co">#&gt;  6 aeu.ark:/13960/t6349g80j   103</span></span>
+<span><span class="co">#&gt;  7 aeu.ark:/13960/t6xw5gz6x   154</span></span>
+<span><span class="co">#&gt;  8 aeu.ark:/13960/t9p27mv8b   154</span></span>
+<span><span class="co">#&gt;  9 aeu.ark:/13960/t9r21rt6x    95</span></span>
+<span><span class="co">#&gt; 10 aeu.ark:/13960/t9x06xb4h   167</span></span>
+<span><span class="co">#&gt; # ... with 212 more rows</span></span></code></pre></div>
 <p>This is a smaller workset, since it only includes English tokens, and only volumes by Tocqueville that include the word “democracy” (most of them!). It’s also possible to get the exact page sequence numbers where the term appears:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-
-<span class="va">tocqueville3</span>
-<span class="co">#&gt; # A tibble: 17,051 x 2</span>
-<span class="co">#&gt;    htid                     id                                  </span>
-<span class="co">#&gt;    &lt;chr&gt;                    &lt;chr&gt;                               </span>
-<span class="co">#&gt;  1 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000033</span>
-<span class="co">#&gt;  2 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000344</span>
-<span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000230</span>
-<span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000124</span>
-<span class="co">#&gt;  5 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000203</span>
-<span class="co">#&gt;  6 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000114</span>
-<span class="co">#&gt;  7 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000324</span>
-<span class="co">#&gt;  8 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000113</span>
-<span class="co">#&gt;  9 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000249</span>
-<span class="co">#&gt; 10 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000018</span>
-<span class="co">#&gt; # ... with 17,041 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span><span class="st">"democracy"</span>, name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville3</span></span>
+<span><span class="co">#&gt; # A tibble: 17,051 x 2</span></span>
+<span><span class="co">#&gt;    htid                     id                                  </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                    &lt;chr&gt;                               </span></span>
+<span><span class="co">#&gt;  1 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000033</span></span>
+<span><span class="co">#&gt;  2 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000344</span></span>
+<span><span class="co">#&gt;  3 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000230</span></span>
+<span><span class="co">#&gt;  4 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000124</span></span>
+<span><span class="co">#&gt;  5 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000203</span></span>
+<span><span class="co">#&gt;  6 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000114</span></span>
+<span><span class="co">#&gt;  7 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000324</span></span>
+<span><span class="co">#&gt;  8 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000113</span></span>
+<span><span class="co">#&gt;  9 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000249</span></span>
+<span><span class="co">#&gt; 10 aeu.ark:/13960/t0wq0sh3s aeu.ark:/13960/t0wq0sh3s.page-000018</span></span>
+<span><span class="co">#&gt; # ... with 17,041 more rows</span></span></code></pre></div>
 <p>We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the acual page shown on the Hathi Trust website).</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">tocqueville3</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">tocqueville3</span><span class="op">)</span></span></code></pre></div>
 <p>For our topic modeling exercise, we will focus on volumes of Tocqueville published since 1950 (better OCR!) with “Democracy in America” in the title.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, pub_date <span class="op">=</span> <span class="fl">1950</span><span class="op">:</span><span class="fl">2020</span>, title <span class="op">=</span> <span class="st">"Democracy in America"</span><span class="op">)</span>
-<span class="va">tocqueville4</span>
-<span class="co">#&gt; # A tibble: 23 x 2</span>
-<span class="co">#&gt;    htid                   n</span>
-<span class="co">#&gt;    &lt;chr&gt;              &lt;int&gt;</span>
-<span class="co">#&gt;  1 coo.31924062496165   440</span>
-<span class="co">#&gt;  2 ien.35556040838641   858</span>
-<span class="co">#&gt;  3 mdp.39015000134430   548</span>
-<span class="co">#&gt;  4 mdp.39015000134448   546</span>
-<span class="co">#&gt;  5 mdp.39015000134471   490</span>
-<span class="co">#&gt;  6 mdp.39015000939747   552</span>
-<span class="co">#&gt;  7 mdp.39015001419269   548</span>
-<span class="co">#&gt;  8 mdp.39015003967810   520</span>
-<span class="co">#&gt;  9 mdp.39015004099282   220</span>
-<span class="co">#&gt; 10 mdp.39015010933128   486</span>
-<span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/workset_builder.html">workset_builder</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Alexis de Tocqueville"</span>, pub_date <span class="op">=</span> <span class="fl">1950</span><span class="op">:</span><span class="fl">2020</span>, title <span class="op">=</span> <span class="st">"Democracy in America"</span><span class="op">)</span></span>
+<span><span class="va">tocqueville4</span></span>
+<span><span class="co">#&gt; # A tibble: 23 x 2</span></span>
+<span><span class="co">#&gt;    htid                   n</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;              &lt;int&gt;</span></span>
+<span><span class="co">#&gt;  1 coo.31924062496165   440</span></span>
+<span><span class="co">#&gt;  2 ien.35556040838641   858</span></span>
+<span><span class="co">#&gt;  3 mdp.39015000134430   548</span></span>
+<span><span class="co">#&gt;  4 mdp.39015000134448   546</span></span>
+<span><span class="co">#&gt;  5 mdp.39015000134471   490</span></span>
+<span><span class="co">#&gt;  6 mdp.39015000939747   552</span></span>
+<span><span class="co">#&gt;  7 mdp.39015001419269   548</span></span>
+<span><span class="co">#&gt;  8 mdp.39015003967810   520</span></span>
+<span><span class="co">#&gt;  9 mdp.39015004099282   220</span></span>
+<span><span class="co">#&gt; 10 mdp.39015010933128   486</span></span>
+<span><span class="co">#&gt; # ... with 13 more rows</span></span></code></pre></div>
 <p>We can download their full metadata as follows (it’s a slow download, so use with care if you have a lot of Hathi Trust ids!):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-<span class="co">#&gt; Getting download key...</span>
-<span class="co">#&gt; Downloading metadata for 23 volumes. This might take some time.</span>
-<span class="co">#&gt; Rows: 23 Columns: 36</span>
-<span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn, ...</span>
-<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
-<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-<span class="va">tocqueville_meta</span>
-<span class="co">#&gt; # A tibble: 23 x 36</span>
-<span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title           genre   pubDate pubPlace typeOfResource bibliographicFo~ language</span>
-<span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span>
-<span class="co">#&gt;  1 http://catal~           1.3 coo.319240624961~ und              Democracy in A~ "[\"no~    1963 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  2 http://catal~           1.3 ien.355560408386~ ic               Democracy in A~ "[\"bi~    2010 inu      text           BK               eng     </span>
-<span class="co">#&gt;  3 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  4 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  5 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  6 http://catal~           1.3 mdp.390150009397~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  7 http://catal~           1.3 mdp.390150014192~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  8 http://catal~           1.3 mdp.390150039678~ und              Democracy in A~ "[\"no~    1961 nyu      text           BK               eng     </span>
-<span class="co">#&gt;  9 http://catal~           1.3 mdp.390150040992~ und              Democracy in A~ "[]"       1962 nyu      text           BK               eng     </span>
-<span class="co">#&gt; 10 http://catal~           1.3 mdp.390150109331~ und              Democracy in A~ "[\"bi~    1980 nyu      text           BK               eng     </span>
-<span class="co">#&gt; # ... with 13 more rows, and 25 more variables: dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span>
-<span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;, hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;,</span>
-<span class="co">#&gt; #   accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;, governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;,</span>
-<span class="co">#&gt; #   subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;, subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;,</span>
-<span class="co">#&gt; #   subjectCartographics &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Getting download key...</span></span>
+<span><span class="co">#&gt; Downloading metadata for 23 volumes. This might take some time.</span></span>
+<span><span class="co">#&gt; Rows: 23 Columns: 36</span></span>
+<span><span class="co">#&gt; -- Column specification ---------------------------------------------------------------------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Delimiter: ","</span></span>
+<span><span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn, ...</span></span>
+<span><span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span></span>
+<span><span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span><span class="va">tocqueville_meta</span></span>
+<span><span class="co">#&gt; # A tibble: 23 x 36</span></span>
+<span><span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title           genre   pubDate pubPlace typeOfResource bibliographicFo~ language</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;           &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 http://catal~           1.3 coo.319240624961~ und              Democracy in A~ "[\"no~    1963 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  2 http://catal~           1.3 ien.355560408386~ ic               Democracy in A~ "[\"bi~    2010 inu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  3 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  4 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  5 http://catal~           1.3 mdp.390150001344~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  6 http://catal~           1.3 mdp.390150009397~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  7 http://catal~           1.3 mdp.390150014192~ ic               Democracy in A~ "[\"bi~    1954 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  8 http://catal~           1.3 mdp.390150039678~ und              Democracy in A~ "[\"no~    1961 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  9 http://catal~           1.3 mdp.390150040992~ und              Democracy in A~ "[]"       1962 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt; 10 http://catal~           1.3 mdp.390150109331~ und              Democracy in A~ "[\"bi~    1980 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt; # ... with 13 more rows, and 25 more variables: dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;, hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;, governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;, subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   subjectCartographics &lt;chr&gt;</span></span></code></pre></div>
 <p>There are 23 volumes listed here, but many are the same book; sometimes the title has just been entered slightly differently in different cataloguing systems, or republished multiple times, or it’s another volume of the same edition. We find 14 distinct bibliographical records with 14 distinct titles which we can investigate:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">summarise</span><span class="op">(</span>n_records <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">hathitrustRecordNumber</span><span class="op">)</span>,
-            n_titles <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">title</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1 x 2</span>
-<span class="co">#&gt;   n_records n_titles</span>
-<span class="co">#&gt;       &lt;int&gt;    &lt;int&gt;</span>
-<span class="co">#&gt; 1        14       14</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>n_records <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">hathitrustRecordNumber</span><span class="op">)</span>,</span>
+<span>            n_titles <span class="op">=</span> <span class="fu">n_distinct</span><span class="op">(</span><span class="va">title</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 1 x 2</span></span>
+<span><span class="co">#&gt;   n_records n_titles</span></span>
+<span><span class="co">#&gt;       &lt;int&gt;    &lt;int&gt;</span></span>
+<span><span class="co">#&gt; 1        14       14</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="downloading-and-caching-the-associated-extracted-features-files">Downloading and caching the associated Extracted Features files<a class="anchor" aria-label="anchor" href="#downloading-and-caching-the-associated-extracted-features-files"></a>
 </h3>
 <p>We first download the “extracted features” files for these texts through the Hathi Trust rsync server. The <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> function attempts to do this automatically (to the <code>/hathi-ef</code> directory by default, which will be created if it doesn’t exist). This function requires that your system has access to <code>rsync</code>..</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-<span class="co">#&gt; 0</span>
-<span class="co">#&gt; [1] 0</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/rsync_from_hathi.html">rsync_from_hathi</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 0</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p>The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs in the “./hathi-ef” directory using the function <code><a href="../reference/cache_htids.html">cache_htids()</a></code>:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-<span class="co">#&gt; Caching ./hathi-ef/coo/32696/coo.31924062496165.json.bz2 to csv.gz, file 1 of 23...</span>
-<span class="co">#&gt; Caching ./hathi-ef/mdp/31034/mdp.39015000939747.json.bz2 to csv.gz, file 6 of 23...</span>
-<span class="co">#&gt; Caching ./hathi-ef/mdp/31142/mdp.39015015647921.json.bz2 to csv.gz, file 11 of 23...</span>
-<span class="co">#&gt; Caching ./hathi-ef/uc1/35105/uc1.31158011108353.json.bz2 to csv.gz, file 16 of 23...</span>
-<span class="co">#&gt; Caching ./hathi-ef/uc1/l747/uc1.l0073944373.json.bz2 to csv.gz, file 21 of 23...</span>
-<span class="co">#&gt; # A tibble: 23 x 3</span>
-<span class="co">#&gt;    htid               local_loc                                      exists</span>
-<span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                                          &lt;lgl&gt; </span>
-<span class="co">#&gt;  1 coo.31924062496165 ./hathi-ef/coo/32696/coo.31924062496165.csv.gz TRUE  </span>
-<span class="co">#&gt;  2 ien.35556040838641 ./hathi-ef/ien/35434/ien.35556040838641.csv.gz TRUE  </span>
-<span class="co">#&gt;  3 mdp.39015000134430 ./hathi-ef/mdp/31033/mdp.39015000134430.csv.gz TRUE  </span>
-<span class="co">#&gt;  4 mdp.39015000134448 ./hathi-ef/mdp/31034/mdp.39015000134448.csv.gz TRUE  </span>
-<span class="co">#&gt;  5 mdp.39015000134471 ./hathi-ef/mdp/31037/mdp.39015000134471.csv.gz TRUE  </span>
-<span class="co">#&gt;  6 mdp.39015000939747 ./hathi-ef/mdp/31034/mdp.39015000939747.csv.gz TRUE  </span>
-<span class="co">#&gt;  7 mdp.39015001419269 ./hathi-ef/mdp/31016/mdp.39015001419269.csv.gz TRUE  </span>
-<span class="co">#&gt;  8 mdp.39015003967810 ./hathi-ef/mdp/31061/mdp.39015003967810.csv.gz TRUE  </span>
-<span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span>
-<span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
-<span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Caching ./hathi-ef/coo/32696/coo.31924062496165.json.bz2 to csv.gz, file 1 of 23...</span></span>
+<span><span class="co">#&gt; Caching ./hathi-ef/mdp/31034/mdp.39015000939747.json.bz2 to csv.gz, file 6 of 23...</span></span>
+<span><span class="co">#&gt; Caching ./hathi-ef/mdp/31142/mdp.39015015647921.json.bz2 to csv.gz, file 11 of 23...</span></span>
+<span><span class="co">#&gt; Caching ./hathi-ef/uc1/35105/uc1.31158011108353.json.bz2 to csv.gz, file 16 of 23...</span></span>
+<span><span class="co">#&gt; Caching ./hathi-ef/uc1/l747/uc1.l0073944373.json.bz2 to csv.gz, file 21 of 23...</span></span>
+<span><span class="co">#&gt; # A tibble: 23 x 3</span></span>
+<span><span class="co">#&gt;    htid               local_loc                                      exists</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                                          &lt;lgl&gt; </span></span>
+<span><span class="co">#&gt;  1 coo.31924062496165 ./hathi-ef/coo/32696/coo.31924062496165.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  2 ien.35556040838641 ./hathi-ef/ien/35434/ien.35556040838641.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  3 mdp.39015000134430 ./hathi-ef/mdp/31033/mdp.39015000134430.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  4 mdp.39015000134448 ./hathi-ef/mdp/31034/mdp.39015000134448.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  5 mdp.39015000134471 ./hathi-ef/mdp/31037/mdp.39015000134471.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  6 mdp.39015000939747 ./hathi-ef/mdp/31034/mdp.39015000939747.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  7 mdp.39015001419269 ./hathi-ef/mdp/31016/mdp.39015001419269.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  8 mdp.39015003967810 ./hathi-ef/mdp/31061/mdp.39015003967810.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt; # ... with 13 more rows</span></span></code></pre></div>
 <p>The convenience function <code><a href="../reference/find_cached_htids.html">find_cached_htids()</a></code>, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file paths of the cached files, and whether each file exists or not (i.e., whether it was downloaded successfully and cached).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cached_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_cached_htids.html">find_cached_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span>
-
-<span class="va">cached_files</span>
-<span class="co">#&gt; # A tibble: 23 x 3</span>
-<span class="co">#&gt;    htid               local_loc                                      exists</span>
-<span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                                          &lt;lgl&gt; </span>
-<span class="co">#&gt;  1 coo.31924062496165 ./hathi-ef/coo/32696/coo.31924062496165.csv.gz TRUE  </span>
-<span class="co">#&gt;  2 ien.35556040838641 ./hathi-ef/ien/35434/ien.35556040838641.csv.gz TRUE  </span>
-<span class="co">#&gt;  3 mdp.39015000134430 ./hathi-ef/mdp/31033/mdp.39015000134430.csv.gz TRUE  </span>
-<span class="co">#&gt;  4 mdp.39015000134448 ./hathi-ef/mdp/31034/mdp.39015000134448.csv.gz TRUE  </span>
-<span class="co">#&gt;  5 mdp.39015000134471 ./hathi-ef/mdp/31037/mdp.39015000134471.csv.gz TRUE  </span>
-<span class="co">#&gt;  6 mdp.39015000939747 ./hathi-ef/mdp/31034/mdp.39015000939747.csv.gz TRUE  </span>
-<span class="co">#&gt;  7 mdp.39015001419269 ./hathi-ef/mdp/31016/mdp.39015001419269.csv.gz TRUE  </span>
-<span class="co">#&gt;  8 mdp.39015003967810 ./hathi-ef/mdp/31061/mdp.39015003967810.csv.gz TRUE  </span>
-<span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span>
-<span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span>
-<span class="co">#&gt; # ... with 13 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">cached_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/find_cached_htids.html">find_cached_htids</a></span><span class="op">(</span><span class="va">tocqueville4</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">cached_files</span></span>
+<span><span class="co">#&gt; # A tibble: 23 x 3</span></span>
+<span><span class="co">#&gt;    htid               local_loc                                      exists</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;                                          &lt;lgl&gt; </span></span>
+<span><span class="co">#&gt;  1 coo.31924062496165 ./hathi-ef/coo/32696/coo.31924062496165.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  2 ien.35556040838641 ./hathi-ef/ien/35434/ien.35556040838641.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  3 mdp.39015000134430 ./hathi-ef/mdp/31033/mdp.39015000134430.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  4 mdp.39015000134448 ./hathi-ef/mdp/31034/mdp.39015000134448.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  5 mdp.39015000134471 ./hathi-ef/mdp/31037/mdp.39015000134471.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  6 mdp.39015000939747 ./hathi-ef/mdp/31034/mdp.39015000939747.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  7 mdp.39015001419269 ./hathi-ef/mdp/31016/mdp.39015001419269.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  8 mdp.39015003967810 ./hathi-ef/mdp/31061/mdp.39015003967810.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt;  9 mdp.39015004099282 ./hathi-ef/mdp/31098/mdp.39015004099282.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt; 10 mdp.39015010933128 ./hathi-ef/mdp/31132/mdp.39015010933128.csv.gz TRUE  </span></span>
+<span><span class="co">#&gt; # ... with 13 more rows</span></span></code></pre></div>
 <p>The reason for an <code>exists</code> column is that sometimes extracted features files are not downloaded successfully – they are not available in the Hathi Trust rsync server for whatever reason – and so need to be excluded from further analysis (by filtering the returned dataset via <code>cached_files %&gt;% filter(exists)</code>, for examples). In any case these files can now be loaded into R very quickly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">cached_files</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">pull</span><span class="op">(</span><span class="va">local_loc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">set_names</span><span class="op">(</span><span class="va">cached_files</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="va">cached_files</span><span class="op">$</span><span class="va">exists</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">map_df</span><span class="op">(</span><span class="fu">vroom</span><span class="fu">::</span><span class="va"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span>, .id <span class="op">=</span> <span class="st">"htid"</span><span class="op">)</span>
-
-<span class="va">tocqueville_ef</span>
-<span class="co">#&gt; # A tibble: 2,812,236 x 6</span>
-<span class="co">#&gt;    htid               token     POS   count section  page</span>
-<span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 coo.31924062496165 "\\-\\\\" UNK       1 body        1</span>
-<span class="co">#&gt;  2 coo.31924062496165 "-~_-"    UNK       1 body        1</span>
-<span class="co">#&gt;  3 coo.31924062496165 "-;-_"    UNK       1 body        1</span>
-<span class="co">#&gt;  4 coo.31924062496165 "-.-."    UNK       1 body        1</span>
-<span class="co">#&gt;  5 coo.31924062496165 "\\~\\.~" UNK       1 body        1</span>
-<span class="co">#&gt;  6 coo.31924062496165 "X"       UNK       1 body        1</span>
-<span class="co">#&gt;  7 coo.31924062496165 "/\\"     UNK       1 body        1</span>
-<span class="co">#&gt;  8 coo.31924062496165 "__.__"   UNK       1 body        1</span>
-<span class="co">#&gt;  9 coo.31924062496165 "s"       UNK       3 body        1</span>
-<span class="co">#&gt; 10 coo.31924062496165 "1\\\\\\" UNK       1 body        1</span>
-<span class="co">#&gt; # ... with 2,812,226 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">cached_files</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">exists</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">pull</span><span class="op">(</span><span class="va">local_loc</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">set_names</span><span class="op">(</span><span class="va">cached_files</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="va">cached_files</span><span class="op">$</span><span class="va">exists</span><span class="op">]</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">map_df</span><span class="op">(</span><span class="fu">vroom</span><span class="fu">::</span><span class="va"><a href="https://vroom.r-lib.org/reference/vroom.html" class="external-link">vroom</a></span>, .id <span class="op">=</span> <span class="st">"htid"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville_ef</span></span>
+<span><span class="co">#&gt; # A tibble: 2,812,236 x 6</span></span>
+<span><span class="co">#&gt;    htid               token     POS   count section  page</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;              &lt;chr&gt;     &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 coo.31924062496165 "\\-\\\\" UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  2 coo.31924062496165 "-~_-"    UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  3 coo.31924062496165 "-;-_"    UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  4 coo.31924062496165 "-.-."    UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  5 coo.31924062496165 "\\~\\.~" UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  6 coo.31924062496165 "X"       UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  7 coo.31924062496165 "/\\"     UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  8 coo.31924062496165 "__.__"   UNK       1 body        1</span></span>
+<span><span class="co">#&gt;  9 coo.31924062496165 "s"       UNK       3 body        1</span></span>
+<span><span class="co">#&gt; 10 coo.31924062496165 "1\\\\\\" UNK       1 body        1</span></span>
+<span><span class="co">#&gt; # ... with 2,812,226 more rows</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="creating-a-document-term-matrix-and-fitting-the-model">Creating a document-term matrix and fitting the model<a class="anchor" aria-label="anchor" href="#creating-a-document-term-matrix-and-fitting-the-model"></a>
 </h3>
 <p>This large data frame can be converted into a <code>quanteda::dfm()</code> document-feature matrix using the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the “body” section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span>
-<span class="co">#&gt; Package version: 3.1.0</span>
-<span class="co">#&gt; Unicode version: 13.0</span>
-<span class="co">#&gt; ICU version: 69.1</span>
-<span class="co">#&gt; Parallel computing: 12 of 12 threads used.</span>
-<span class="co">#&gt; See https://quanteda.io for tutorials and examples.</span>
-
-<span class="va">tocqueville_meta</span><span class="op">$</span><span class="va">editions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Nolla-Shleifer"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
-                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
-                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Schocken books Mill appraisal"</span>, <span class="st">"Sinclair-Probst dramatizations"</span>,
-                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
-                      <span class="st">"Goldhammer"</span>, <span class="st">"Bender abridgement of Reeve, Bowen, Bradley"</span>, <span class="st">"Lawrence"</span>,
-                      <span class="st">"Reeve"</span>, <span class="st">"Schocken books Mill appraisal"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,
-                      <span class="st">"Mayer-Lawrence"</span>, <span class="st">"Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span><span class="op">)</span>
-
-<span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="va">enumerationChronology</span>, <span class="va">pubDate</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">section</span> <span class="op">==</span> <span class="st">"body"</span>, <span class="op">!</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">token</span>, <span class="st">"[^[:alnum:]]"</span><span class="op">)</span>,
-         <span class="fu">str_detect</span><span class="op">(</span><span class="va">POS</span>, <span class="st">"NN|NOUN"</span><span class="op">)</span>, <span class="fu">str_length</span><span class="op">(</span><span class="va">token</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>text_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">htid</span>, <span class="va">page</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">text_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>num_tokens <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">htid</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>prop_page <span class="op">=</span> <span class="va">page</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">page</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">num_tokens</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This selects pages with at least 10 tokens</span>
-  <span class="fu">left_join</span><span class="op">(</span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This adds the metadata</span>
-              <span class="fu">rename</span><span class="op">(</span>htid <span class="op">=</span> <span class="va">volumeIdentifier</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "htid"</span>
-
-<span class="va">tocqueville_dfm</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">cast_dfm</span><span class="op">(</span><span class="va">text_id</span>, <span class="va">token</span>, <span class="va">count</span><span class="op">)</span>
-
-<span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">token</span>, <span class="op">-</span><span class="va">POS</span>, <span class="op">-</span><span class="va">count</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">tocqueville_dfm</span>
-<span class="co">#&gt; Document-feature matrix of: 12,216 documents, 28,880 features (99.76% sparse) and 42 docvars.</span>
-<span class="co">#&gt;                        features</span>
-<span class="co">#&gt; docs                    KINGDOM Richard Smalley Frederick Morison John Eliot introduction Frances Donald</span>
-<span class="co">#&gt;   coo.31924062496165_6        1       1       1         2       1    1     1            9       1      1</span>
-<span class="co">#&gt;   coo.31924062496165_10       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_11       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_12       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 28,870 more features ]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://quanteda.io" class="external-link">quanteda</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Package version: 3.1.0</span></span>
+<span><span class="co">#&gt; Unicode version: 13.0</span></span>
+<span><span class="co">#&gt; ICU version: 69.1</span></span>
+<span><span class="co">#&gt; Parallel computing: 12 of 12 threads used.</span></span>
+<span><span class="co">#&gt; See https://quanteda.io for tutorials and examples.</span></span>
+<span></span>
+<span><span class="va">tocqueville_meta</span><span class="op">$</span><span class="va">editions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Nolla-Shleifer"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,</span>
+<span>                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,</span>
+<span>                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Schocken books Mill appraisal"</span>, <span class="st">"Sinclair-Probst dramatizations"</span>,</span>
+<span>                      <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,</span>
+<span>                      <span class="st">"Goldhammer"</span>, <span class="st">"Bender abridgement of Reeve, Bowen, Bradley"</span>, <span class="st">"Lawrence"</span>,</span>
+<span>                      <span class="st">"Reeve"</span>, <span class="st">"Schocken books Mill appraisal"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>, <span class="st">"Reeve, Bowen, Bradley"</span>,</span>
+<span>                      <span class="st">"Mayer-Lawrence"</span>, <span class="st">"Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span>, <span class="st">"Commager abridg. Reeve"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville_meta</span> <span class="op">&lt;-</span> <span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="va">enumerationChronology</span>, <span class="va">pubDate</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville_ef</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">section</span> <span class="op">==</span> <span class="st">"body"</span>, <span class="op">!</span><span class="fu">str_detect</span><span class="op">(</span><span class="va">token</span>, <span class="st">"[^[:alnum:]]"</span><span class="op">)</span>,</span>
+<span>         <span class="fu">str_detect</span><span class="op">(</span><span class="va">POS</span>, <span class="st">"NN|NOUN"</span><span class="op">)</span>, <span class="fu">str_length</span><span class="op">(</span><span class="va">token</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>text_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">htid</span>, <span class="va">page</span>, sep <span class="op">=</span> <span class="st">"_"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">text_id</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>num_tokens <span class="op">=</span> <span class="fu">n</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">htid</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>prop_page <span class="op">=</span> <span class="va">page</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">page</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">num_tokens</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This selects pages with at least 10 tokens</span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">tocqueville_meta</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span> <span class="co"># This adds the metadata</span></span>
+<span>              <span class="fu">rename</span><span class="op">(</span>htid <span class="op">=</span> <span class="va">volumeIdentifier</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining, by = "htid"</span></span>
+<span></span>
+<span><span class="va">tocqueville_dfm</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">cast_dfm</span><span class="op">(</span><span class="va">text_id</span>, <span class="va">token</span>, <span class="va">count</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">tocqueville_ef</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="op">-</span><span class="va">token</span>, <span class="op">-</span><span class="va">POS</span>, <span class="op">-</span><span class="va">count</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">distinct</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville_dfm</span></span>
+<span><span class="co">#&gt; Document-feature matrix of: 12,216 documents, 28,880 features (99.76% sparse) and 42 docvars.</span></span>
+<span><span class="co">#&gt;                        features</span></span>
+<span><span class="co">#&gt; docs                    KINGDOM Richard Smalley Frederick Morison John Eliot introduction Frances Donald</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_6        1       1       1         2       1    1     1            9       1      1</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_10       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_11       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_12       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 28,870 more features ]</span></span></code></pre></div>
 <p>We can use this document-feature matrix in a variety of ways. Here I train a page-level topic model using the <a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a> package, using only the English texts of Tocqueville.</p>
 <p>First we subset the document-feature matrix, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tocqueville_dfm_eng</span> <span class="op">&lt;-</span> <span class="fu">dfm_subset</span><span class="op">(</span><span class="va">tocqueville_dfm</span>, subset <span class="op">=</span> <span class="va">language</span> <span class="op">==</span> <span class="st">"eng"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dfm_tolower</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dfm_trim</span><span class="op">(</span><span class="fl">20000</span>, termfreq_type <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">dfm_remove</span><span class="op">(</span><span class="fu">stopwords</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">tocqueville_dfm_eng</span>
-<span class="co">#&gt; Document-feature matrix of: 12,216 documents, 25,154 features (99.73% sparse) and 42 docvars.</span>
-<span class="co">#&gt;                        features</span>
-<span class="co">#&gt; docs                    kingdom richard smalley frederick morison john eliot introduction frances donald</span>
-<span class="co">#&gt;   coo.31924062496165_6        1       1       1         2       1    1     1            9       1      1</span>
-<span class="co">#&gt;   coo.31924062496165_10       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_11       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_12       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span>
-<span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    1     0            0       0      0</span>
-<span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 25,144 more features ]</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tocqueville_dfm_eng</span> <span class="op">&lt;-</span> <span class="fu">dfm_subset</span><span class="op">(</span><span class="va">tocqueville_dfm</span>, subset <span class="op">=</span> <span class="va">language</span> <span class="op">==</span> <span class="st">"eng"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dfm_tolower</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dfm_trim</span><span class="op">(</span><span class="fl">20000</span>, termfreq_type <span class="op">=</span> <span class="st">"rank"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dfm_remove</span><span class="op">(</span><span class="fu">stopwords</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tocqueville_dfm_eng</span></span>
+<span><span class="co">#&gt; Document-feature matrix of: 12,216 documents, 25,154 features (99.73% sparse) and 42 docvars.</span></span>
+<span><span class="co">#&gt;                        features</span></span>
+<span><span class="co">#&gt; docs                    kingdom richard smalley frederick morison john eliot introduction frances donald</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_6        1       1       1         2       1    1     1            9       1      1</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_10       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_11       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_12       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_13       0       0       0         0       0    0     0            0       0      0</span></span>
+<span><span class="co">#&gt;   coo.31924062496165_14       0       0       0         0       0    1     0            0       0      0</span></span>
+<span><span class="co">#&gt; [ reached max_ndoc ... 12,210 more documents, reached max_nfeat ... 25,144 more features ]</span></span></code></pre></div>
 <p>We then fit a structural topic model with 20 topics. This takes a while; normally you’d also do some sensitivity analysis and check whether the model works better with more or fewer topics, but this model is only illustrative (see <a href="https://juliasilge.com/blog/evaluating-stm/" class="external-link">this very useful article by Julia Silge</a> on training, evaluating, and interpreting topic models). I also don’t incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a></span><span class="op">)</span>
-<span class="co">#&gt; stm v1.3.6 successfully loaded. See ?stm for help. </span>
-<span class="co">#&gt;  Papers, resources, and other materials at structuraltopicmodel.com</span>
-
-<span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">stm</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span>, K <span class="op">=</span> <span class="fl">20</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span>
-<span class="co"># model &lt;- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE, prevalence = ~editions) # With prevalence covariates</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://www.structuraltopicmodel.com/" class="external-link">stm</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; stm v1.3.6 successfully loaded. See ?stm for help. </span></span>
+<span><span class="co">#&gt;  Papers, resources, and other materials at structuraltopicmodel.com</span></span>
+<span></span>
+<span><span class="va">model</span> <span class="op">&lt;-</span> <span class="fu">stm</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span>, K <span class="op">=</span> <span class="fl">20</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co"># model &lt;- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE, prevalence = ~editions) # With prevalence covariates</span></span></code></pre></div>
 <p>We then tidy this model using the tidiers from the <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a> package.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="fu">tidy</span><span class="op">(</span><span class="va">model</span>, matrix <span class="op">=</span> <span class="st">"gamma"</span>,
-                   document_names <span class="op">=</span>  <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span><span class="op">$</span><span class="va">text_id</span><span class="op">)</span>
-
-<span class="va">docs</span> <span class="op">&lt;-</span> <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>document <span class="op">=</span> <span class="va">text_id</span><span class="op">)</span>
-
-<span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">left_join</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "document"</span>
-
-<span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu">labelTopics</span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">as_tibble</span><span class="op">(</span>.name_repair <span class="op">=</span> <span class="st">"unique"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"topic"</span>, values_to <span class="op">=</span> <span class="st">"word"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">summarise</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">word</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>topic <span class="op">=</span> <span class="fu">str_remove</span><span class="op">(</span><span class="va">topic</span>, <span class="fu">fixed</span><span class="op">(</span><span class="st">"..."</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-           <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span>
-<span class="co">#&gt; New names:</span>
-<span class="co">#&gt; * `` -&gt; ...1</span>
-<span class="co">#&gt; * `` -&gt; ...2</span>
-<span class="co">#&gt; * `` -&gt; ...3</span>
-<span class="co">#&gt; * `` -&gt; ...4</span>
-<span class="co">#&gt; * `` -&gt; ...5</span>
-<span class="co">#&gt; * ...</span>
-
-<span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">left_join</span><span class="op">(</span><span class="va">labels</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "topic"</span>
-
-<span class="va">tidy_model</span>
-<span class="co">#&gt; # A tibble: 244,320 x 46</span>
-<span class="co">#&gt;    document  topic   gamma htid  section  page text_id num_tokens prop_page htBibUrl  schemaVersion rightsAttributes title   genre pubDate pubPlace</span>
-<span class="co">#&gt;    &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;   </span>
-<span class="co">#&gt;  1 coo.3192~     1 8.13e-4 coo.~ body        6 coo.31~         71    0.0138 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  2 coo.3192~     1 2.58e-3 coo.~ body       10 coo.31~         31    0.0230 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  3 coo.3192~     1 6.86e-2 coo.~ body       11 coo.31~         57    0.0253 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  4 coo.3192~     1 3.48e-3 coo.~ body       12 coo.31~         51    0.0276 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  5 coo.3192~     1 2.66e-3 coo.~ body       13 coo.31~         27    0.0300 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  6 coo.3192~     1 2.50e-3 coo.~ body       14 coo.31~         29    0.0323 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  7 coo.3192~     1 5.51e-4 coo.~ body       15 coo.31~         77    0.0346 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  8 coo.3192~     1 3.09e-4 coo.~ body       16 coo.31~         87    0.0369 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt;  9 coo.3192~     1 6.97e-4 coo.~ body       17 coo.31~         86    0.0392 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt; 10 coo.3192~     1 5.96e-4 coo.~ body       18 coo.31~        106    0.0415 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span>
-<span class="co">#&gt; # ... with 244,310 more rows, and 30 more variables: typeOfResource &lt;chr&gt;, bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;, dateCreated &lt;dttm&gt;,</span>
-<span class="co">#&gt; #   lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;, lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span>
-<span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span>
-<span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;,</span>
-<span class="co">#&gt; #   subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;, editions &lt;chr&gt;, label &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="fu">tidy</span><span class="op">(</span><span class="va">model</span>, matrix <span class="op">=</span> <span class="st">"gamma"</span>,</span>
+<span>                   document_names <span class="op">=</span>  <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span><span class="op">$</span><span class="va">text_id</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">docs</span> <span class="op">&lt;-</span> <span class="fu">docvars</span><span class="op">(</span><span class="va">tocqueville_dfm_eng</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>document <span class="op">=</span> <span class="va">text_id</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">docs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining, by = "document"</span></span>
+<span></span>
+<span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu">labelTopics</span><span class="op">(</span><span class="va">model</span><span class="op">)</span><span class="op">$</span><span class="va">prob</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">as_tibble</span><span class="op">(</span>.name_repair <span class="op">=</span> <span class="st">"unique"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="fu">everything</span><span class="op">(</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"topic"</span>, values_to <span class="op">=</span> <span class="st">"word"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">word</span>, collapse <span class="op">=</span> <span class="st">","</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>topic <span class="op">=</span> <span class="fu">str_remove</span><span class="op">(</span><span class="va">topic</span>, <span class="fu">fixed</span><span class="op">(</span><span class="st">"..."</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>           <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">topic</span><span class="op">)</span></span>
+<span><span class="co">#&gt; New names:</span></span>
+<span><span class="co">#&gt; * `` -&gt; ...1</span></span>
+<span><span class="co">#&gt; * `` -&gt; ...2</span></span>
+<span><span class="co">#&gt; * `` -&gt; ...3</span></span>
+<span><span class="co">#&gt; * `` -&gt; ...4</span></span>
+<span><span class="co">#&gt; * `` -&gt; ...5</span></span>
+<span><span class="co">#&gt; * ...</span></span>
+<span></span>
+<span><span class="va">tidy_model</span> <span class="op">&lt;-</span> <span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">left_join</span><span class="op">(</span><span class="va">labels</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Joining, by = "topic"</span></span>
+<span></span>
+<span><span class="va">tidy_model</span></span>
+<span><span class="co">#&gt; # A tibble: 244,320 x 46</span></span>
+<span><span class="co">#&gt;    document  topic   gamma htid  section  page text_id num_tokens prop_page htBibUrl  schemaVersion rightsAttributes title   genre pubDate pubPlace</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;int&gt;     &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 coo.3192~     1 8.13e-4 coo.~ body        6 coo.31~         71    0.0138 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  2 coo.3192~     1 2.58e-3 coo.~ body       10 coo.31~         31    0.0230 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  3 coo.3192~     1 6.86e-2 coo.~ body       11 coo.31~         57    0.0253 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  4 coo.3192~     1 3.48e-3 coo.~ body       12 coo.31~         51    0.0276 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  5 coo.3192~     1 2.66e-3 coo.~ body       13 coo.31~         27    0.0300 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  6 coo.3192~     1 2.50e-3 coo.~ body       14 coo.31~         29    0.0323 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  7 coo.3192~     1 5.51e-4 coo.~ body       15 coo.31~         77    0.0346 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  8 coo.3192~     1 3.09e-4 coo.~ body       16 coo.31~         87    0.0369 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt;  9 coo.3192~     1 6.97e-4 coo.~ body       17 coo.31~         86    0.0392 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt; 10 coo.3192~     1 5.96e-4 coo.~ body       18 coo.31~        106    0.0415 http://c~           1.3 und              Democr~ "[\"~    1963 nyu     </span></span>
+<span><span class="co">#&gt; # ... with 244,310 more rows, and 30 more variables: typeOfResource &lt;chr&gt;, bibliographicFormat &lt;chr&gt;, language &lt;chr&gt;, dateCreated &lt;dttm&gt;,</span></span>
+<span><span class="co">#&gt; #   lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;, lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;, sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;, subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;, subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;, editions &lt;chr&gt;, label &lt;chr&gt;</span></span></code></pre></div>
 <p>We can now visualize the topic distribution per book:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span>
-
-
-<span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu">str_replace_all</span><span class="op">(</span><span class="va">editions</span>, <span class="st">"NA"</span>, <span class="st">"1 vol. edition"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-           <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"V\\.[ ]?"</span>, <span class="st">"v."</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-           <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"v\\. "</span>, <span class="st">"v."</span><span class="op">)</span>,
-         editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="st">"HT#"</span>, <span class="va">hathitrustRecordNumber</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_col</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">page</span>,  y <span class="op">=</span> <span class="va">gamma</span>, fill <span class="op">=</span> <span class="va">label</span><span class="op">)</span>,
-           position <span class="op">=</span> <span class="st">"fill"</span>,
-           width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">editions</span><span class="op">~</span><span class="va">.</span>, switch <span class="op">=</span> <span class="st">'y'</span><span class="op">)</span> <span class="op">+</span>
-  <span class="co"># geom_vline(data = chapters, aes(xintercept = page)) +</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">theme</span><span class="op">(</span>
-      panel.spacing.y<span class="op">=</span><span class="fu">unit</span><span class="op">(</span><span class="fl">0</span>, <span class="st">"lines"</span><span class="op">)</span>,
-      strip.text.y.left <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span>, angle <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,
-      legend.position <span class="op">=</span> <span class="st">"bottom"</span>,
-      axis.text.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
-      axis.title.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
-      axis.ticks.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
-      panel.border <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
-      strip.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,
-      plot.title <span class="op">=</span> <span class="fu">element_markdown</span><span class="op">(</span><span class="op">)</span>,
-      panel.grid<span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>
-      <span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_discrete</span><span class="op">(</span>type <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">23</span>, palette <span class="op">=</span> <span class="st">"RdYlBu"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Topic distribution in different volumes and editions of translations of Tocqueville's *Democracy in America*"</span>,
-       x <span class="op">=</span> <span class="st">"page sequence"</span>,
-       fill <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://wilkelab.org/ggtext/" class="external-link">ggtext</a></span><span class="op">)</span></span>
+<span></span>
+<span></span>
+<span><span class="va">tidy_model</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>editions <span class="op">=</span> <span class="fu">str_replace_all</span><span class="op">(</span><span class="va">editions</span>, <span class="st">"NA"</span>, <span class="st">"1 vol. edition"</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>           <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"V\\.[ ]?"</span>, <span class="st">"v."</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>           <span class="fu">str_replace_all</span><span class="op">(</span><span class="st">"v\\. "</span>, <span class="st">"v."</span><span class="op">)</span>,</span>
+<span>         editions <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">editions</span>, <span class="st">"HT#"</span>, <span class="va">hathitrustRecordNumber</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_col</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">page</span>,  y <span class="op">=</span> <span class="va">gamma</span>, fill <span class="op">=</span> <span class="va">label</span><span class="op">)</span>,</span>
+<span>           position <span class="op">=</span> <span class="st">"fill"</span>,</span>
+<span>           width <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_grid</span><span class="op">(</span><span class="va">editions</span><span class="op">~</span><span class="va">.</span>, switch <span class="op">=</span> <span class="st">'y'</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="co"># geom_vline(data = chapters, aes(xintercept = page)) +</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu">theme</span><span class="op">(</span></span>
+<span>      panel.spacing.y<span class="op">=</span><span class="fu">unit</span><span class="op">(</span><span class="fl">0</span>, <span class="st">"lines"</span><span class="op">)</span>,</span>
+<span>      strip.text.y.left <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>size <span class="op">=</span> <span class="fl">7</span>, angle <span class="op">=</span> <span class="fl">0</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>,</span>
+<span>      legend.position <span class="op">=</span> <span class="st">"bottom"</span>,</span>
+<span>      axis.text.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      axis.title.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      axis.ticks.y <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      panel.border <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      strip.background <span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      plot.title <span class="op">=</span> <span class="fu">element_markdown</span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      panel.grid<span class="op">=</span> <span class="fu">element_blank</span><span class="op">(</span><span class="op">)</span></span>
+<span>      <span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_x_continuous</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_discrete</span><span class="op">(</span>type <span class="op">=</span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">hcl.colors</a></span><span class="op">(</span><span class="fl">23</span>, palette <span class="op">=</span> <span class="st">"RdYlBu"</span>, rev <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Topic distribution in different volumes and editions of translations of Tocqueville's *Democracy in America*"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"page sequence"</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">""</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">guides</span><span class="op">(</span>fill <span class="op">=</span> <span class="fu">guide_legend</span><span class="op">(</span>ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="images/topic-modeling-unnamed-chunk-15-1.png" alt=""><p class="caption">Figure 1</p>
 </div>
@@ -671,7 +671,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>

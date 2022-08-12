@@ -32,7 +32,7 @@ https://github.com/bmschmidt/edinburgh/)."><!-- mathjax --><script src="https://
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -77,29 +77,37 @@ that same metadata. It uses code authored by Ben Schmidt (from
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">query_bookworm</span><span class="op">(</span>
-  <span class="va">word</span>,
-  groups <span class="op">=</span> <span class="st">"date_year"</span>,
-  ignore_case <span class="op">=</span> <span class="cn">TRUE</span>,
-  counttype <span class="op">=</span> <span class="st">"WordsPerMillion"</span>,
-  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"return_json"</span>, <span class="st">"returnPossibleFields"</span>, <span class="st">"search_results"</span><span class="op">)</span>,
-  lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1920</span>, <span class="fl">2000</span><span class="op">)</span>,
-  <span class="va">compare_to</span>,
-  as_json <span class="op">=</span> <span class="cn">FALSE</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">query_bookworm</span><span class="op">(</span></span>
+<span>  <span class="va">word</span>,</span>
+<span>  groups <span class="op">=</span> <span class="st">"date_year"</span>,</span>
+<span>  ignore_case <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  counttype <span class="op">=</span> <span class="st">"WordsPerMillion"</span>,</span>
+<span>  method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"data"</span>, <span class="st">"returnPossibleFields"</span>, <span class="st">"search_results"</span><span class="op">)</span>,</span>
+<span>  format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"json"</span>, <span class="st">"csv"</span>, <span class="st">"tsv"</span>, <span class="st">"feather"</span><span class="op">)</span>,</span>
+<span>  lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1920</span>, <span class="fl">2000</span><span class="op">)</span>,</span>
+<span>  <span class="va">compare_to</span>,</span>
+<span>  as_json <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>word</dt>
-<dd><p>At least one term to get frequencies for. Can be a vector of
-strings.</p></dd>
+<dd><p>Term to get frequencies for. Can be a vector of strings. It can
+be left empty if one is interested primarily in statistics about the corpus
+as a whole.</p></dd>
+
+
 <dt>groups</dt>
-<dd><p>At least one category to group results by. The default is
-<code>date_year</code>, which groups results by year.</p></dd>
+<dd><p>Category to group results by. The default is <code>date_year</code>, which
+groups results by year.</p></dd>
+
+
 <dt>ignore_case</dt>
 <dd><p>Default is <code>TRUE</code>, ignores case in search.</p></dd>
+
+
 <dt>counttype</dt>
 <dd><p>The default is words per million, <code>counttype = "WordsPerMillion"</code>. According to the <a href="https://bookworm-project.github.io/Docs/query_structure.html" class="external-link">API documentation</a>,
 the following options are available:</p>
@@ -119,12 +127,15 @@ derive <code>TextPercent</code> locally, if you prefer).</p>
 <p><code>TotalWords</code>: The number of words in the larger set.</p>
 <p><code>WordsRatio</code>: equal to <code>WordCount/TotalWords</code>. Useful when <code>method = "search_results"</code>.</p>
 <p><code>SumWords</code>: equal to <code>TotalWords + WordCount</code></p>
-<p><code>TextRatio</code>: equal to <code>TextCount/TotalTexts</code> Currently does not work. Will
-throw an error in this version.</p>
-<p><code>SumTexts</code>: equal to <code>TextCount + TotalTexts</code> Currently does not work. Will
-throw an error in this version.</p></dd>
+<p><code>TextRatio</code>: equal to <code>TextCount/TotalTexts</code>.</p>
+<p><code>SumTexts</code>: equal to <code>TextCount + TotalTexts</code></p>
+<p>It is possible to combine some of these - e.g., counttype = c("TextCount",
+"TextPercent"). But it is not possible to combine <code>Text-</code> counts with
+<code>Word-</code> counts in this version of the API.</p></dd>
+
+
 <dt>method</dt>
-<dd><p>Type of results to return. Can be <code>return_json</code> (the default -
+<dd><p>Type of results to return. Can be <code>data</code> (the default -
 automatically converted to a proper tibble when possible; the JSON is
 structured as "nested dicts for each grouping in <code>groups</code> pointing to an
 array consisting of the results for each count in <code>counttype</code>", according
@@ -145,34 +156,43 @@ implementation uses an approximation for this:
 ordering for most distributions, but in some cases it may not behave as
 intended."</p></li>
 </ul></dd>
+
+
 <dt>lims</dt>
 <dd><p>Min and max year as a two-element numeric vector. Default is
 <code>c(1920, 2000)</code>.</p></dd>
+
+
 <dt>compare_to</dt>
 <dd><p>A word to compare relative frequencies to. Currently this
 is most useful with <code>counttype = "WordsRatio"</code>; this compares the relative
 frequency of two words.</p></dd>
+
+
 <dt>as_json</dt>
 <dd><p>Whether to return the raw json. Useful for complex queries
 where the function does not know how to return a tibble, or when you want
 to use the raw json to produce a different data structure.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters passed to the query builder; these would be
 the fields that method = <code>returnPossibleFields</code> returns, including fields
 to group the query by (e.g., groups = "class"). At the date of this
-writing, these fields were: language, publication_country,
-publication_state, subclass, narrow_class, class, resource_type,
-target_audience, scanner, first_author_birth, first_author_name,
-contributing_library, literary_form, cataloguing_source,
-first_author_death, first_place, first_publisher, is_gov, subject_places,
-date_year, and record_date_year. These are not documented, and in some
-cases one must know the exact string to search for; for example, a search
-with <code>first_author_name = "Tocqueville"</code> won't find anything, but a search
-with <code>first_author_name = "Tocqueville, Alexis de 1805-1859."</code> may.</p></dd>
+writing, these fields were: lc_classes, lc_subclass, fiction_nonfiction,
+genres, languages, htsource, digitization_agent_code, mainauthor,
+publisher, format, is_gov_doc, page_count_bin, word_count_bin,
+publication_country, publication_state, publication_place. These are not
+documented, and in some cases one must know the exact string to search for;
+for example, a search with <code>mainauthor = "Tocqueville"</code> won't find
+anything, but a search with <code>mainauthor = "Tocqueville, Alexis de 1805-1859."</code> may.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tidy tibble whenever possible, with columns for each grouping
+    
+
+<p>A tidy tibble whenever possible, with columns for each grouping
 parameter, the word (if any), and the counts and counttypes. For <code>method = "search_result"</code>, a workset that can be used in <a href="browse_htids.html">browse_htids</a> and
 <a href="get_workset_meta.html">get_workset_meta</a>.</p>
     </div>
@@ -183,18 +203,18 @@ parameter, the word (if any), and the counts and counttypes. For <code>method = 
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"monarchy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>,</span>
-<span class="r-in">  counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"TextPercent"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">result4</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>,</span>
-<span class="r-in">  language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">result5</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="st">"date_year"</span>, date_year <span class="op">=</span> <span class="st">"1941"</span>,</span>
-<span class="r-in">  class <span class="op">=</span> <span class="st">"Education"</span>, method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"monarchy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"TextPercent"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">result4</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">result5</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="st">"date_year"</span>, date_year <span class="op">=</span> <span class="st">"1941"</span>,</span></span>
+<span class="r-in"><span>  class <span class="op">=</span> <span class="st">"Education"</span>, method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -209,7 +229,7 @@ parameter, the word (if any), and the counts and counttypes. For <code>method = 
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

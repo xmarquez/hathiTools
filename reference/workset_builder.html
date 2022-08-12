@@ -29,7 +29,7 @@ API changes."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -72,19 +72,19 @@ API changes.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">workset_builder</span><span class="op">(</span>
-  <span class="va">token</span>,
-  <span class="va">genre</span>,
-  <span class="va">title</span>,
-  <span class="va">name</span>,
-  <span class="va">imprint</span>,
-  <span class="va">pub_date</span>,
-  lang <span class="op">=</span> <span class="st">"eng"</span>,
-  volumes_only <span class="op">=</span> <span class="cn">TRUE</span>,
-  token_join <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,
-  genre_join <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,
-  max_vols <span class="op">=</span> <span class="cn">Inf</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">workset_builder</span><span class="op">(</span></span>
+<span>  <span class="va">token</span>,</span>
+<span>  <span class="va">genre</span>,</span>
+<span>  <span class="va">title</span>,</span>
+<span>  <span class="va">name</span>,</span>
+<span>  <span class="va">imprint</span>,</span>
+<span>  <span class="va">pub_date</span>,</span>
+<span>  lang <span class="op">=</span> <span class="st">"eng"</span>,</span>
+<span>  volumes_only <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  token_join <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
+<span>  genre_join <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"AND"</span>, <span class="st">"OR"</span><span class="op">)</span>,</span>
+<span>  max_vols <span class="op">=</span> <span class="cn">Inf</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -101,6 +101,8 @@ where either of the tokens appear. Search is case-insensitive; phrases can
 be included (e.g., "liberal democracy"), and the database will then return
 matches where both terms appear in the <em>same page</em> (though not necessarily
 next to each other).</p></dd>
+
+
 <dt>genre</dt>
 <dd><p>A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
 Trust full metadata. Can be a set of genre strings, e.g.,
@@ -108,18 +110,28 @@ Trust full metadata. Can be a set of genre strings, e.g.,
 <code>genre_join</code> (by default "AND", so the metadata must contain both genre
 strings; if "OR", the query will look for volumes that contain any of the
 genre strings).</p></dd>
+
+
 <dt>title</dt>
 <dd><p>Title field. Multiple words will be joined with "AND"; can be a
 phrase (e.g., "Democracy in America").</p></dd>
+
+
 <dt>name</dt>
 <dd><p>Names associated with the book (e.g., author). Multiple terms
 will be joined with "AND"; can be a phrase (e.g., "Alexis de Tocqueville").</p></dd>
+
+
 <dt>imprint</dt>
 <dd><p>Imprint information (e.g., publisher). Multiple terms will be
 joined with "AND"; can be a phrase (e.g., "University of Chicago Press").</p></dd>
+
+
 <dt>pub_date</dt>
 <dd><p>Publication date in Hathi Trust metadata. Can be a range,
 e.g., <code>1800:1900</code>, or a set of years, e.g., <code>c(1800, 1805)</code>.</p></dd>
+
+
 <dt>lang</dt>
 <dd><p>Language. Default is "eng" (English); a string like "English" or
 any 2 or 3 letter ISO639 code (available in the dataset <a href="iso639.html">iso639</a> included
@@ -128,57 +140,68 @@ is to search all languages; set to <code>NULL</code> if you want to search all
 languages). Right now this function can only search one language at a time;
 if you wish to search for terms in more than one language, create multiple
 worksets and bind them together.</p></dd>
+
+
 <dt>volumes_only</dt>
 <dd><p>If <code>TRUE</code> (the default), returns only volume IDs plus a
 count of the number of times the tokens appear in the volume; <code>FALSE</code>
 returns both volume and page IDs where the tokens are found. Note the page
 IDs are 0-based; when looking for the page at the Hathi Digital Library
 site, it's necessary to add 1. <a href="browse_htids.html">browse_htids</a> does this automatically.</p></dd>
+
+
 <dt>token_join</dt>
 <dd><p>The logical connector for the tokens in <code>token</code>, if more
 than one. Default is "AND"; the query will ask for all volumes where all
 tokens occur. "OR" means the query will ask for all volumes where any of
 the tokens occur.</p></dd>
+
+
 <dt>genre_join</dt>
 <dd><p>The logical connector for different genre strings. Default
 is "AND"; the query will ask for all volumes containing all the selected
 genre strings. "OR" means the query will ask for all volumes where any of
 the genre strings occur.</p></dd>
+
+
 <dt>max_vols</dt>
 <dd><p>Maximum number of volumes to return. Default is <code>Inf</code>, all
 volumes; for queries expected to return large numbers of volumes, it's
 sometimes best to specify a small number just to test that the query is
 what one wants.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A tibble with volume_ids, number of occurrences of the terms in the
+    
+
+<p>A tibble with volume_ids, number of occurrences of the terms in the
 volume, and if <code>volumes_only</code> is <code>FALSE</code> a column for page ids.</p>
     </div>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"biography"</span>, <span class="st">"dictionary"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="co"># Better to run two separate queries so the genres can be distinguished per</span></span>
-<span class="r-in"><span class="co"># volume, but one can in principle use "OR" to find volumes that contain</span></span>
-<span class="r-in"><span class="co"># "democracy" in either genre.</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"biography"</span>, <span class="st">"dictionary"</span><span class="op">)</span>,</span>
-<span class="r-in">       genre_join <span class="op">=</span> <span class="st">"OR"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># All volumes that mention "tylenol" and "paracetamol" in the same page</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tylenol"</span>, <span class="st">"paracetamol"</span><span class="op">)</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># All volumes mentioning "demagogue" published between 1800 and 1900</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"demagogue"</span>, pub_date <span class="op">=</span> <span class="fl">1800</span><span class="op">:</span><span class="fl">1900</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># All volumes mentioning "demagogue" with "Tocqueville" and "Reeve"</span></span>
-<span class="r-in"><span class="co"># in the author field</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"demagogue"</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tocqueville"</span>, <span class="st">"Reeve"</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># All volumes with "Tocqueville" in the author field</span></span>
-<span class="r-in"><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Tocqueville"</span><span class="op">)</span></span>
-<span class="r-in"><span class="op">}</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"biography"</span>, <span class="st">"dictionary"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Better to run two separate queries so the genres can be distinguished per</span></span></span>
+<span class="r-in"><span><span class="co"># volume, but one can in principle use "OR" to find volumes that contain</span></span></span>
+<span class="r-in"><span><span class="co"># "democracy" in either genre.</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"democracy"</span>, genre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"biography"</span>, <span class="st">"dictionary"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>       genre_join <span class="op">=</span> <span class="st">"OR"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All volumes that mention "tylenol" and "paracetamol" in the same page</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"tylenol"</span>, <span class="st">"paracetamol"</span><span class="op">)</span>, volumes_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All volumes mentioning "demagogue" published between 1800 and 1900</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"demagogue"</span>, pub_date <span class="op">=</span> <span class="fl">1800</span><span class="op">:</span><span class="fl">1900</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All volumes mentioning "demagogue" with "Tocqueville" and "Reeve"</span></span></span>
+<span class="r-in"><span><span class="co"># in the author field</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span><span class="st">"demagogue"</span>, name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tocqueville"</span>, <span class="st">"Reeve"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># All volumes with "Tocqueville" in the author field</span></span></span>
+<span class="r-in"><span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu">workset_builder</span><span class="op">(</span>name <span class="op">=</span> <span class="st">"Tocqueville"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </div>
@@ -193,7 +216,7 @@ volume, and if <code>volumes_only</code> is <code>FALSE</code> a column for page
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

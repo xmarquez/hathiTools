@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -95,283 +95,283 @@
 <p>This package offers one function, <code><a href="../reference/query_bookworm.html">query_bookworm()</a></code>, that makes it relatively easy to retrieve word frequency and other data from the Hathi Trust Bookworm into R, and to use it for exploratory analyses of word frequency trends.</p>
 <p>For example, suppose we are interested in the changing frequencies of terms like “democracy”, “dictatorship”, “monarchy”, and so on. We can download the frequency of these terms (according to various metrics) with a single call:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xmarquez/hathiTools" class="external-link">hathiTools</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/slider" class="external-link">slider</a></span><span class="op">)</span> <span class="co"># For moving averages</span>
-
-<span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"dictatorship"</span>, <span class="st">"monarchy"</span>,
-                        <span class="st">"aristocracy"</span>, <span class="st">"oligarchy"</span>, <span class="st">"tyranny"</span>,
-                        <span class="st">"autocracy"</span><span class="op">)</span>,
-                      counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"TextPercent"</span><span class="op">)</span>,
-                      lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1700</span>, <span class="fl">2020</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/xmarquez/hathiTools" class="external-link">hathiTools</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org" class="external-link">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/DavisVaughan/slider" class="external-link">slider</a></span><span class="op">)</span> <span class="co"># For moving averages</span></span>
+<span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"dictatorship"</span>, <span class="st">"monarchy"</span>,</span>
+<span>                        <span class="st">"aristocracy"</span>, <span class="st">"oligarchy"</span>, <span class="st">"tyranny"</span>,</span>
+<span>                        <span class="st">"autocracy"</span><span class="op">)</span>,</span>
+<span>                      counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"TextPercent"</span><span class="op">)</span>,</span>
+<span>                      lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1700</span>, <span class="fl">2020</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>This results in a nice, tidy tibble:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span>
-<span class="co">#&gt; # A tibble: 4,494 x 4</span>
-<span class="co">#&gt;    word      date_year value counttype      </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;          </span>
-<span class="co">#&gt;  1 democracy      1700 1.65  WordsPerMillion</span>
-<span class="co">#&gt;  2 democracy      1700 1.27  TextPercent    </span>
-<span class="co">#&gt;  3 democracy      1701 0.152 WordsPerMillion</span>
-<span class="co">#&gt;  4 democracy      1701 1.05  TextPercent    </span>
-<span class="co">#&gt;  5 democracy      1702 0.342 WordsPerMillion</span>
-<span class="co">#&gt;  6 democracy      1702 1.85  TextPercent    </span>
-<span class="co">#&gt;  7 democracy      1703 1.43  WordsPerMillion</span>
-<span class="co">#&gt;  8 democracy      1703 1.13  TextPercent    </span>
-<span class="co">#&gt;  9 democracy      1704 0.478 WordsPerMillion</span>
-<span class="co">#&gt; 10 democracy      1704 1.20  TextPercent    </span>
-<span class="co">#&gt; # ... with 4,484 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span></span>
+<span><span class="co">#&gt; # A tibble: 4,494 x 4</span></span>
+<span><span class="co">#&gt;    word      date_year value counttype      </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;dbl&gt; &lt;chr&gt;          </span></span>
+<span><span class="co">#&gt;  1 democracy      1700 1.65  WordsPerMillion</span></span>
+<span><span class="co">#&gt;  2 democracy      1700 1.27  TextPercent    </span></span>
+<span><span class="co">#&gt;  3 democracy      1701 0.152 WordsPerMillion</span></span>
+<span><span class="co">#&gt;  4 democracy      1701 1.05  TextPercent    </span></span>
+<span><span class="co">#&gt;  5 democracy      1702 0.342 WordsPerMillion</span></span>
+<span><span class="co">#&gt;  6 democracy      1702 1.85  TextPercent    </span></span>
+<span><span class="co">#&gt;  7 democracy      1703 1.43  WordsPerMillion</span></span>
+<span><span class="co">#&gt;  8 democracy      1703 1.13  TextPercent    </span></span>
+<span><span class="co">#&gt;  9 democracy      1704 0.478 WordsPerMillion</span></span>
+<span><span class="co">#&gt; 10 democracy      1704 1.20  TextPercent    </span></span>
+<span><span class="co">#&gt; # ... with 4,484 more rows</span></span></code></pre></div>
 <p>Which can be used for plotting:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">counttype</span> <span class="op">==</span> <span class="st">"WordsPerMillion"</span> <span class="op">~</span> <span class="st">"Words per million"</span>,
-                               <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Percent of volumes containing word"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">word</span>, <span class="va">counttype</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>rolling_avg <span class="op">=</span> <span class="fu">slide_dbl</span><span class="op">(</span><span class="va">value</span>, <span class="va">mean</span>, .before <span class="op">=</span> <span class="fl">10</span>, .after <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, color <span class="op">=</span> <span class="va">word</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">rolling_avg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">counttype</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Approx. year of publication"</span>, y <span class="op">=</span> <span class="st">""</span>, subtitle <span class="op">=</span> <span class="st">"10 year rolling average, books published between 1700-2020"</span>,
-       title <span class="op">=</span> <span class="st">"Frequency of 'democracy' and other political terms in the HathiTrust corpus"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_color_viridis_d</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>counttype <span class="op">=</span> <span class="fu">case_when</span><span class="op">(</span><span class="va">counttype</span> <span class="op">==</span> <span class="st">"WordsPerMillion"</span> <span class="op">~</span> <span class="st">"Words per million"</span>,</span>
+<span>                               <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Percent of volumes containing word"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">word</span>, <span class="va">counttype</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>rolling_avg <span class="op">=</span> <span class="fu">slide_dbl</span><span class="op">(</span><span class="va">value</span>, <span class="va">mean</span>, .before <span class="op">=</span> <span class="fl">10</span>, .after <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, color <span class="op">=</span> <span class="va">word</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>y <span class="op">=</span> <span class="va">value</span><span class="op">)</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">rolling_avg</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">counttype</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>x <span class="op">=</span> <span class="st">"Approx. year of publication"</span>, y <span class="op">=</span> <span class="st">""</span>, subtitle <span class="op">=</span> <span class="st">"10 year rolling average, books published between 1700-2020"</span>,</span>
+<span>       title <span class="op">=</span> <span class="st">"Frequency of 'democracy' and other political terms in the HathiTrust corpus"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_color_viridis_d</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="images/using-the-hathi-bookworm-unnamed-chunk-3-1.png" alt=""><p class="caption">Figure 1</p>
 </div>
 <p>The trends are clear: “democracy” becomes a much more salient term during the 19th and 20th centuries, with big peaks around the World Wars and the end of the Cold War.</p>
 <p>We can also look at the frequency of democracy <em>relative</em> to another word (e.g., dictatorship) across time by using <code>counttype = "WordsRatio"</code>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, compare_to <span class="op">=</span> <span class="st">"dictatorship"</span>,
-                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="st">"WordsRatio"</span><span class="op">)</span>
-
-<span class="va">res2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Frequency of 'democracy' relative to 'dictatorship' in the Bookworm corpus"</span>,
-       x <span class="op">=</span> <span class="st">"Approx. date of publication"</span>,
-       y <span class="op">=</span> <span class="st">"Ratio"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, compare_to <span class="op">=</span> <span class="st">"dictatorship"</span>,</span>
+<span>                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="st">"WordsRatio"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Frequency of 'democracy' relative to 'dictatorship' in the Bookworm corpus"</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"Approx. date of publication"</span>,</span>
+<span>       y <span class="op">=</span> <span class="st">"Ratio"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="images/using-the-hathi-bookworm-unnamed-chunk-4-1.png" alt=""><p class="caption">Figure 2</p>
 </div>
 <p>‘Democracy’ is always used more frequently than ‘dictatorship’ in the 20th century, but especially right around the First World War.</p>
 <p>We can also explore the kinds of books where ‘democracy’ is mentioned in the 20th century. This query groups the volumes that mention ‘democracy’ by both the year of publication and the volume classification in the Hathi Trust metadata:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>,
-                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">res2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="fu">str_trunc</span><span class="op">(</span><span class="va">class</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">word</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_fill_gradient2</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">""</span>, x <span class="op">=</span> <span class="st">"Year"</span>, title <span class="op">=</span> <span class="st">"Frequency of 'democracy' \nacross library classifications"</span>,
-       fill <span class="op">=</span> <span class="st">"Words per million"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>,</span>
+<span>                          lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res2</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="fu">fct_reorder</span><span class="op">(</span><span class="fu">str_trunc</span><span class="op">(</span><span class="va">class</span>, <span class="fl">40</span><span class="op">)</span>, <span class="va">value</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_tile</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>fill <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">facet_wrap</span><span class="op">(</span><span class="op">~</span><span class="va">word</span>, scales <span class="op">=</span> <span class="st">"free_y"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_fill_gradient2</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>y <span class="op">=</span> <span class="st">""</span>, x <span class="op">=</span> <span class="st">"Year"</span>, title <span class="op">=</span> <span class="st">"Frequency of 'democracy' \nacross library classifications"</span>,</span>
+<span>       fill <span class="op">=</span> <span class="st">"Words per million"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme</span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="images/using-the-hathi-bookworm-unnamed-chunk-5-1.png" alt=""><p class="caption">Figure 3</p>
 </div>
 <p>As we might expect, most volumes classified as “Political Science”, “History”, and “Social Sciences” mention democracy more often than medicine or agriculture, especially in the second half of the 20th century. But a surprising number of books classified as “Education” mention democracy quite a bit, especially right around the Second World War.</p>
 <p>It is also possible to further limit the query to, e.g., books published in a particular language or written by a particular author. For example, this gives the number of English-language texts that use the word “democracy” in 1900-2000, grouped by library classification.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>,
-                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>,
-                       groups <span class="op">=</span> <span class="st">"class"</span>,
-                       counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,
-                       language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span>
-
-<span class="va">res3</span>
-<span class="co">#&gt; # A tibble: 21 x 4</span>
-<span class="co">#&gt;    word      class                                                                             value counttype </span>
-<span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;                                                                             &lt;int&gt; &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 democracy N/A                                                                             2717605 TotalTexts</span>
-<span class="co">#&gt;  2 democracy Agriculture                                                                      100664 TotalTexts</span>
-<span class="co">#&gt;  3 democracy Education                                                                        100170 TotalTexts</span>
-<span class="co">#&gt;  4 democracy World History And History Of Europe, Asia, Africa, Australia, New Zealand, Etc.  202428 TotalTexts</span>
-<span class="co">#&gt;  5 democracy History Of The Americas                                                          143957 TotalTexts</span>
-<span class="co">#&gt;  6 democracy Fine Arts                                                                         70854 TotalTexts</span>
-<span class="co">#&gt;  7 democracy Science                                                                          347394 TotalTexts</span>
-<span class="co">#&gt;  8 democracy General Works                                                                     42162 TotalTexts</span>
-<span class="co">#&gt;  9 democracy Military Science                                                                  20246 TotalTexts</span>
-<span class="co">#&gt; 10 democracy Geography.  Anthropology.  Recreation                                             60933 TotalTexts</span>
-<span class="co">#&gt; # ... with 11 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>,</span>
+<span>                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>,</span>
+<span>                       groups <span class="op">=</span> <span class="st">"class"</span>,</span>
+<span>                       counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,</span>
+<span>                       language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res3</span></span>
+<span><span class="co">#&gt; # A tibble: 21 x 4</span></span>
+<span><span class="co">#&gt;    word      class                                                                             value counttype </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;     &lt;chr&gt;                                                                             &lt;int&gt; &lt;chr&gt;     </span></span>
+<span><span class="co">#&gt;  1 democracy N/A                                                                             2717605 TotalTexts</span></span>
+<span><span class="co">#&gt;  2 democracy Agriculture                                                                      100664 TotalTexts</span></span>
+<span><span class="co">#&gt;  3 democracy Education                                                                        100170 TotalTexts</span></span>
+<span><span class="co">#&gt;  4 democracy World History And History Of Europe, Asia, Africa, Australia, New Zealand, Etc.  202428 TotalTexts</span></span>
+<span><span class="co">#&gt;  5 democracy History Of The Americas                                                          143957 TotalTexts</span></span>
+<span><span class="co">#&gt;  6 democracy Fine Arts                                                                         70854 TotalTexts</span></span>
+<span><span class="co">#&gt;  7 democracy Science                                                                          347394 TotalTexts</span></span>
+<span><span class="co">#&gt;  8 democracy General Works                                                                     42162 TotalTexts</span></span>
+<span><span class="co">#&gt;  9 democracy Military Science                                                                  20246 TotalTexts</span></span>
+<span><span class="co">#&gt; 10 democracy Geography.  Anthropology.  Recreation                                             60933 TotalTexts</span></span>
+<span><span class="co">#&gt; # ... with 11 more rows</span></span></code></pre></div>
 <p>Among texts which have some classification (most don’t!), ~100,000 education and political science texts mention the term.</p>
 <p>And this query finds how many volumes between 1900 and 2000 had Alexis de Tocqueville as a first author and mentioned the word “democracy”, grouped by date of publication and the library where the digitised volume was taken from:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>,
-                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>,
-                       groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"contributing_library"</span><span class="op">)</span>,
-                       counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,
-                       first_author_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tocqueville, Alexis de, 1805-1859."</span>,
-                                             <span class="st">"Tocqueville, Alexis de, 1805-1859"</span><span class="op">)</span><span class="op">)</span>
-
-<span class="va">res3</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">arrange</span><span class="op">(</span><span class="va">date_year</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 60 x 5</span>
-<span class="co">#&gt;    word      date_year contributing_library      value counttype </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt;     </span>
-<span class="co">#&gt;  1 democracy      1900 New York Public Library       2 TotalTexts</span>
-<span class="co">#&gt;  2 democracy      1900 The Ohio State University     2 TotalTexts</span>
-<span class="co">#&gt;  3 democracy      1900 University of Virginia        2 TotalTexts</span>
-<span class="co">#&gt;  4 democracy      1900 Harvard University            1 TotalTexts</span>
-<span class="co">#&gt;  5 democracy      1903 University of Wisconsin       1 TotalTexts</span>
-<span class="co">#&gt;  6 democracy      1904 Indiana University            1 TotalTexts</span>
-<span class="co">#&gt;  7 democracy      1904 University of California      2 TotalTexts</span>
-<span class="co">#&gt;  8 democracy      1904 Harvard University            1 TotalTexts</span>
-<span class="co">#&gt;  9 democracy      1908 University of Michigan        1 TotalTexts</span>
-<span class="co">#&gt; 10 democracy      1908 University of California      1 TotalTexts</span>
-<span class="co">#&gt; # ... with 50 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res3</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>,</span>
+<span>                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>, <span class="fl">2000</span><span class="op">)</span>,</span>
+<span>                       groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"contributing_library"</span><span class="op">)</span>,</span>
+<span>                       counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,</span>
+<span>                       first_author_name <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Tocqueville, Alexis de, 1805-1859."</span>,</span>
+<span>                                             <span class="st">"Tocqueville, Alexis de, 1805-1859"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res3</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="va">date_year</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 60 x 5</span></span>
+<span><span class="co">#&gt;    word      date_year contributing_library      value counttype </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;int&gt; &lt;chr&gt;                     &lt;int&gt; &lt;chr&gt;     </span></span>
+<span><span class="co">#&gt;  1 democracy      1900 New York Public Library       2 TotalTexts</span></span>
+<span><span class="co">#&gt;  2 democracy      1900 The Ohio State University     2 TotalTexts</span></span>
+<span><span class="co">#&gt;  3 democracy      1900 University of Virginia        2 TotalTexts</span></span>
+<span><span class="co">#&gt;  4 democracy      1900 Harvard University            1 TotalTexts</span></span>
+<span><span class="co">#&gt;  5 democracy      1903 University of Wisconsin       1 TotalTexts</span></span>
+<span><span class="co">#&gt;  6 democracy      1904 Indiana University            1 TotalTexts</span></span>
+<span><span class="co">#&gt;  7 democracy      1904 University of California      2 TotalTexts</span></span>
+<span><span class="co">#&gt;  8 democracy      1904 Harvard University            1 TotalTexts</span></span>
+<span><span class="co">#&gt;  9 democracy      1908 University of Michigan        1 TotalTexts</span></span>
+<span><span class="co">#&gt; 10 democracy      1908 University of California      1 TotalTexts</span></span>
+<span><span class="co">#&gt; # ... with 50 more rows</span></span></code></pre></div>
 <p>Tocqueville has been republished and collected by big libraries quite a bit in the 20th century!</p>
 <p>One can use <code>method = "returnPossibleFields"</code> to return the fields available for limiting a query or grouping the results:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">""</span>, method <span class="op">=</span> <span class="st">"returnPossibleFields"</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 21 x 6</span>
-<span class="co">#&gt;    name                tablename                 dbname              type      anchor description</span>
-<span class="co">#&gt;    &lt;chr&gt;               &lt;chr&gt;                     &lt;chr&gt;               &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;      </span>
-<span class="co">#&gt;  1 language            languageLookup            language            character bookid ""         </span>
-<span class="co">#&gt;  2 publication_country publication_countryLookup publication_country character bookid ""         </span>
-<span class="co">#&gt;  3 publication_state   publication_stateLookup   publication_state   character bookid ""         </span>
-<span class="co">#&gt;  4 subclass            subclassLookup            subclass            character bookid ""         </span>
-<span class="co">#&gt;  5 narrow_class        narrow_classLookup        narrow_class        character bookid ""         </span>
-<span class="co">#&gt;  6 class               classLookup               class               character bookid ""         </span>
-<span class="co">#&gt;  7 resource_type       resource_typeLookup       resource_type       character bookid ""         </span>
-<span class="co">#&gt;  8 target_audience     target_audienceLookup     target_audience     character bookid ""         </span>
-<span class="co">#&gt;  9 scanner             scannerLookup             scanner             character bookid ""         </span>
-<span class="co">#&gt; 10 first_author_birth  first_author_birthLookup  first_author_birth  character bookid ""         </span>
-<span class="co">#&gt; # ... with 11 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">""</span>, method <span class="op">=</span> <span class="st">"returnPossibleFields"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 21 x 6</span></span>
+<span><span class="co">#&gt;    name                tablename                 dbname              type      anchor description</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;               &lt;chr&gt;                     &lt;chr&gt;               &lt;chr&gt;     &lt;chr&gt;  &lt;chr&gt;      </span></span>
+<span><span class="co">#&gt;  1 language            languageLookup            language            character bookid ""         </span></span>
+<span><span class="co">#&gt;  2 publication_country publication_countryLookup publication_country character bookid ""         </span></span>
+<span><span class="co">#&gt;  3 publication_state   publication_stateLookup   publication_state   character bookid ""         </span></span>
+<span><span class="co">#&gt;  4 subclass            subclassLookup            subclass            character bookid ""         </span></span>
+<span><span class="co">#&gt;  5 narrow_class        narrow_classLookup        narrow_class        character bookid ""         </span></span>
+<span><span class="co">#&gt;  6 class               classLookup               class               character bookid ""         </span></span>
+<span><span class="co">#&gt;  7 resource_type       resource_typeLookup       resource_type       character bookid ""         </span></span>
+<span><span class="co">#&gt;  8 target_audience     target_audienceLookup     target_audience     character bookid ""         </span></span>
+<span><span class="co">#&gt;  9 scanner             scannerLookup             scanner             character bookid ""         </span></span>
+<span><span class="co">#&gt; 10 first_author_birth  first_author_birthLookup  first_author_birth  character bookid ""         </span></span>
+<span><span class="co">#&gt; # ... with 11 more rows</span></span></code></pre></div>
 <p>We can also get a sample of the book titles and links for a particular year. (It’s a limited sample; the database will only pull the top 100 books mentioning the term, weighted by the frequency of the term in the volume). For example, we can pull out the top 100 books in the category “Education” that mention the word “democracy” in 1941, the year where education books seem to be most likely to mention democracy:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>,
-                       date_year <span class="op">=</span> <span class="st">"1941"</span>,
-                       class <span class="op">=</span> <span class="st">"Education"</span>,
-                       method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span>
-
-<span class="va">res4</span>
-<span class="co">#&gt; # A tibble: 100 x 3</span>
-<span class="co">#&gt;    htid                      title                                                                       url                                      </span>
-<span class="co">#&gt;    &lt;chr&gt;                     &lt;chr&gt;                                                                       &lt;chr&gt;                                    </span>
-<span class="co">#&gt;  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=n~</span>
-<span class="co">#&gt;  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=u~</span>
-<span class="co">#&gt;  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=m~</span>
-<span class="co">#&gt;  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=m~</span>
-<span class="co">#&gt;  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=u~</span>
-<span class="co">#&gt;  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=m~</span>
-<span class="co">#&gt;  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=m~</span>
-<span class="co">#&gt;  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=u~</span>
-<span class="co">#&gt;  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=u~</span>
-<span class="co">#&gt; 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=u~</span>
-<span class="co">#&gt; # ... with 90 more rows</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">res4</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>,</span>
+<span>                       date_year <span class="op">=</span> <span class="st">"1941"</span>,</span>
+<span>                       class <span class="op">=</span> <span class="st">"Education"</span>,</span>
+<span>                       method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res4</span></span>
+<span><span class="co">#&gt; # A tibble: 100 x 3</span></span>
+<span><span class="co">#&gt;    htid                      title                                                                       url                                      </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                     &lt;chr&gt;                                                                       &lt;chr&gt;                                    </span></span>
+<span><span class="co">#&gt;  1 nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina public schools /--- 1941           https://babel.hathitrust.org/cgi/pt?id=n~</span></span>
+<span><span class="co">#&gt;  2 uc1.$b67929               The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=u~</span></span>
+<span><span class="co">#&gt;  3 mdp.39015062763720        The education of free men in American democracy.                            https://babel.hathitrust.org/cgi/pt?id=m~</span></span>
+<span><span class="co">#&gt;  4 mdp.39015068297905        The education of free men in American democracy.--- suppl.                  https://babel.hathitrust.org/cgi/pt?id=m~</span></span>
+<span><span class="co">#&gt;  5 uc1.$b67873               Pennsylvania bill of rights week. Recommendations for school observance ... https://babel.hathitrust.org/cgi/pt?id=u~</span></span>
+<span><span class="co">#&gt;  6 mdp.39015035886111        Education in a world of fear,                                               https://babel.hathitrust.org/cgi/pt?id=m~</span></span>
+<span><span class="co">#&gt;  7 mdp.39015031665543        Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=m~</span></span>
+<span><span class="co">#&gt;  8 uc1.$b67928               Education and the morale of a free people.                                  https://babel.hathitrust.org/cgi/pt?id=u~</span></span>
+<span><span class="co">#&gt;  9 uiug.30112108068831       Proceedings of the convention.--- 19 1941                                   https://babel.hathitrust.org/cgi/pt?id=u~</span></span>
+<span><span class="co">#&gt; 10 uc1.b4305220              Guidance in democratic living,--- copy D11                                  https://babel.hathitrust.org/cgi/pt?id=u~</span></span>
+<span><span class="co">#&gt; # ... with 90 more rows</span></span></code></pre></div>
 <p>If you need a bigger sample, use the function <code><a href="../reference/workset_builder.html">workset_builder()</a></code> to query the Hathi Trust’s <a href="https://solr2.htrc.illinois.edu/solr-ef/" class="external-link">Workset Builder 2.0</a>; this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on see the article “<a href="topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more examples of how to use this facility.</p>
 <p>We can investigate further any of these volumes by downloading their associated “Extracted Features” file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, The education of free men in American democracy., available at <a href="https://babel.hathitrust.org/cgi/pt?id=uc1.%24b67929" class="external-link uri">https://babel.hathitrust.org/cgi/pt?id=uc1.$b67929</a>, as a nice tidy <code>tibble</code> suitable for analysis with a package like <a href="https://github.com/juliasilge/tidytext" class="external-link">tidytext</a>.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-
-<span class="va">extracted_features</span>
-<span class="co">#&gt; # A tibble: 18,763 x 6</span>
-<span class="co">#&gt;    htid        token      POS   count section  page</span>
-<span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span>
-<span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span>
-<span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span>
-<span class="co">#&gt;  4 uc1.$b67929 uc-male    JJ        1 body        1</span>
-<span class="co">#&gt;  5 uc1.$b67929 *          SYM       1 body        1</span>
-<span class="co">#&gt;  6 uc1.$b67929 .          .         1 body        1</span>
-<span class="co">#&gt;  7 uc1.$b67929 Free       NNP       1 body        1</span>
-<span class="co">#&gt;  8 uc1.$b67929 Men        NNP       1 body        1</span>
-<span class="co">#&gt;  9 uc1.$b67929 Democracy  NNP       1 body        1</span>
-<span class="co">#&gt; 10 uc1.$b67929 School     NNP       1 body        1</span>
-<span class="co">#&gt; # ... with 18,753 more rows</span></code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">extracted_features</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hathi_counts.html">get_hathi_counts</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">extracted_features</span></span>
+<span><span class="co">#&gt; # A tibble: 18,763 x 6</span></span>
+<span><span class="co">#&gt;    htid        token      POS   count section  page</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt; &lt;dbl&gt; &lt;chr&gt;   &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt;  1 uc1.$b67929 COMMISSION NNP       1 body        1</span></span>
+<span><span class="co">#&gt;  2 uc1.$b67929 N35        CD        1 body        1</span></span>
+<span><span class="co">#&gt;  3 uc1.$b67929 in         IN        1 body        1</span></span>
+<span><span class="co">#&gt;  4 uc1.$b67929 uc-male    JJ        1 body        1</span></span>
+<span><span class="co">#&gt;  5 uc1.$b67929 *          SYM       1 body        1</span></span>
+<span><span class="co">#&gt;  6 uc1.$b67929 .          .         1 body        1</span></span>
+<span><span class="co">#&gt;  7 uc1.$b67929 Free       NNP       1 body        1</span></span>
+<span><span class="co">#&gt;  8 uc1.$b67929 Men        NNP       1 body        1</span></span>
+<span><span class="co">#&gt;  9 uc1.$b67929 Democracy  NNP       1 body        1</span></span>
+<span><span class="co">#&gt; 10 uc1.$b67929 School     NNP       1 body        1</span></span>
+<span><span class="co">#&gt; # ... with 18,753 more rows</span></span></code></pre></div>
 <p>And we can extract the full metadata for that particular volume, which tells us this title was created by the Educational Policies Commission, National Education Association of the United States and the American Association of School Administrators:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-
-<span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 35 x 3</span>
-<span class="co">#&gt;    field         value                                                            htid       </span>
-<span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                                            &lt;chr&gt;      </span>
-<span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_MetadataSubSchema_v_3.0 uc1.$b67929</span>
-<span class="co">#&gt;  2 id            http://hdl.handle.net/2027/uc1.$b67929                           uc1.$b67929</span>
-<span class="co">#&gt;  3 type          DataFeedItem                                                     uc1.$b67929</span>
-<span class="co">#&gt;  4 type          Book                                                             uc1.$b67929</span>
-<span class="co">#&gt;  5 dateCreated   20200209                                                         uc1.$b67929</span>
-<span class="co">#&gt;  6 title         The education of free men in American democracy.                 uc1.$b67929</span>
-<span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/144709713                               uc1.$b67929</span>
-<span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Organization               uc1.$b67929</span>
-<span class="co">#&gt;  9 contributor   Educational Policies Commission.                                 uc1.$b67929</span>
-<span class="co">#&gt; 10 contributor   http://www.viaf.org/viaf/136691592                               uc1.$b67929</span>
-<span class="co">#&gt; # ... with 25 more rows</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_hathi_meta.html">get_hathi_meta</a></span><span class="op">(</span><span class="va">res4</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">meta</span></span>
+<span><span class="co">#&gt; # A tibble: 35 x 3</span></span>
+<span><span class="co">#&gt;    field         value                                                            htid       </span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;         &lt;chr&gt;                                                            &lt;chr&gt;      </span></span>
+<span><span class="co">#&gt;  1 schemaVersion https://schemas.hathitrust.org/EF_Schema_MetadataSubSchema_v_3.0 uc1.$b67929</span></span>
+<span><span class="co">#&gt;  2 id            http://hdl.handle.net/2027/uc1.$b67929                           uc1.$b67929</span></span>
+<span><span class="co">#&gt;  3 type          DataFeedItem                                                     uc1.$b67929</span></span>
+<span><span class="co">#&gt;  4 type          Book                                                             uc1.$b67929</span></span>
+<span><span class="co">#&gt;  5 dateCreated   20200209                                                         uc1.$b67929</span></span>
+<span><span class="co">#&gt;  6 title         The education of free men in American democracy.                 uc1.$b67929</span></span>
+<span><span class="co">#&gt;  7 contributor   http://www.viaf.org/viaf/144709713                               uc1.$b67929</span></span>
+<span><span class="co">#&gt;  8 contributor   http://id.loc.gov/ontologies/bibframe/Organization               uc1.$b67929</span></span>
+<span><span class="co">#&gt;  9 contributor   Educational Policies Commission.                                 uc1.$b67929</span></span>
+<span><span class="co">#&gt; 10 contributor   http://www.viaf.org/viaf/136691592                               uc1.$b67929</span></span>
+<span><span class="co">#&gt; # ... with 25 more rows</span></span></code></pre></div>
 <p>We can also get the metadata for all of these volumes at the same time:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">res4</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span>
-<span class="co">#&gt; Getting download key...</span>
-<span class="co">#&gt; Downloading metadata for 100 volumes. This might take some time.</span>
-<span class="co">#&gt; Rows: 100 Columns: 36</span>
-<span class="co">#&gt; -- Column specification --------------------------------------------------------------------------------------------------------------------------</span>
-<span class="co">#&gt; Delimiter: ","</span>
-<span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...</span>
-<span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span>
-<span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span>
-<span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span>
-
-<span class="va">meta</span>
-<span class="co">#&gt; # A tibble: 100 x 36</span>
-<span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title         genre    pubDate pubPlace typeOfResource bibliographicFo~ language</span>
-<span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span>
-<span class="co">#&gt;  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching dem~ "[\"bib~    1941 ncu      text           BK               eng     </span>
-<span class="co">#&gt;  2 http://catal~           1.3 uc1.$b67929       pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  3 http://catal~           1.3 mdp.390150627637~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  4 http://catal~           1.3 mdp.390150682979~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvania~ "[\"not~    1941 pau      text           BK               eng     </span>
-<span class="co">#&gt;  6 http://catal~           1.3 mdp.390150358861~ ic               Education in~ "[\"not~    1941 mau      text           BK               eng     </span>
-<span class="co">#&gt;  7 http://catal~           1.3 mdp.390150316655~ pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  8 http://catal~           1.3 uc1.$b67928       pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span>
-<span class="co">#&gt;  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings ~ "[\"con~    1941 onc      text           SE               eng     </span>
-<span class="co">#&gt; 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in ~ "[\"bib~    1941 nyu      text           BK               eng     </span>
-<span class="co">#&gt; # ... with 90 more rows, and 25 more variables: dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span>
-<span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;, hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;,</span>
-<span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;, governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;,</span>
-<span class="co">#&gt; #   subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;, subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;,</span>
-<span class="co">#&gt; #   subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">meta</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_workset_meta.html">get_workset_meta</a></span><span class="op">(</span><span class="va">res4</span>, metadata_dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Getting download key...</span></span>
+<span><span class="co">#&gt; Downloading metadata for 100 volumes. This might take some time.</span></span>
+<span><span class="co">#&gt; Rows: 100 Columns: 36</span></span>
+<span><span class="co">#&gt; -- Column specification --------------------------------------------------------------------------------------------------------------------------</span></span>
+<span><span class="co">#&gt; Delimiter: ","</span></span>
+<span><span class="co">#&gt; chr  (31): htBibUrl, volumeIdentifier, rightsAttributes, title, genre, pubPlace, typeOfResource, bibliographicFormat, language, imprint, isbn,...</span></span>
+<span><span class="co">#&gt; dbl   (3): schemaVersion, pubDate, hathitrustRecordNumber</span></span>
+<span><span class="co">#&gt; dttm  (2): dateCreated, lastUpdateDate</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; i Use `spec()` to retrieve the full column specification for this data.</span></span>
+<span><span class="co">#&gt; i Specify the column types or set `show_col_types = FALSE` to quiet this message.</span></span>
+<span></span>
+<span><span class="va">meta</span></span>
+<span><span class="co">#&gt; # A tibble: 100 x 36</span></span>
+<span><span class="co">#&gt;    htBibUrl      schemaVersion volumeIdentifier  rightsAttributes title         genre    pubDate pubPlace typeOfResource bibliographicFo~ language</span></span>
+<span><span class="co">#&gt;    &lt;chr&gt;                 &lt;dbl&gt; &lt;chr&gt;             &lt;chr&gt;            &lt;chr&gt;         &lt;chr&gt;      &lt;dbl&gt; &lt;chr&gt;    &lt;chr&gt;          &lt;chr&gt;            &lt;chr&gt;   </span></span>
+<span><span class="co">#&gt;  1 http://catal~           1.3 nc01.ark:/13960/~ und              Teaching dem~ "[\"bib~    1941 ncu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  2 http://catal~           1.3 uc1.$b67929       pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  3 http://catal~           1.3 mdp.390150627637~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  4 http://catal~           1.3 mdp.390150682979~ pd               The educatio~ "[\"bib~    1941 dcu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  5 http://catal~           1.3 uc1.$b67873       pd               Pennsylvania~ "[\"not~    1941 pau      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  6 http://catal~           1.3 mdp.390150358861~ ic               Education in~ "[\"not~    1941 mau      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  7 http://catal~           1.3 mdp.390150316655~ pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  8 http://catal~           1.3 uc1.$b67928       pd               Education an~ "[\"not~    1941 dcu      text           BK               eng     </span></span>
+<span><span class="co">#&gt;  9 http://catal~           1.3 uiug.30112108068~ ic               Proceedings ~ "[\"con~    1941 onc      text           SE               eng     </span></span>
+<span><span class="co">#&gt; 10 http://catal~           1.3 uc1.b4305220      ic               Guidance in ~ "[\"bib~    1941 nyu      text           BK               eng     </span></span>
+<span><span class="co">#&gt; # ... with 90 more rows, and 25 more variables: dateCreated &lt;dttm&gt;, lastUpdateDate &lt;dttm&gt;, imprint &lt;chr&gt;, isbn &lt;chr&gt;, issn &lt;chr&gt;, oclc &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   lccn &lt;chr&gt;, classification &lt;chr&gt;, handleUrl &lt;chr&gt;, hathitrustRecordNumber &lt;dbl&gt;, sourceInstitutionRecordNumber &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   sourceInstitution &lt;chr&gt;, accessProfile &lt;chr&gt;, enumerationChronology &lt;chr&gt;, governmentDocument &lt;chr&gt;, names &lt;chr&gt;, issuance &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   subjectGenre &lt;chr&gt;, subjectTopic &lt;chr&gt;, subjectName &lt;chr&gt;, subjectTitleInfo &lt;chr&gt;, subjectTemporal &lt;chr&gt;, subjectGeographic &lt;chr&gt;,</span></span>
+<span><span class="co">#&gt; #   subjectOccupation &lt;chr&gt;, subjectCartographics &lt;chr&gt;</span></span></code></pre></div>
 <p>And browse interactively these titles on the Hathi Trust website:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">res4</span><span class="op">)</span></span></code></pre></div>
 <p>If you want to download lots of volumes and have <a href="https://linux.die.net/man/1/rsync" class="external-link">rsync</a> installed in your system, the functions <code><a href="../reference/rsync_from_hathi.html">rsync_from_hathi()</a></code> and <code><a href="../reference/htid_to_rsync.html">htid_to_rsync()</a></code> can facilitate the process; see the article on “Creating and Using Hathi Trust Worksets” for more.</p>
 <p>One can get info about the Bookworm corpus itself by using <code>counttype = "TotalWords"</code> or <code>counttype = "TotalTexts"</code> and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">res5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,
-                       groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,
-                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1500</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span>
-
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span>
-
-<span class="va">res5</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>language <span class="op">=</span> <span class="fu">fct_lump_n</span><span class="op">(</span><span class="va">language</span>, <span class="fl">10</span>, w <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">date_year</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">summarise</span><span class="op">(</span>value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">date_year</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">date_year</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">language</span><span class="op">)</span>, <span class="cn">NA_character_</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">group_by</span><span class="op">(</span><span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">mutate</span><span class="op">(</span>rolling_avg <span class="op">=</span> <span class="fu">slider</span><span class="fu">::</span><span class="fu">slide_dbl</span><span class="op">(</span><span class="va">value</span>, <span class="va">mean</span>, .before <span class="op">=</span> <span class="fl">10</span>, .after <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span>
-  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">rolling_avg</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">geom_text_repel</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span>, label <span class="op">=</span> <span class="va">label</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Total texts per language in the HathiTrust bookworm"</span>,
-       subtitle <span class="op">=</span> <span class="st">"Log scale. Less common languages grouped as 'other'. 10 year rolling average."</span>,
-       x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span>
-<span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.</span>
-<span class="co">#&gt; Warning: Removed 4838 rows containing missing values (geom_text_repel).</span>
-<span class="co">#&gt; Warning: ggrepel: 3 unlabeled data points (too many overlaps). Consider increasing max.overlaps</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">res5</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/query_bookworm.html">query_bookworm</a></span><span class="op">(</span>counttype <span class="op">=</span> <span class="st">"TotalTexts"</span>,</span>
+<span>                       groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"language"</span><span class="op">)</span>,</span>
+<span>                       lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1500</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/slowkow/ggrepel" class="external-link">ggrepel</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">res5</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>language <span class="op">=</span> <span class="fu">fct_lump_n</span><span class="op">(</span><span class="va">language</span>, <span class="fl">10</span>, w <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">date_year</span>, <span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>value <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">date_year</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">date_year</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">language</span><span class="op">)</span>, <span class="cn">NA_character_</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">language</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>rolling_avg <span class="op">=</span> <span class="fu">slider</span><span class="fu">::</span><span class="fu">slide_dbl</span><span class="op">(</span><span class="va">value</span>, <span class="va">mean</span>, .before <span class="op">=</span> <span class="fl">10</span>, .after <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="../reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">rolling_avg</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_line</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">geom_text_repel</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">date_year</span>, y <span class="op">=</span> <span class="va">value</span>, label <span class="op">=</span> <span class="va">label</span>, color <span class="op">=</span> <span class="va">language</span><span class="op">)</span>, show.legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">scale_y_log10</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">theme_bw</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu">labs</span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Total texts per language in the HathiTrust bookworm"</span>,</span>
+<span>       subtitle <span class="op">=</span> <span class="st">"Log scale. Less common languages grouped as 'other'. 10 year rolling average."</span>,</span>
+<span>       x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the `.groups` argument.</span></span>
+<span><span class="co">#&gt; Warning: Removed 4838 rows containing missing values (geom_text_repel).</span></span>
+<span><span class="co">#&gt; Warning: ggrepel: 3 unlabeled data points (too many overlaps). Consider increasing max.overlaps</span></span></code></pre></div>
 <div class="figure">
 <img src="images/using-the-hathi-bookworm-unnamed-chunk-10-1.png" alt=""><p class="caption">Figure 4</p>
 </div>
@@ -399,7 +399,7 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
