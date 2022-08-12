@@ -23,21 +23,7 @@
 #' }
 rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
 
-  if("workset_hathi" %in% class(htids)) {
-    htids <- htids$htid
-  } else if("data.frame" %in% class(htids)) {
-    if(!"htid" %in% names(htids)) {
-      stop("Cannot find a column named 'htid' in the data frame of htids")
-    }
-    htids <- htids$htid
-  } else {
-    if(!is.character(htids)) {
-      stop("htids must be a character vector, a workset produced via workset_builder",
-           ", or a data frame with a column named 'htid' and containing the htids.")
-    }
-  }
-
-  htids <- unique(htids)
+  htids <- check_htids(htids)
 
   if(!fs::dir_exists(dir)) {
     message("Creating directory to sync JSON EF files at ", dir)
@@ -107,21 +93,7 @@ rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
 #' @examples
 #' htid_to_rsync(c("nc01.ark:/13960/t2v41mn4r", "mdp.39015001796443"), tempfile())
 htid_to_rsync <- function(htids, file) {
-  if("workset_hathi" %in% class(htids)) {
-    htids <- htids$htid
-  } else if("data.frame" %in% class(htids)) {
-    if(!"htid" %in% names(htids)) {
-      stop("Cannot find a column named 'htid' in the data frame of htids")
-    }
-    htids <- htids$htid
-  } else {
-    if(!is.character(htids)) {
-      stop("htids must be a character vector, a workset produced via workset_builder",
-           ", or a data frame with a column named 'htid' and containing the htids.")
-    }
-  }
-
-  htids <- unique(htids)
+  htids <- check_htids(htids)
 
   rel_paths <- htids %>%
     purrr::map_chr(stubby_url_to_rsync)
@@ -134,34 +106,7 @@ htid_to_rsync <- function(htids, file) {
 
 }
 
-#' Caches downloaded JSON Extracted Features files to another format
-#'
-#' It is useful to run this function after running [rsync_from_hathi]; this way,
-#' you can cache all your slow-to-load JSON Extracted Features files to a faster
-#' to load format (e.g., `feather` or `csv`).
-#'
-#' @param htids A character vector of Hathi Trust ids, a workset created with
-#'   [workset_builder], or a data frame with a column named "htid" containing
-#'   the Hathi Trust ids that require caching.
-#' @inheritParams get_hathi_counts
-#' @param keep_json Whether to keep the downloaded json files. Default is
-#'   `TRUE`; if false, it only keeps the local cached files (e.g., the csv
-#'   files) and deletes the associated JSON files. This can save space.
-#'
-#' @return A [tibble] with the paths of the cached files and an indicator of
-#'   whether each htid was successfully cached.
-#'
-#' @export
-cache_htids <- function(htids,
-                        dir = getOption("hathiTools.ef.dir"),
-                        cache_type = getOption("hathiTools.cachetype"),
-                        keep_json = TRUE) {
-
-  exists.y <- exists.x <- page <- count <- NULL
-
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
-
+check_htids <- function(htids) {
   if("workset_hathi" %in% class(htids)) {
     htids <- htids$htid
   } else if("data.frame" %in% class(htids)) {
@@ -175,137 +120,5 @@ cache_htids <- function(htids,
 
   }
 
-  json_file_locs <-  find_cached_htids(htids,
-                                       dir = dir,
-                                       cache_type = "none")
-
-  if(cache_type == "none") {
-    message("No files cached. Returning JSON EF file locations.")
-    return(json_file_locs)
-  }
-
-  cached_file_locs <- find_cached_htids(htids,
-                                        dir = dir,
-                                        cache_type = cache_type)
-
-  total_file_locs <- nrow(cached_file_locs)
-
-  to_cache <- cached_file_locs %>%
-    dplyr::left_join(json_file_locs, by = "htid") %>%
-    dplyr::filter(!exists.x, exists.y)
-
-  if(nrow(to_cache) < total_file_locs) {
-    non_existent_json <- cached_file_locs %>%
-      dplyr::left_join(json_file_locs, by = "htid") %>%
-      dplyr::filter(!exists.y) %>%
-      nrow()
-
-    cached_already <- cached_file_locs %>%
-      dplyr::left_join(json_file_locs, by = "htid") %>%
-      dplyr::filter(exists.x) %>%
-      nrow()
-
-    if(non_existent_json > 0) {
-      message(non_existent_json, " HTIDs cannot be cached, since their JSON EF files have not been downloaded yet to ", dir)
-      message("Try using rsync_from_hathi(htids) to download them.")
-    }
-    if(cached_already > 0) {
-      message(cached_already, " HTIDs have already been cached to ", cache_type, " format.")
-    }
-    if(!keep_json) {
-      message("Now deleting associated JSON files!")
-      fs::file_delete(json_file_locs$local_loc)
-    }
-    return(find_cached_htids(htids, dir = dir, cache_type = cache_type))
-  }
-
-  json_files <- to_cache$local_loc.y[to_cache$exists.y]
-  for(local_json in json_files) {
-    num_file <- which(json_files %in% local_json)
-    if(num_file %% 5 == 1) {
-      message("Caching ", local_json, " to ", cache_type,
-              ", file ", num_file, " of ", length(json_files), "...")
-    }
-    ef <- jsonlite::read_json(local_json) %>%
-      parse_listified_book() %>%
-      dplyr::mutate(page = as.integer(page),
-                    count = as.integer(count))
-
-    cache_ef_file(ef, to_cache$local_loc.x[num_file], cache_type = cache_type)
-  }
-
-  if(!keep_json) {
-    message("Now deleting associated JSON files!")
-    fs::file_delete(json_file_locs$local_loc)
-  }
-
-  find_cached_htids(htids, dir = dir, cache_type = cache_type)
-
-}
-
-cache_htids_meta <- function(htids) {
-  if("workset_hathi" %in% class(htids)) {
-    htids <- htids$htid
-  } else if("data.frame" %in% class(htids)) {
-    if(!"htid" %in% names(htids)) {
-      stop("Cannot find a column named 'htid' in the data frame of htids")
-    }
-    htids <- htids$htid
-  } else if(!is.character(htids)) {
-    stop("htids must be a character vector, a workset produced via workset_builder",
-         ", or a data frame with a column named 'htid' and containing the htids.")
-
-  }
-
-  json_file_locs <-  find_cached_htids(htids,
-                                       dir = dir,
-                                       cache_type = "none")
-
-
-
-}
-
-#' Finds cached Extracted Features files for a set of HT ids
-#'
-#' @param htids A character vector of Hathi Trust ids, a workset created with
-#'   [workset_builder], or a data frame with a column named "htid" containing
-#'   the Hathi Trust ids that require caching.
-#' @inheritParams get_hathi_counts
-#'
-#' @return A [tibble] with the paths of the cached files and an indicator of
-#'   whether each htid has an existing cached file.
-#'
-#' @export
-find_cached_htids <- function(htids,
-                              dir = getOption("hathiTools.ef.dir"),
-                              cache_type = getOption("hathiTools.cachetype")) {
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
-
-  if("workset_hathi" %in% class(htids)) {
-    htids <- htids$htid
-  } else if("data.frame" %in% class(htids)) {
-    if(!"htid" %in% names(htids)) {
-      stop("Cannot find a column named 'htid' in the data frame of htids")
-    }
-    htids <- htids$htid
-  } else if(!is.character(htids)) {
-      stop("htids must be a character vector, a workset produced via workset_builder",
-           ", or a data frame with a column named 'htid' and containing the htids.")
-
-  }
-
-
-
-  if(cache_type == "none") {
-    cache_type <- "json.bz2"
-  }
-
-  local_files <- htids %>%
-    purrr::map_chr(local_loc, suffix = cache_type, dir = dir)
-
-  tibble(htid = htids, local_loc = local_files, exists = fs::file_exists(local_files))
-
-
-
+  unique(htids)
 }
