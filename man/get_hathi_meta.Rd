@@ -54,13 +54,13 @@ described by the Extracted Features file.}
 \item{enumerationChronology}{Information regarding which volume, issue,
 and/or year the HathiTrust volume was published.}
 
-\item{publisher}{Named list column. Information about the publisher of the
+\item{publisher}{Information about the publisher of the
 volume described by the Extracted Features file. Includes type, name, and
 id. \code{type} is either "Organization" or "Person". \code{id} is a URL identifying
 the publisher, such as a Handle URL, ORCID, etc. \code{name} is derived from the
 Imprint field in the MARC record.}
 
-\item{pubPlace}{Named list column.  Information about where the volume was
+\item{pubPlace}{Information about where the volume was
 first published. Includes id, type, and name. \code{type} is taken from the
 Bibframe Instance's provisionActivity's place rdf:about node, which are
 derived from the country codes in the MARC 008 field.}
@@ -68,11 +68,11 @@ derived from the country codes in the MARC 008 field.}
 \item{pubDate}{The year in which that edition of the volume was first
 published.}
 
-\item{genre}{List column. Information about the volume's genre, as
+\item{genre}{Information about the volume's genre, as
 determined by the cataloger of the work. Values are derived from the
 Genre/Form Field in the MARC record.}
 
-\item{category}{List column. The volume's topic or topics.Derived from the
+\item{category}{The volume's topic or topics.Derived from the
 Bibframe Work's ClassificationLcc node. Represents the natural language
 label for the Library of Congress Classification (LCC) value based upon the
 Library of Congress's LCC standard documentation.}
@@ -91,7 +91,7 @@ they are processed at HathiTrust.}
 \item{lastRightsUpdateDate}{The most recent date the volume's copyright
 status was updated.}
 
-\item{Contributor}{List column. Contains information regarding the
+\item{Contributor}{Contains information regarding the
 author(s), editor(s), or other agents involved in creating the volume.
 Consists of id, type, and name. id is a URL taken from the Bibframe agent
 that links to an authorities database (e.g., VIAF). type is either the
@@ -104,12 +104,12 @@ Fields.}
 \item{typeOfResource}{The cataloger-determined resource type of the volume
 (e.g., text, image, etc.).}
 
-\item{sourceInstitution}{List column. An array containing information about
+\item{sourceInstitution}{An array containing information about
 the institution that contributed the volume to HathiTrust. Always has a type
 node and a name node. \code{id} is a URL identifying the source institution.
 \code{name} is the name of the source institution.}
 
-\item{mainEntityOfPage}{List columns. An array of URLs linking to various
+\item{mainEntityOfPage}{An array of URLs linking to various
 metadata records describing the volume represented by the Extracted Features
 file. The array typically contains 3 URLs that point to the HathiTrust
 Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
