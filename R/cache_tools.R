@@ -32,7 +32,7 @@ cache_htids <- function(htids,
                         cache_page_metadata = TRUE,
                         keep_json = TRUE) {
 
-  exists.y <- exists.x <- page <- count <- NULL
+  exists.y <- exists.x <- page <- count <- htid <- NULL
 
   cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
@@ -256,6 +256,8 @@ assemble_from_cache <- function(htid, local_loc, meta_loc,
                                 pagemeta_loc, cache_type, include_meta,
                                 include_page_meta, filter_expression) {
 
+  mainEntityOfPage <- page <- NULL
+
   ef <- read_cached_ef_file(local_loc, cache_type = cache_type)
   ef$htid <- htid
 
@@ -332,6 +334,9 @@ cache_ef_file <- function(ef, filename, cache_type) {
 }
 
 needs_cache <- function(cached_file_locs, json_file_locs, cache_type) {
+
+  exists.y <- exists.x <- NULL
+
   total_file_locs <- nrow(cached_file_locs)
 
   to_cache <- cached_file_locs %>%
