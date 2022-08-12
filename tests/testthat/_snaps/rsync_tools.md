@@ -11,16 +11,6 @@
 
     Code
       get_hathi_counts(poetry$htid[1], dir = dir)
-    Message <vroom_dim_message>
-      Rows: 1155 Columns: 5
-    Message <vroom_spec_message>
-      -- Column specification --------------------------------------------------------
-      Delimiter: ","
-      chr (3): token, POS, section
-      dbl (2): count, page
-      
-      i Use `spec()` to retrieve the full column specification for this data.
-      i Specify the column types or set `show_col_types = FALSE` to quiet this message.
     Output
       # A tibble: 1,155 x 6
          htid               token      POS   count section  page
@@ -36,21 +26,12 @@
        9 mdp.39015047759454 MRDRYDEN   NN        1 body        5
       10 mdp.39015047759454 .          .         4 body        5
       # ... with 1,145 more rows
+      # i Use `print(n = ...)` to see more rows
 
 # Can cache to text2vec.csv
 
     Code
       get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "text2vec.csv")
-    Message <vroom_dim_message>
-      Rows: 17 Columns: 3
-    Message <vroom_spec_message>
-      -- Column specification --------------------------------------------------------
-      Delimiter: ","
-      chr (2): section, token
-      dbl (1): page
-      
-      i Use `spec()` to retrieve the full column specification for this data.
-      i Specify the column types or set `show_col_types = FALSE` to quiet this message.
     Output
       # A tibble: 17 x 4
          htid               section  page token                                       
@@ -92,6 +73,7 @@
        9 mdp.39015047759454 MRDRYDEN   NN        1 body        5
       10 mdp.39015047759454 .          .         4 body        5
       # ... with 1,145 more rows
+      # i Use `print(n = ...)` to see more rows
 
 # Can cache to arrow
 
@@ -112,6 +94,7 @@
        9 mdp.39015047759454 MRDRYDEN   NN        1 body        5
       10 mdp.39015047759454 .          .         4 body        5
       # ... with 1,145 more rows
+      # i Use `print(n = ...)` to see more rows
 
 # Can cache workset
 
@@ -132,4 +115,5 @@
        9 mdp.39015047759454 MRDRYDEN   NN        1 body        5
       10 mdp.39015047759454 .          .         4 body        5
       # ... with 1,145 more rows
+      # i Use `print(n = ...)` to see more rows
 

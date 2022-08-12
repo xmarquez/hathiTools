@@ -36,7 +36,7 @@ test_that("Can cache to rds", {
   skip_if_offline()
   cache_htids(poetry$htid[1:10], dir = dir, cache_type = "rds")
   files <- fs::dir_ls(path = dir, recurse = TRUE, glob = "*.rds")
-  expect_equal(length(files), 10)
+  expect_equal(length(files), 30)
   expect_snapshot(get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "rds"))
 })
 
