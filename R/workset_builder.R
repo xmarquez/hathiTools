@@ -143,7 +143,7 @@ workset_builder <- function(token, genre, title,
   }
 
   if(!missing(title)) {
-    title <- stringr::str_split(title, "[ [:punct:]]") %>%
+    title <- stringr::str_split(title, "[ ]") %>%
       unlist() %>%
       unique()
     title <- title[ title != "" ]
@@ -161,7 +161,7 @@ workset_builder <- function(token, genre, title,
   }
 
   if(!missing(name)) {
-    name <- stringr::str_split(name, "[ [:punct:]]") %>%
+    name <- stringr::str_split(name, "[ ]") %>%
       unlist() %>%
       unique()
     name <- name[ name != "" ]
@@ -182,6 +182,7 @@ workset_builder <- function(token, genre, title,
     imprint <- stringr::str_split(imprint, " ") %>%
       unlist() %>%
       unique()
+    imprint <- imprint[ imprint != "" ]
     imprint <- stringr::str_c("(volumeimprint_txt:", imprint, ")")
     imprint <- paste(imprint, collapse = " AND ")
     if(token_query != "") {
