@@ -1,29 +1,3 @@
-download_hathi_ef <- function(htid,
-                           dir = getOption("hathiTools.ef.dir"),
-                           cache_type = getOption("hathiTools.cachetype")) {
-
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
-
-  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
-  if(file.exists(local_cache)) {
-    message("File has already been downloaded. Returning existing cached file.")
-    ef <- read_cached_ef_file(local_cache, cache_type)
-  } else {
-    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
-    if(!file.exists(local_json)) {
-      download_http(htid, dir = dir)
-    }
-    ef <- read_json(htid, dir = dir)
-
-    ef <- cache_ef_file(ef, local_cache, cache_type = cache_type)
-
-  }
-  ef %>%
-    dplyr::mutate(htid = htid, .before = dplyr::everything())
-
-}
-
 #' Reads the downloaded extracted features file for a given Hathi Trust id
 #'
 #' Given a single Hathi Trust ID, this function returns a
@@ -66,6 +40,10 @@ download_hathi_ef <- function(htid,
 get_hathi_counts <- function(htid,
                              dir = getOption("hathiTools.ef.dir"),
                              cache_type = getOption("hathiTools.cachetype")) {
+  if(length(htid) != 1) {
+    stop("This function only works with a single HT id. ",
+         "Use `read_cached_htids()` to read extracted features for multiple HT ids.")
+  }
 
   cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
@@ -141,13 +119,13 @@ get_hathi_counts <- function(htid,
 #'  \item{enumerationChronology}{Information regarding which volume, issue,
 #'  and/or year the HathiTrust volume was published.}
 #'
-#'  \item{publisher}{Named list column. Information about the publisher of the
+#'  \item{publisher}{Information about the publisher of the
 #'  volume described by the Extracted Features file. Includes type, name, and
 #'  id. `type` is either "Organization" or "Person". `id` is a URL identifying
 #'  the publisher, such as a Handle URL, ORCID, etc. `name` is derived from the
 #'  Imprint field in the MARC record.}
 #'
-#'  \item{pubPlace}{Named list column.  Information about where the volume was
+#'  \item{pubPlace}{Information about where the volume was
 #'  first published. Includes id, type, and name. `type` is taken from the
 #'  Bibframe Instance's provisionActivity's place rdf:about node, which are
 #'  derived from the country codes in the MARC 008 field.}
@@ -155,11 +133,11 @@ get_hathi_counts <- function(htid,
 #'  \item{pubDate}{The year in which that edition of the volume was first
 #'  published.}
 #'
-#'  \item{genre}{List column. Information about the volume's genre, as
+#'  \item{genre}{Information about the volume's genre, as
 #'  determined by the cataloger of the work. Values are derived from the
 #'  Genre/Form Field in the MARC record.}
 #'
-#'  \item{category}{List column. The volume's topic or topics.Derived from the
+#'  \item{category}{The volume's topic or topics.Derived from the
 #'  Bibframe Work's ClassificationLcc node. Represents the natural language
 #'  label for the Library of Congress Classification (LCC) value based upon the
 #'  Library of Congress's LCC standard documentation.}
@@ -178,7 +156,7 @@ get_hathi_counts <- function(htid,
 #'  \item{lastRightsUpdateDate}{The most recent date the volume's copyright
 #'  status was updated.}
 #'
-#'  \item{Contributor}{List column. Contains information regarding the
+#'  \item{Contributor}{Contains information regarding the
 #'  author(s), editor(s), or other agents involved in creating the volume.
 #'  Consists of id, type, and name. id is a URL taken from the Bibframe agent
 #'  that links to an authorities database (e.g., VIAF). type is either the
@@ -191,12 +169,12 @@ get_hathi_counts <- function(htid,
 #'  \item{typeOfResource}{The cataloger-determined resource type of the volume
 #'  (e.g., text, image, etc.).}
 #'
-#'  \item{sourceInstitution}{List column. An array containing information about
+#'  \item{sourceInstitution}{An array containing information about
 #'  the institution that contributed the volume to HathiTrust. Always has a type
 #'  node and a name node. `id` is a URL identifying the source institution.
 #'  `name` is the name of the source institution.}
 #'
-#'  \item{mainEntityOfPage}{List columns. An array of URLs linking to various
+#'  \item{mainEntityOfPage}{An array of URLs linking to various
 #'  metadata records describing the volume represented by the Extracted Features
 #'  file. The array typically contains 3 URLs that point to the HathiTrust
 #'  Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
@@ -232,18 +210,28 @@ get_hathi_counts <- function(htid,
 #' get_hathi_meta("mdp.39015001796443", dir = tmp)
 #' }
 get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
-  local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
-  if(!file.exists(local_json)) {
-    download_hathi_ef(htid, dir = dir)
+  if(length(htid) != 1) {
+    stop("This function only works with a single HT id. ",
+         "Use `read_cached_htids()` to read metadata for multiple HT ids.")
   }
-  meta <- load_json(htid, dir = dir)$metadata
+  local_cache <- local_loc(htid, suffix = "meta.rds", dir = dir)
 
-  meta <- meta %>%
-    purrr::compact() %>%
-    purrr::map(flatten_data) %>%
-    tibble::as_tibble() %>%
-    dplyr::mutate(htid = htid,
-                  .before = dplyr::everything())
+  if(!file.exists(local_cache)) {
+    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+    if(!file.exists(local_json)) {
+      download_hathi_ef(htid, dir = dir)
+    }
+    meta <- load_json(htid, dir = dir)$metadata %>%
+      purrr::compact() %>%
+      purrr::map(flatten_data) %>%
+      tibble::as_tibble() %>%
+      dplyr::mutate(htid = htid,
+                    .before = dplyr::everything())
+    saveRDS(meta, local_cache, compress = TRUE)
+  }
+  else {
+    meta <- readRDS(local_cache)
+  }
 
   meta
 }
@@ -341,74 +329,65 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'
 #' }
 get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir")) {
-
-  local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
-  if(!file.exists(local_json)) {
-    download_hathi_ef(htid, dir = dir)
+  if(length(htid) != 1) {
+    stop("This function only works with a single HT id. ",
+         "Use `read_cached_htids()` to read page metadata for multiple HT ids.")
   }
-  load_json(htid, dir = dir) %>%
-    parse_page_meta_volume()
+  local_cache <- local_loc(htid, suffix = "pagemeta.rds", dir = dir)
 
+  if(!file.exists(local_cache)) {
+    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+    if(!file.exists(local_json)) {
+      download_hathi_ef(htid, dir = dir)
+    }
+    page_meta <- load_json(htid, dir = dir) %>%
+      parse_page_meta_volume()
+
+    saveRDS(page_meta, local_cache, compress = TRUE)
+  }
+  else {
+    page_meta <- readRDS(local_cache)
+  }
+
+  page_meta
+
+}
+
+download_hathi_ef <- function(htid,
+                              dir = getOption("hathiTools.ef.dir"),
+                              cache_type = getOption("hathiTools.cachetype")) {
+
+  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+                                        "feather", "text2vec.csv"))
+
+  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
+  if(file.exists(local_cache)) {
+    message("File has already been downloaded. Returning existing cached file.")
+    ef <- read_cached_ef_file(local_cache, cache_type)
+  } else {
+    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+    if(!file.exists(local_json)) {
+      download_http(htid, dir = dir)
+    }
+    ef <- read_json(htid, dir = dir)
+
+    ef <- cache_ef_file(ef, local_cache, cache_type = cache_type)
+
+  }
+  ef %>%
+    dplyr::mutate(htid = htid, .before = dplyr::everything())
 
 }
 
 flatten_data <- function(x) {
   if(length(x) > 1) {
-    x <- list(x)
+    if(!is.null(names(x))) {
+      x <- stringr::str_c(names(x), x, sep = "=", collapse = ", ")
+    } else {
+      x <- toString(x)
+    }
   }
   x
-}
-
-read_cached_ef_file <- function(filename, cache_type) {
-  if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
-    res <- vroom::vroom(filename)
-  }
-  if(cache_type %in% c("rds")) {
-    res <- readRDS(filename)
-  }
-  if(cache_type %in% c("feather")) {
-    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
-      stop("Must have 'arrow' package installed to use 'feather' cache")
-    }
-    res <- arrow::read_feather(filename)
-  }
-  if(cache_type != "text2vec.csv") {
-    res$count <- as.numeric(res$count)
-  }
-  res$page <- as.numeric(res$page)
-  res
-}
-
-cache_ef_file <- function(ef, filename, cache_type) {
-
-  section <- page <- token <- count <- POS <- NULL
-
-  if(stringr::str_detect(cache_type, "text2vec")) {
-
-    ef <- ef %>%
-      dplyr::group_by(section, page) %>%
-      dplyr::summarise(token = stringr::str_c(rep(token, count), "_", rep(POS, count), collapse = " "),
-                       .groups = "drop")
-
-    ef$page <- as.numeric(ef$page)
-
-
-  }
-  if(cache_type %in% c("csv.gz", "csv", "text2vec.csv")) {
-    vroom::vroom_write(ef, filename, delim = ",")
-  }
-  if(cache_type == "rds") {
-    saveRDS(ef, filename, compress = TRUE)
-  }
-  if(cache_type == "feather") {
-    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
-      stop("Must have 'arrow' package installed to use 'feather' cache")
-    }
-    arrow::write_feather(ef, filename)
-  }
-
-  ef
-
 }
 
 id_encode <- function (htid) {
@@ -561,8 +540,9 @@ parse_page_meta <- function(page) {
   page <- page[to_parse] %>%
     purrr::compact() %>%
     tibble::as_tibble_row() %>%
-    dplyr::mutate(seq = as.numeric(seq),
-                  sectionStats = list(sectionStats))
+    dplyr::mutate(seq = as.numeric(seq)) %>%
+    dplyr::bind_cols(sectionStats) %>%
+    dplyr::rename(page = seq)
 
   page
 }
@@ -572,9 +552,7 @@ parse_page_meta_volume <- function(listified_version) {
   res <- listified_version$features$pages %>%
     purrr::map_df(parse_page_meta)
 
-  res <- res %>%
-    dplyr::mutate(htid = listified_version$htid,
-           .before = dplyr::everything())
+  res$htid <- listified_version$htid
   res
 
 }
