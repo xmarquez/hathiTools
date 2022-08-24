@@ -15,6 +15,8 @@ query_bookworm(
   lims = c(1920, 2000),
   compare_to,
   as_json = FALSE,
+  verbose = TRUE,
+  query,
   ...
 )
 }
@@ -87,9 +89,9 @@ ordering for most distributions, but in some cases it may not behave as
 intended."
 }}
 
-\item{format}{Format of returned results. In theory the Bookworm should be
+\item{format}{Format of returned results. In theory the Bookworm DB should be
 able to return results as "json", "tsv", "csv", or even "feather";
-currently only "json" works.}
+currently only "json" works (and it's the only supported format here).}
 
 \item{lims}{Min and max year as a two-element numeric vector. Default is
 \code{c(1920, 2000)}.}
@@ -102,6 +104,15 @@ frequency of two words.}
 where the function does not know how to return a \link{tibble}, or when you want
 to use the raw json to produce a different data structure.}
 
+\item{verbose}{If \code{TRUE}, shows the JSON query once built.}
+
+\item{query}{You can directly pass on a query string (in JSON). This is
+useful for very complex queries, but there's no checking that the
+parameters are correct so you may encounter unexpected errors. See
+https://bookworm-project.github.io/Docs/query_structure.html for more on
+the query structure. If you use \code{query}, all other parameters are silently
+ignored. Use with care!}
+
 \item{...}{Additional parameters passed to the query builder; these would be
 the fields that method = \code{returnPossibleFields} returns, including fields
 to group the query by (e.g., groups = "class"). At the date of this
@@ -111,7 +122,8 @@ publisher, format, is_gov_doc, page_count_bin, word_count_bin,
 publication_country, publication_state, publication_place. These are not
 documented, and in some cases one must know the exact string to search for;
 for example, a search with \code{mainauthor = "Tocqueville"} won't find
-anything, but a search with \code{mainauthor = "Tocqueville, Alexis de 1805-1859."} may.}
+anything, but a search with \code{mainauthor = "Tocqueville, Alexis de 1805-1859."} may. These fields should be accessible via
+\code{options("hathiTools.bookworm.fields")}}
 }
 \value{
 A tidy \link{tibble} whenever possible, with columns for each grouping
@@ -126,17 +138,15 @@ that same metadata. It uses code authored by Ben Schmidt (from
 \url{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
-\dontrun{
-result <- query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000),
-  counttype = c("WordsPerMillion", "TextPercent"))
+\donttest{
+query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000),
+  counttype = c("WordsPerMillion", "WordCount"))
 
-result2 <- query_bookworm(word = "democracy", groups = c("date_year", "class"), lims = c(1900,2000))
+query_bookworm(word = "democracy", groups = c("date_year", "class"),
+  lims = c(1900,2000))
 
-result4 <- query_bookworm(word = c("democracy"), lims = c(1760, 2000), counttype = c("TotalTexts"),
-  language = "English")
-
-result5 <- query_bookworm(word = "democracy", groups = "date_year", date_year = "1941",
-  class = "Education", method = "search_results")
+query_bookworm(word = "democracy", groups = "date_year", date_year = "1941",
+  lc_classes = "Education", method = "search_results")
 }
 }
 \author{
