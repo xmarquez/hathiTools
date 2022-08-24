@@ -120,7 +120,7 @@
 #' query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000),
 #'   counttype = c("WordsPerMillion", "WordCount"))
 #'
-#' query_bookworm(word = "democracy", groups = c("date_year", "class"),
+#' query_bookworm(word = "democracy", groups = c("date_year", "lc_classes"),
 #'   lims = c(1900,2000))
 #'
 #' query_bookworm(word = "democracy", groups = "date_year", date_year = "1941",

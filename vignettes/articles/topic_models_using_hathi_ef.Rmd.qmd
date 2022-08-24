@@ -76,7 +76,7 @@ tocqueville4 <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1950:
 tocqueville4
 ```
 
-We can download their full metadata as follows (it's a slow download, so use with care if you have a lot of Hathi Trust ids!):
+In principle we can download their full metadata using the function get_workset_meta(), though the SOLR service hasn't been working recently.  (Also, it's a slow download, so use with care if you have a lot of Hathi Trust ids!).
 
 ```{r}
 tocqueville_meta <- get_workset_meta(tocqueville4)
@@ -93,20 +93,20 @@ tocqueville_meta %>%
 
 ### Downloading and caching the associated Extracted Features files
 
-We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist). This function requires that your system has access to `rsync`..
-
+We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist). This function requires that your system has access to `rsync`. (In Windows, the easiest way to do this is to install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install); `rsync` should come already installed in most Mac and Linux machines).
 
 ```{r}
 rsync_from_hathi(tocqueville4)
 ```
 
-The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs in the "./hathi-ef" directory using the function `cache_htids()`:
+The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs (or to other formats, including Arrow's "Feather") in the "./hathi-ef" directory using the function `cache_htids()`:
 
 ```{r}
-cache_htids(tocqueville4)
+cached_files <- cache_htids(tocqueville4)
+cached_files
 ```
 
-The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file paths of the cached files, and whether each file exists or not (i.e., whether it was downloaded successfully and cached).
+The convenience function `find_cached_htids()`, when called with a vector of Hathi Trust IDs or a workset, returns a data frame with the Hathi Trust id, the local file paths of the cached EF files, and whether each file exists or not (i.e., whether it was downloaded successfully and cached).
 
 ```{r}
 cached_files <- find_cached_htids(tocqueville4)
@@ -114,7 +114,7 @@ cached_files <- find_cached_htids(tocqueville4)
 cached_files
 ```
 
-The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis (by filtering the returned dataset via `cached_files %>% filter(exists)`, for examples). In any case these files can now be loaded into R very quickly:
+The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis (by filtering the returned dataset via `cached_files %>% filter(exists)`, for example). In any case these files can now be loaded into R very quickly:
 
 ```{r, message = FALSE}
 tocqueville_ef <- cached_files %>%
@@ -125,6 +125,16 @@ tocqueville_ef <- cached_files %>%
 
 tocqueville_ef
 ```
+
+Or one can use the function read_cached_htids():
+
+```{r}
+tocqueville_ef <- read_cached_htids(tocqueville4)
+tocqueville_ef
+```
+
+
+Note that cache_htids() automatically caches not only the extracted features file, but also the volume-level and page-level metadata; the function read_cached_htids() by default adds both of these forms of metadata to your tibble. This can make it quite large! One can get the metadata separately.
 
 ### Creating a document-term matrix and fitting the model
 
