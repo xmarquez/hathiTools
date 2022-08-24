@@ -31,7 +31,7 @@
 # Can cache to text2vec.csv
 
     Code
-      get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "text2vec.csv")
+      get_hathi_counts(poetry$htid[1], dir = dir, cache_format = "text2vec.csv")
     Output
       # A tibble: 17 x 4
          htid               section  page token                                       
@@ -57,7 +57,7 @@
 # Can cache to rds
 
     Code
-      get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "rds")
+      get_hathi_counts(poetry$htid[1], dir = dir, cache_format = "rds")
     Output
       # A tibble: 1,155 x 6
          htid               token      POS   count section  page
@@ -78,7 +78,7 @@
 # Can cache to arrow
 
     Code
-      get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "feather")
+      get_hathi_counts(poetry$htid[1], dir = dir, cache_format = "feather")
     Output
       # A tibble: 1,155 x 6
          htid               token      POS   count section  page
@@ -99,7 +99,7 @@
 # Can cache workset
 
     Code
-      get_hathi_counts(poetry$htid[1], dir = dir, cache_type = "feather")
+      get_hathi_counts(poetry$htid[1], dir = dir, cache_format = "feather")
     Output
       # A tibble: 1,155 x 6
          htid               token      POS   count section  page
