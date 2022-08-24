@@ -2,12 +2,15 @@
 % Please edit documentation in R/cache_tools.R
 \name{clear_cache}
 \alias{clear_cache}
-\title{Removes cached Extracted Features files for a set of HT ids}
+\title{Removes cached files for a set of HT ids}
 \usage{
 clear_cache(
   htids,
   dir = getOption("hathiTools.ef.dir"),
-  cache_type = c(getOption("hathiTools.cachetype"), "meta", "pagemeta"),
+  cache_type = c("ef", "meta", "pagemeta"),
+  cache_format = getOption("hathiTools.cacheformat"),
+  cache_metadata_format = c("rds", "csv.gz", "feather"),
+  cache_pagemetadata_format = c("rds", "feather"),
   keep_json = TRUE
 )
 }
@@ -20,22 +23,37 @@ the Hathi Trust ids that require caching.}
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "hathi-ef" on load.}
 
-\item{cache_type}{The type of cached file to remove. Defaults to
-\code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load, as well as
-any cached volume-level or page-level metadata ("meta" and "pagemeta").
+\item{cache_type}{Type of information to remove. The default is c("ef",
+"meta", "pagemeta"), which refers to the extracted features, the volume
+metadata, and the page metadata in \code{dir}. Omitting one of these removes
+only the rest (e.g., cache_type = "ef" removes only the EF files, not their
+associated metadata or page metadata).}
+
+\item{cache_format}{The format of the cached EF files to remove. Defaults to
+\code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on load, as well
+as any cached volume-level or page-level metadata ("meta" and "pagemeta").
 Other possibilities are: "rds", "feather" (suitable for use with \link{arrow};
 needs the \link{arrow} package installed), or "text2vec.csv" (a csv suitable for
 use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec})}
+
+\item{cache_metadata_format}{File format of volume metadata cache. Default
+(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
+\link{arrow} package). Can be multiple for \link{find_cached_htids} and
+\link{clear_cache}.}
+
+\item{cache_pagemetadata_format}{File format of page metadata cache. Default
+(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
+package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
 
 \item{keep_json}{Whether to keep any downloaded JSON files. Default is
 \code{TRUE}; if \code{FALSE} will delete all JSON extracted features associated with
 the set of htids.}
 }
 \value{
-A \link{tibble} with the paths of the cached files and an indicator of
-whether each htid has an existing cached file.
+(Invisible) a character vector with the locations of the deleted
+files.
 }
 \description{
-Removes cached Extracted Features files for a set of HT ids
+Removes cached files for a set of HT ids
 }

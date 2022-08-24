@@ -7,7 +7,11 @@
 find_cached_htids(
   htids,
   dir = getOption("hathiTools.ef.dir"),
-  cache_type = getOption("hathiTools.cachetype")
+  cache_type = c("ef", "meta", "pagemeta"),
+  cache_format = getOption("hathiTools.cacheformat"),
+  cache_metadata_format = c("rds", "csv.gz", "feather"),
+  cache_pagemetadata_format = c("rds", "feather"),
+  existing_only = TRUE
 )
 }
 \arguments{
@@ -19,13 +23,31 @@ the Hathi Trust ids that require caching.}
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "hathi-ef" on load.}
 
-\item{cache_type}{Type of caching used. Defaults to
-\code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
-cache types are: compressed csv (the default), "none" (no local caching of
-JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
-csv suitable for use with the package
+\item{cache_type}{Type of information cached. The default is c("ef", "meta",
+"pagemeta"), which refers to the extracted features, the volume metadata,
+and the page metadata in \code{dir}. Omitting one of these caches or finds only
+the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+their associated metadata or page metadata).}
+
+\item{cache_format}{File format of cache for Extracted Features files.
+Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
+load. Allowed cache types are: compressed csv (the default), "none" (no
+local caching of JSON download; only JSON file kept), "rds", "feather"
+(suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
+"text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
+
+\item{cache_metadata_format}{File format of volume metadata cache. Default
+(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
+\link{arrow} package). Can be multiple for \link{find_cached_htids} and
+\link{clear_cache}.}
+
+\item{cache_pagemetadata_format}{File format of page metadata cache. Default
+(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
+package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
+
+\item{existing_only}{Whether to return only file paths to files that actually
+exist. Default is \code{TRUE}.}
 }
 \value{
 A \link{tibble} with the paths of the cached files and an indicator of

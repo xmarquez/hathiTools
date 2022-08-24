@@ -7,9 +7,10 @@
 read_cached_htids(
   htids,
   dir = getOption("hathiTools.ef.dir"),
-  cache_type = getOption("hathiTools.cachetype"),
-  include_meta = TRUE,
-  include_page_meta = TRUE,
+  cache_type = c("ef", "meta", "pagemeta"),
+  cache_format = getOption("hathiTools.cacheformat"),
+  cache_metadata_format = "rds",
+  cache_pagemetadata_format = "rds",
   filter_expression = TRUE
 )
 }
@@ -22,19 +23,28 @@ the Hathi Trust ids that require caching.}
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "hathi-ef" on load.}
 
-\item{cache_type}{Type of caching used. Defaults to
-\code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
-cache types are: compressed csv (the default), "none" (no local caching of
-JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
-csv suitable for use with the package
+\item{cache_type}{Type of information cached. The default is c("ef", "meta",
+"pagemeta"), which refers to the extracted features, the volume metadata,
+and the page metadata in \code{dir}. Omitting one of these caches or finds only
+the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+their associated metadata or page metadata).}
+
+\item{cache_format}{File format of cache for Extracted Features files.
+Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
+load. Allowed cache types are: compressed csv (the default), "none" (no
+local caching of JSON download; only JSON file kept), "rds", "feather"
+(suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
+"text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
-\item{include_meta}{Whether to include the volume-level metadata in the
-returned \link[tibble:tibble]{tibble}. Default is \code{TRUE}.}
+\item{cache_metadata_format}{File format of volume metadata cache. Default
+(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
+\link{arrow} package). Can be multiple for \link{find_cached_htids} and
+\link{clear_cache}.}
 
-\item{include_page_meta}{Whether to include the page-level metadata in the
-returned \link[tibble:tibble]{tibble}. Default is \code{TRUE}.}
+\item{cache_pagemetadata_format}{File format of page metadata cache. Default
+(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
+package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
 
 \item{filter_expression}{A filter expression to filter each returned
 \link[tibble:tibble]{tibble} by (so as to only load into memory desired
