@@ -40,7 +40,7 @@ function uses code authored by Ben Schmidt, from his Hathidy package
 (\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \examples{
-\dontrun{
+\donttest{
 # Download the 1863 version of "Democracy in America" by Tocqueville and get
 # its extracted features
 
