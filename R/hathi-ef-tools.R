@@ -28,7 +28,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Download the 1863 version of "Democracy in America" by Tocqueville and get
 #' # its extracted features
 #'
@@ -412,7 +412,7 @@ download_hathi_ef <- function(htid,
   local_cache <- local_loc(htid, suffix = cache_format, dir = dir)
   if(file.exists(local_cache)) {
     message("File has already been downloaded. Returning existing cached file.")
-    ef <- read_cached_ef_file(local_cache, cache_format)
+    ef <- read_cached_file(local_cache, cache_format)
   } else {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
     if(!file.exists(local_json)) {
