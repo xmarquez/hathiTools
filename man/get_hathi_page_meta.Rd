@@ -4,7 +4,11 @@
 \alias{get_hathi_page_meta}
 \title{Reads the page-level metadata of a single Hathi Trust Extracted Features file}
 \usage{
-get_hathi_page_meta(htid, dir = getOption("hathiTools.ef.dir"))
+get_hathi_page_meta(
+  htid,
+  dir = getOption("hathiTools.ef.dir"),
+  cache_format = c("rds", "csv.gz", "csv", "feather")
+)
 }
 \arguments{
 \item{htid}{The Hathi Trust id of the item whose metadata is to be read.}
@@ -13,6 +17,9 @@ get_hathi_page_meta(htid, dir = getOption("hathiTools.ef.dir"))
 saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "./hathi-ef/" on load. If the file does not exist, this function will first
 attempt to download it.}
+
+\item{cache_format}{Format of metadata. The default is "rds"; can also
+be "csv.gz", "csv", and "feather" (requires the \link{arrow} package).}
 }
 \value{
 A \link[tibble:tibble]{tibble} with the page-level metadata for the
@@ -44,28 +51,30 @@ algorithm.}
 
 \item{sentenceCount}{The total number of sentences detected on the page.}
 
-\item{sectionStats}{A \link[tibble:tibble]{tibble} column with stats for each
-of the sections of the page ("header", "body", and "footer"). This tibble
-has the following fields:
-\itemize{
-\item section: The seciton of the page.
-\item sectiontokenCount: The total number of tokens detected in the section of
-the page.
-\item sectionlineCount: The total number of lines detected in the section of
-the page.
-\item sectionemptyLineCount The total number of empty lines detected in the
-section of the page.
-\item sectionsentenceCount The total number of sentences detected in the
-section of the page.
-\item sectioncapAlphaSeq The longest length of the alphabetical sequence of
-capital characters starting a line. Only available for the "body" section.
-\item beginCharCount A \link[tibble:tibble]{tibble} column with the first non-White
+\item{section}{The section of the page.}
+
+\item{sectiontokenCount}{The total number of tokens detected in the section of
+the page.}
+
+\item{sectionlineCount}{The total number of lines detected in the section of
+the page.}
+
+\item{sectionemptyLineCount}{The total number of empty lines detected in the
+section of the page.}
+
+\item{sectionsentenceCount}{The total number of sentences detected in the
+section of the page.}
+
+\item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence of
+capital characters starting a line. Only available for the "body" section.}
+
+\item{beginCharCount}{A \link[tibble:tibble]{tibble} column with the first non-White
 Space characters detected on lines in the section (beginChar) and their
-occurrence counts (beginCharCount).
-\item endCharCount An \link[tibble:tibble]{tibble} column of the last non-White
+occurrence counts (beginCharCount)}.
+
+\item{endCharCount}{A \link[tibble:tibble]{tibble} column of the last non-White
 Space characters on detected lines in the section (endChar) and their
-occurrence counts (endCharCount). }
-}
+occurrence counts (endCharCount).}
 
 }
 }
@@ -81,6 +90,10 @@ uses code authored by Ben Schmidt, from his Hathidy package
 Note that if you want to extract the page-level metadata of more than one
 Hathi Trust ID at a time, it may be best to download the JSON files for these
 HTIDs first using \link{rsync_from_hathi} and then running this function.
+}
+\note{
+It is not recommended to save page-level metadata in csv format; you will
+lose the \code{beginCharCount} and \code{endCharCount} variables.
 }
 \examples{
 \dontrun{

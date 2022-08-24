@@ -14,12 +14,12 @@
 #' @param dir The directory where the download extracted features files are to
 #'   be found. Defaults to `getOption("hathiTools.ef.dir")`, which is just
 #'   "hathi-ef" on load.
-#' @param cache_type Type of caching used. Defaults to
-#'   `getOption("hathiTools.cachetype")`, which is "csv.gz" on load. Allowed
-#'   cache types are: compressed csv (the default), "none" (no local caching of
-#'   JSON download; only JSON file kept), "rds", "feather" (suitable for use
-#'   with [arrow]; needs the [arrow] package installed), or "text2vec.csv" (a
-#'   csv suitable for use with the package
+#' @param cache_format File format of cache for Extracted Features files.
+#'   Defaults to `getOption("hathiTools.cacheformat")`, which is "csv.gz" on
+#'   load. Allowed cache types are: compressed csv (the default), "none" (no
+#'   local caching of JSON download; only JSON file kept), "rds", "feather"
+#'   (suitable for use with [arrow]; needs the [arrow] package installed), or
+#'   "text2vec.csv" (a csv suitable for use with the package
 #'   [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @author Ben Schmidt
@@ -39,21 +39,24 @@
 #' }
 get_hathi_counts <- function(htid,
                              dir = getOption("hathiTools.ef.dir"),
-                             cache_type = getOption("hathiTools.cachetype")) {
+                             cache_format = getOption("hathiTools.cacheformat")) {
   if(length(htid) != 1) {
     stop("This function only works with a single HT id. ",
          "Use `read_cached_htids()` to read extracted features for multiple HT ids.")
   }
 
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+  cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
 
-  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
+  local_cache <- local_loc(htid, suffix = cache_format, dir = dir)
+
   if(!file.exists(local_cache)) {
-    ef <- download_hathi_ef(htid, dir = dir, cache_type = cache_type)
-  } else {
-    ef <- read_cached_ef_file(local_cache, cache_type = cache_type)
-  }
+      ef <- download_hathi_ef(htid, dir = dir, cache_format = cache_format)
+    } else {
+      ef <- read_cached_file(local_cache,
+                             cache_format = cache_format)
+    }
+
   ef %>%
     dplyr::mutate(htid = htid, .before = dplyr::everything())
 }
@@ -71,19 +74,22 @@ get_hathi_counts <- function(htid,
 #'Note that if you want to extract the metadata of more than one Hathi Trust ID
 #'at a time, it may be best to simply query the Workset Builder database using
 #'[get_workset_meta], or to download the JSON files for these HTIDs first using
-#'[rsync_from_hathi] and then running this function. It is also possible to get
-#'simple metadata for large numbers of htids by downloading the big hathifile
-#'using [download_hathifile] and then filtering it.
+#'[rsync_from_hathi] and then running [cache_htids] and [read_cached_htids] with
+#'the option `cache_type = "meta"`. It is also possible to get simple metadata
+#'for large numbers of htids by downloading the big hathifile using
+#'[download_hathifile] and then filtering it.
 #'
 #'@param htid The Hathi Trust id of the item whose metadata is to be read.
 #'@param dir The directory where the JSON file for the extracted features is
 #'  saved. Defaults to `getOption("hathiTools.ef.dir")`, which is just
 #'  "./hathi-ef/" on load. If the file does not exist, this function will first
 #'  attempt to download it.
+#'@param cache_format Format of metadata. The default is "rds"; can also
+#'  be "csv.gz", "csv", and "feather" (requires the [arrow] package).
 #'
-#'@return A [tibble][tibble::tibble] with the volume-level
-#'  metadata for the corresponding Hathi Trust ID. This [tibble][tibble::tibble]
-#'  can contain the following fields (taken from
+#'@return A [tibble][tibble::tibble] with the volume-level metadata for the
+#'  corresponding Hathi Trust ID. This [tibble][tibble::tibble] can contain the
+#'  following fields (taken from
 #'  [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329);
 #'   if the field is `NULL`, it is not returned, so the metadata can contain
 #'  fewer fields):
@@ -119,28 +125,28 @@ get_hathi_counts <- function(htid,
 #'  \item{enumerationChronology}{Information regarding which volume, issue,
 #'  and/or year the HathiTrust volume was published.}
 #'
-#'  \item{publisher}{Information about the publisher of the
-#'  volume described by the Extracted Features file. Includes type, name, and
-#'  id. `type` is either "Organization" or "Person". `id` is a URL identifying
-#'  the publisher, such as a Handle URL, ORCID, etc. `name` is derived from the
-#'  Imprint field in the MARC record.}
+#'  \item{publisher}{Information about the publisher of the volume described by
+#'  the Extracted Features file. Includes type, name, and id. `type` is either
+#'  "Organization" or "Person". `id` is a URL identifying the publisher, such as
+#'  a Handle URL, ORCID, etc. `name` is derived from the Imprint field in the
+#'  MARC record.}
 #'
-#'  \item{pubPlace}{Information about where the volume was
-#'  first published. Includes id, type, and name. `type` is taken from the
-#'  Bibframe Instance's provisionActivity's place rdf:about node, which are
-#'  derived from the country codes in the MARC 008 field.}
+#'  \item{pubPlace}{Information about where the volume was first published.
+#'  Includes id, type, and name. `type` is taken from the Bibframe Instance's
+#'  provisionActivity's place rdf:about node, which are derived from the country
+#'  codes in the MARC 008 field.}
 #'
 #'  \item{pubDate}{The year in which that edition of the volume was first
 #'  published.}
 #'
-#'  \item{genre}{Information about the volume's genre, as
-#'  determined by the cataloger of the work. Values are derived from the
-#'  Genre/Form Field in the MARC record.}
+#'  \item{genre}{Information about the volume's genre, as determined by the
+#'  cataloger of the work. Values are derived from the Genre/Form Field in the
+#'  MARC record.}
 #'
-#'  \item{category}{The volume's topic or topics.Derived from the
-#'  Bibframe Work's ClassificationLcc node. Represents the natural language
-#'  label for the Library of Congress Classification (LCC) value based upon the
-#'  Library of Congress's LCC standard documentation.}
+#'  \item{category}{The volume's topic or topics.Derived from the Bibframe
+#'  Work's ClassificationLcc node. Represents the natural language label for the
+#'  Library of Congress Classification (LCC) value based upon the Library of
+#'  Congress's LCC standard documentation.}
 #'
 #'  \item{language}{The cataloger-determined language or languages of the
 #'  volume. Taken from the Bibframe Work's language's identifiedBy's value node,
@@ -156,29 +162,28 @@ get_hathi_counts <- function(htid,
 #'  \item{lastRightsUpdateDate}{The most recent date the volume's copyright
 #'  status was updated.}
 #'
-#'  \item{Contributor}{Contains information regarding the
-#'  author(s), editor(s), or other agents involved in creating the volume.
-#'  Consists of id, type, and name. id is a URL taken from the Bibframe agent
-#'  that links to an authorities database (e.g., VIAF). type is either the
-#'  Person or Organization. Taken from the Bibframe agent type. name is The name
-#'  of the person or organization who created the volume. Taken from the
-#'  Bibframe agent's label. Derived from a variety of fields in the MARC record,
-#'  including Main Entry Fields, Title and Title-Related Fields, and Added Entry
-#'  Fields.}
+#'  \item{Contributor}{Contains information regarding the author(s), editor(s),
+#'  or other agents involved in creating the volume. Consists of id, type, and
+#'  name. id is a URL taken from the Bibframe agent that links to an authorities
+#'  database (e.g., VIAF). type is either the Person or Organization. Taken from
+#'  the Bibframe agent type. name is The name of the person or organization who
+#'  created the volume. Taken from the Bibframe agent's label. Derived from a
+#'  variety of fields in the MARC record, including Main Entry Fields, Title and
+#'  Title-Related Fields, and Added Entry Fields.}
 #'
 #'  \item{typeOfResource}{The cataloger-determined resource type of the volume
 #'  (e.g., text, image, etc.).}
 #'
-#'  \item{sourceInstitution}{An array containing information about
-#'  the institution that contributed the volume to HathiTrust. Always has a type
+#'  \item{sourceInstitution}{An array containing information about the
+#'  institution that contributed the volume to HathiTrust. Always has a type
 #'  node and a name node. `id` is a URL identifying the source institution.
 #'  `name` is the name of the source institution.}
 #'
-#'  \item{mainEntityOfPage}{An array of URLs linking to various
-#'  metadata records describing the volume represented by the Extracted Features
-#'  file. The array typically contains 3 URLs that point to the HathiTrust
-#'  Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
-#'  bibliographic record, and the HathiTrust catalog record.}
+#'  \item{mainEntityOfPage}{An array of URLs linking to various metadata records
+#'  describing the volume represented by the Extracted Features file. The array
+#'  typically contains 3 URLs that point to the HathiTrust Bibliographic API:
+#'  HathiTrust brief bibliographic record, HathiTrust full bibliographic record,
+#'  and the HathiTrust catalog record.}
 #'
 #'  \item{oclc}{The OCLC number for the volume. An OCLC number is an identifier
 #'  assigned to items as they are cataloged in a library.}
@@ -209,12 +214,17 @@ get_hathi_counts <- function(htid,
 #'
 #' get_hathi_meta("mdp.39015001796443", dir = tmp)
 #' }
-get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
+get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
+                            cache_format = c("rds", "csv.gz", "csv", "feather")) {
   if(length(htid) != 1) {
     stop("This function only works with a single HT id. ",
          "Use `read_cached_htids()` to read metadata for multiple HT ids.")
   }
-  local_cache <- local_loc(htid, suffix = "meta.rds", dir = dir)
+
+  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather"))
+
+  local_cache <- local_loc(htid, suffix = paste0("meta.", cache_format),
+                           dir = dir)
 
   if(!file.exists(local_cache)) {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
@@ -227,10 +237,22 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
       tibble::as_tibble() %>%
       dplyr::mutate(htid = htid,
                     .before = dplyr::everything())
-    saveRDS(meta, local_cache, compress = TRUE)
+
+    if(cache_format %in% c("csv.gz", "csv")) {
+      vroom::vroom_write(meta, local_cache, delim = ",")
+    }
+    if(cache_format == "rds") {
+      saveRDS(meta, local_cache, compress = TRUE)
+    }
+    if(cache_format == "feather") {
+      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+        stop("Must have 'arrow' package installed to use 'feather' cache")
+      }
+      arrow::write_feather(meta, local_cache)
+    }
   }
   else {
-    meta <- readRDS(local_cache)
+    meta <- read_cached_file(local_cache)
   }
 
   meta
@@ -250,11 +272,16 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #' HTIDs first using [rsync_from_hathi] and then running this function.
 #'
 #' @inheritParams get_hathi_meta
+#' @note
+#'
+#' It is not recommended to save page-level metadata in csv format; you will
+#' lose the `beginCharCount` and `endCharCount` variables.
 #'
 #' @return A [tibble][tibble::tibble] with the page-level metadata for the
 #'   corresponding Hathi Trust ID. The page-level metadata contains the
 #'   following fields (taken from
 #'   [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329)):
+#'
 #'
 #'   \describe{
 #'
@@ -280,34 +307,30 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #'
 #'   \item{sentenceCount}{The total number of sentences detected on the page.}
 #'
-#'   \item{sectionStats}{A [tibble][tibble::tibble] column with stats for each
-#'   of the sections of the page ("header", "body", and "footer"). This tibble
-#'   has the following fields:
+#'   \item{section}{The section of the page.}
 #'
-#'   * section: The seciton of the page.
+#'   \item{sectiontokenCount}{The total number of tokens detected in the section of
+#'   the page.}
 #'
-#'   * sectiontokenCount: The total number of tokens detected in the section of
-#'   the page.
+#'   \item{sectionlineCount}{The total number of lines detected in the section of
+#'   the page.}
 #'
-#'   * sectionlineCount: The total number of lines detected in the section of
-#'   the page.
+#'   \item{sectionemptyLineCount}{The total number of empty lines detected in the
+#'   section of the page.}
 #'
-#'   * sectionemptyLineCount The total number of empty lines detected in the
-#'   section of the page.
+#'   \item{sectionsentenceCount}{The total number of sentences detected in the
+#'   section of the page.}
 #'
-#'   * sectionsentenceCount The total number of sentences detected in the
-#'   section of the page.
+#'   \item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence of
+#'   capital characters starting a line. Only available for the "body" section.}
 #'
-#'   * sectioncapAlphaSeq The longest length of the alphabetical sequence of
-#'   capital characters starting a line. Only available for the "body" section.
-#'
-#'   * beginCharCount A [tibble][tibble::tibble] column with the first non-White
+#'   \item{beginCharCount}{A [tibble][tibble::tibble] column with the first non-White
 #'   Space characters detected on lines in the section (beginChar) and their
-#'   occurrence counts (beginCharCount).
+#'   occurrence counts (beginCharCount)}.
 #'
-#'   * endCharCount An [tibble][tibble::tibble] column of the last non-White
+#'   \item{endCharCount}{A [tibble][tibble::tibble] column of the last non-White
 #'   Space characters on detected lines in the section (endChar) and their
-#'   occurrence counts (endCharCount). }
+#'   occurrence counts (endCharCount).}
 #'
 #'   }
 #'
@@ -328,12 +351,16 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir")) {
 #' page_meta %>% tidyr::unnest(sectionStats) %>% tidyr::unnest(beginCharCount)
 #'
 #' }
-get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir")) {
+get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir"),
+                                cache_format = c("rds", "csv.gz", "csv", "feather")) {
   if(length(htid) != 1) {
     stop("This function only works with a single HT id. ",
          "Use `read_cached_htids()` to read page metadata for multiple HT ids.")
   }
-  local_cache <- local_loc(htid, suffix = "pagemeta.rds", dir = dir)
+
+  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather"))
+
+  local_cache <- local_loc(htid, suffix = paste0("pagemeta.", cache_format), dir = dir)
 
   if(!file.exists(local_cache)) {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
@@ -343,10 +370,32 @@ get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir")) {
     page_meta <- load_json(htid, dir = dir) %>%
       parse_page_meta_volume()
 
-    saveRDS(page_meta, local_cache, compress = TRUE)
+    if(cache_format %in% c("csv.gz", "csv")) {
+      vroom::vroom_write(page_meta, local_cache, delim = ",")
+    }
+    if(cache_format == "rds") {
+      saveRDS(page_meta, local_cache, compress = TRUE)
+    }
+    if(cache_format == "feather") {
+      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+        stop("Must have 'arrow' package installed to use 'feather' cache")
+      }
+      arrow::write_feather(page_meta, local_cache)
+    }
   }
   else {
-    page_meta <- readRDS(local_cache)
+    if(cache_format %in% c("csv.gz", "csv")) {
+      page_meta <- vroom::vroom(local_cache, delim = ",")
+    }
+    if(cache_format == "rds") {
+      page_meta <- readRDS(local_cache)
+    }
+    if(cache_format == "feather") {
+      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+        stop("Must have 'arrow' package installed to use 'feather' cache")
+      }
+      page_meta <- arrow::read_feather(local_cache)
+    }
   }
 
   page_meta
@@ -355,15 +404,15 @@ get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir")) {
 
 download_hathi_ef <- function(htid,
                               dir = getOption("hathiTools.ef.dir"),
-                              cache_type = getOption("hathiTools.cachetype")) {
+                              cache_format = getOption("hathiTools.cacheformat")) {
 
-  cache_type <- match.arg(cache_type, c("csv.gz", "none", "rds",
+  cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
                                         "feather", "text2vec.csv"))
 
-  local_cache <- local_loc(htid, suffix = cache_type, dir = dir)
+  local_cache <- local_loc(htid, suffix = cache_format, dir = dir)
   if(file.exists(local_cache)) {
     message("File has already been downloaded. Returning existing cached file.")
-    ef <- read_cached_ef_file(local_cache, cache_type)
+    ef <- read_cached_ef_file(local_cache, cache_format)
   } else {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
     if(!file.exists(local_json)) {
@@ -371,7 +420,7 @@ download_hathi_ef <- function(htid,
     }
     ef <- read_json(htid, dir = dir)
 
-    ef <- cache_ef_file(ef, local_cache, cache_type = cache_type)
+    ef <- cache_ef_file(ef, local_cache, cache_format = cache_format)
 
   }
   ef %>%
@@ -488,13 +537,13 @@ parse_listified_book <- function(listified_version) {
 
 parse_page_meta <- function(page) {
   seq <- section <- beginChar <- beginCount <- endChar <- endCount <- NULL
+  endCharCount <- beingCharCount <- NULL
   to_parse <- names(page)[!names(page) %in% c("body", "header", "footer")]
   beginCharCount <- page[c("body", "header", "footer")] %>%
     purrr::compact() %>%
-    purrr::map("beginCharCount") %>%
-    purrr::map_df(~tibble::enframe(.x, name = "beginChar", value = "beginCount") %>%
-                 tidyr::unnest("beginCount"),
-                 .id = "section")
+    purrr::map_df(~tibble::enframe(unlist(.$beginCharCount),
+                                   name = "beginChar",
+                                   value = "beginCount"), .id = "section")
 
   if(nrow(beginCharCount) == 0) {
     beginCharCount <- tibble(section = character(0),
@@ -508,10 +557,9 @@ parse_page_meta <- function(page) {
 
   endCharCount <- page[c("body", "header", "footer")] %>%
     purrr::compact() %>%
-    purrr::map("endCharCount") %>%
-    purrr::map_df(~tibble::enframe(.x, name = "endChar", value = "endCount") %>%
-                    tidyr::unnest("endCount"),
-                  .id = "section")
+    purrr::map_df(~tibble::enframe(unlist(.$endCharCount),
+                                   name = "endChar",
+                                   value = "endCount"), .id = "section")
 
   if(nrow(endCharCount) == 0) {
     endCharCount <- tibble(section = character(0),

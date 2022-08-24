@@ -5,7 +5,11 @@
 \title{Reads the volume-level metadata of a single downloaded Hathi Trust extracted
 features file}
 \usage{
-get_hathi_meta(htid, dir = getOption("hathiTools.ef.dir"))
+get_hathi_meta(
+  htid,
+  dir = getOption("hathiTools.ef.dir"),
+  cache_format = c("rds", "csv.gz", "csv", "feather")
+)
 }
 \arguments{
 \item{htid}{The Hathi Trust id of the item whose metadata is to be read.}
@@ -14,11 +18,14 @@ get_hathi_meta(htid, dir = getOption("hathiTools.ef.dir"))
 saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "./hathi-ef/" on load. If the file does not exist, this function will first
 attempt to download it.}
+
+\item{cache_format}{Format of metadata. The default is "rds"; can also
+be "csv.gz", "csv", and "feather" (requires the \link{arrow} package).}
 }
 \value{
-A \link[tibble:tibble]{tibble} with the volume-level
-metadata for the corresponding Hathi Trust ID. This \link[tibble:tibble]{tibble}
-can contain the following fields (taken from
+A \link[tibble:tibble]{tibble} with the volume-level metadata for the
+corresponding Hathi Trust ID. This \link[tibble:tibble]{tibble} can contain the
+following fields (taken from
 \url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329};
 if the field is \code{NULL}, it is not returned, so the metadata can contain
 fewer fields):
@@ -54,28 +61,28 @@ described by the Extracted Features file.}
 \item{enumerationChronology}{Information regarding which volume, issue,
 and/or year the HathiTrust volume was published.}
 
-\item{publisher}{Information about the publisher of the
-volume described by the Extracted Features file. Includes type, name, and
-id. \code{type} is either "Organization" or "Person". \code{id} is a URL identifying
-the publisher, such as a Handle URL, ORCID, etc. \code{name} is derived from the
-Imprint field in the MARC record.}
+\item{publisher}{Information about the publisher of the volume described by
+the Extracted Features file. Includes type, name, and id. \code{type} is either
+"Organization" or "Person". \code{id} is a URL identifying the publisher, such as
+a Handle URL, ORCID, etc. \code{name} is derived from the Imprint field in the
+MARC record.}
 
-\item{pubPlace}{Information about where the volume was
-first published. Includes id, type, and name. \code{type} is taken from the
-Bibframe Instance's provisionActivity's place rdf:about node, which are
-derived from the country codes in the MARC 008 field.}
+\item{pubPlace}{Information about where the volume was first published.
+Includes id, type, and name. \code{type} is taken from the Bibframe Instance's
+provisionActivity's place rdf:about node, which are derived from the country
+codes in the MARC 008 field.}
 
 \item{pubDate}{The year in which that edition of the volume was first
 published.}
 
-\item{genre}{Information about the volume's genre, as
-determined by the cataloger of the work. Values are derived from the
-Genre/Form Field in the MARC record.}
+\item{genre}{Information about the volume's genre, as determined by the
+cataloger of the work. Values are derived from the Genre/Form Field in the
+MARC record.}
 
-\item{category}{The volume's topic or topics.Derived from the
-Bibframe Work's ClassificationLcc node. Represents the natural language
-label for the Library of Congress Classification (LCC) value based upon the
-Library of Congress's LCC standard documentation.}
+\item{category}{The volume's topic or topics.Derived from the Bibframe
+Work's ClassificationLcc node. Represents the natural language label for the
+Library of Congress Classification (LCC) value based upon the Library of
+Congress's LCC standard documentation.}
 
 \item{language}{The cataloger-determined language or languages of the
 volume. Taken from the Bibframe Work's language's identifiedBy's value node,
@@ -91,29 +98,28 @@ they are processed at HathiTrust.}
 \item{lastRightsUpdateDate}{The most recent date the volume's copyright
 status was updated.}
 
-\item{Contributor}{Contains information regarding the
-author(s), editor(s), or other agents involved in creating the volume.
-Consists of id, type, and name. id is a URL taken from the Bibframe agent
-that links to an authorities database (e.g., VIAF). type is either the
-Person or Organization. Taken from the Bibframe agent type. name is The name
-of the person or organization who created the volume. Taken from the
-Bibframe agent's label. Derived from a variety of fields in the MARC record,
-including Main Entry Fields, Title and Title-Related Fields, and Added Entry
-Fields.}
+\item{Contributor}{Contains information regarding the author(s), editor(s),
+or other agents involved in creating the volume. Consists of id, type, and
+name. id is a URL taken from the Bibframe agent that links to an authorities
+database (e.g., VIAF). type is either the Person or Organization. Taken from
+the Bibframe agent type. name is The name of the person or organization who
+created the volume. Taken from the Bibframe agent's label. Derived from a
+variety of fields in the MARC record, including Main Entry Fields, Title and
+Title-Related Fields, and Added Entry Fields.}
 
 \item{typeOfResource}{The cataloger-determined resource type of the volume
 (e.g., text, image, etc.).}
 
-\item{sourceInstitution}{An array containing information about
-the institution that contributed the volume to HathiTrust. Always has a type
+\item{sourceInstitution}{An array containing information about the
+institution that contributed the volume to HathiTrust. Always has a type
 node and a name node. \code{id} is a URL identifying the source institution.
 \code{name} is the name of the source institution.}
 
-\item{mainEntityOfPage}{An array of URLs linking to various
-metadata records describing the volume represented by the Extracted Features
-file. The array typically contains 3 URLs that point to the HathiTrust
-Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
-bibliographic record, and the HathiTrust catalog record.}
+\item{mainEntityOfPage}{An array of URLs linking to various metadata records
+describing the volume represented by the Extracted Features file. The array
+typically contains 3 URLs that point to the HathiTrust Bibliographic API:
+HathiTrust brief bibliographic record, HathiTrust full bibliographic record,
+and the HathiTrust catalog record.}
 
 \item{oclc}{The OCLC number for the volume. An OCLC number is an identifier
 assigned to items as they are cataloged in a library.}
@@ -143,9 +149,10 @@ uses code authored by Ben Schmidt, from his Hathidy package
 Note that if you want to extract the metadata of more than one Hathi Trust ID
 at a time, it may be best to simply query the Workset Builder database using
 \link{get_workset_meta}, or to download the JSON files for these HTIDs first using
-\link{rsync_from_hathi} and then running this function. It is also possible to get
-simple metadata for large numbers of htids by downloading the big hathifile
-using \link{download_hathifile} and then filtering it.
+\link{rsync_from_hathi} and then running \link{cache_htids} and \link{read_cached_htids} with
+the option \code{cache_type = "meta"}. It is also possible to get simple metadata
+for large numbers of htids by downloading the big hathifile using
+\link{download_hathifile} and then filtering it.
 }
 \examples{
 \dontrun{

@@ -7,7 +7,7 @@
 get_hathi_counts(
   htid,
   dir = getOption("hathiTools.ef.dir"),
-  cache_type = getOption("hathiTools.cachetype")
+  cache_format = getOption("hathiTools.cacheformat")
 )
 }
 \arguments{
@@ -19,12 +19,12 @@ try to download it first.}
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 "hathi-ef" on load.}
 
-\item{cache_type}{Type of caching used. Defaults to
-\code{getOption("hathiTools.cachetype")}, which is "csv.gz" on load. Allowed
-cache types are: compressed csv (the default), "none" (no local caching of
-JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with \link{arrow}; needs the \link{arrow} package installed), or "text2vec.csv" (a
-csv suitable for use with the package
+\item{cache_format}{File format of cache for Extracted Features files.
+Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
+load. Allowed cache types are: compressed csv (the default), "none" (no
+local caching of JSON download; only JSON file kept), "rds", "feather"
+(suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
+"text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
 \value{
