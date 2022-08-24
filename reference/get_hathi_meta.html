@@ -79,7 +79,11 @@ uses code authored by Ben Schmidt, from his Hathidy package
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_hathi_meta</span><span class="op">(</span><span class="va">htid</span>, dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.ef.dir"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_hathi_meta</span><span class="op">(</span></span>
+<span>  <span class="va">htid</span>,</span>
+<span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.ef.dir"</span><span class="op">)</span>,</span>
+<span>  cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"rds"</span>, <span class="st">"csv.gz"</span>, <span class="st">"csv"</span>, <span class="st">"feather"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -94,16 +98,19 @@ saved. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
 "./hathi-ef/" on load. If the file does not exist, this function will first
 attempt to download it.</p></dd>
 
+
+<dt>cache_format</dt>
+<dd><p>Format of metadata. The default is "rds"; can also
+be "csv.gz", "csv", and "feather" (requires the arrow package).</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>A <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a> with the volume-level
-metadata for the corresponding Hathi Trust ID. This <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a></p>
-
-
-<p>can contain the following fields (taken from
+<p>A <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a> with the volume-level metadata for the
+corresponding Hathi Trust ID. This <a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a> can contain the
+following fields (taken from
 <a href="https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329" class="external-link">https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329</a>;
 if the field is <code>NULL</code>, it is not returned, so the metadata can contain
 fewer fields):</p>
@@ -153,18 +160,18 @@ and/or year the HathiTrust volume was published.</p></dd>
 
 
 <dt>publisher</dt>
-<dd><p>Information about the publisher of the
-volume described by the Extracted Features file. Includes type, name, and
-id. <code>type</code> is either "Organization" or "Person". <code>id</code> is a URL identifying
-the publisher, such as a Handle URL, ORCID, etc. <code>name</code> is derived from the
-Imprint field in the MARC record.</p></dd>
+<dd><p>Information about the publisher of the volume described by
+the Extracted Features file. Includes type, name, and id. <code>type</code> is either
+"Organization" or "Person". <code>id</code> is a URL identifying the publisher, such as
+a Handle URL, ORCID, etc. <code>name</code> is derived from the Imprint field in the
+MARC record.</p></dd>
 
 
 <dt>pubPlace</dt>
-<dd><p>Information about where the volume was
-first published. Includes id, type, and name. <code>type</code> is taken from the
-Bibframe Instance's provisionActivity's place rdf:about node, which are
-derived from the country codes in the MARC 008 field.</p></dd>
+<dd><p>Information about where the volume was first published.
+Includes id, type, and name. <code>type</code> is taken from the Bibframe Instance's
+provisionActivity's place rdf:about node, which are derived from the country
+codes in the MARC 008 field.</p></dd>
 
 
 <dt>pubDate</dt>
@@ -173,16 +180,16 @@ published.</p></dd>
 
 
 <dt>genre</dt>
-<dd><p>Information about the volume's genre, as
-determined by the cataloger of the work. Values are derived from the
-Genre/Form Field in the MARC record.</p></dd>
+<dd><p>Information about the volume's genre, as determined by the
+cataloger of the work. Values are derived from the Genre/Form Field in the
+MARC record.</p></dd>
 
 
 <dt>category</dt>
-<dd><p>The volume's topic or topics.Derived from the
-Bibframe Work's ClassificationLcc node. Represents the natural language
-label for the Library of Congress Classification (LCC) value based upon the
-Library of Congress's LCC standard documentation.</p></dd>
+<dd><p>The volume's topic or topics.Derived from the Bibframe
+Work's ClassificationLcc node. Represents the natural language label for the
+Library of Congress Classification (LCC) value based upon the Library of
+Congress's LCC standard documentation.</p></dd>
 
 
 <dt>language</dt>
@@ -206,15 +213,14 @@ status was updated.</p></dd>
 
 
 <dt>Contributor</dt>
-<dd><p>Contains information regarding the
-author(s), editor(s), or other agents involved in creating the volume.
-Consists of id, type, and name. id is a URL taken from the Bibframe agent
-that links to an authorities database (e.g., VIAF). type is either the
-Person or Organization. Taken from the Bibframe agent type. name is The name
-of the person or organization who created the volume. Taken from the
-Bibframe agent's label. Derived from a variety of fields in the MARC record,
-including Main Entry Fields, Title and Title-Related Fields, and Added Entry
-Fields.</p></dd>
+<dd><p>Contains information regarding the author(s), editor(s),
+or other agents involved in creating the volume. Consists of id, type, and
+name. id is a URL taken from the Bibframe agent that links to an authorities
+database (e.g., VIAF). type is either the Person or Organization. Taken from
+the Bibframe agent type. name is The name of the person or organization who
+created the volume. Taken from the Bibframe agent's label. Derived from a
+variety of fields in the MARC record, including Main Entry Fields, Title and
+Title-Related Fields, and Added Entry Fields.</p></dd>
 
 
 <dt>typeOfResource</dt>
@@ -223,18 +229,18 @@ Fields.</p></dd>
 
 
 <dt>sourceInstitution</dt>
-<dd><p>An array containing information about
-the institution that contributed the volume to HathiTrust. Always has a type
+<dd><p>An array containing information about the
+institution that contributed the volume to HathiTrust. Always has a type
 node and a name node. <code>id</code> is a URL identifying the source institution.
 <code>name</code> is the name of the source institution.</p></dd>
 
 
 <dt>mainEntityOfPage</dt>
-<dd><p>An array of URLs linking to various
-metadata records describing the volume represented by the Extracted Features
-file. The array typically contains 3 URLs that point to the HathiTrust
-Bibliographic API: HathiTrust brief bibliographic record, HathiTrust full
-bibliographic record, and the HathiTrust catalog record.</p></dd>
+<dd><p>An array of URLs linking to various metadata records
+describing the volume represented by the Extracted Features file. The array
+typically contains 3 URLs that point to the HathiTrust Bibliographic API:
+HathiTrust brief bibliographic record, HathiTrust full bibliographic record,
+and the HathiTrust catalog record.</p></dd>
 
 
 <dt>oclc</dt>
@@ -268,9 +274,10 @@ is a unique number that is assigned during cataloging.</p></dd>
     <p>Note that if you want to extract the metadata of more than one Hathi Trust ID
 at a time, it may be best to simply query the Workset Builder database using
 <a href="get_workset_meta.html">get_workset_meta</a>, or to download the JSON files for these HTIDs first using
-<a href="rsync_from_hathi.html">rsync_from_hathi</a> and then running this function. It is also possible to get
-simple metadata for large numbers of htids by downloading the big hathifile
-using <a href="download_hathifile.html">download_hathifile</a> and then filtering it.</p>
+<a href="rsync_from_hathi.html">rsync_from_hathi</a> and then running <a href="cache_htids.html">cache_htids</a> and <a href="read_cached_htids.html">read_cached_htids</a> with
+the option <code>cache_type = "meta"</code>. It is also possible to get simple metadata
+for large numbers of htids by downloading the big hathifile using
+<a href="download_hathifile.html">download_hathifile</a> and then filtering it.</p>
     </div>
     <div id="author">
     <h2>Author</h2>

@@ -87,6 +87,8 @@ that same metadata. It uses code authored by Ben Schmidt (from
 <span>  lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1920</span>, <span class="fl">2000</span><span class="op">)</span>,</span>
 <span>  <span class="va">compare_to</span>,</span>
 <span>  as_json <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  <span class="va">query</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -159,9 +161,9 @@ intended."</p></li>
 
 
 <dt>format</dt>
-<dd><p>Format of returned results. In theory the Bookworm should be
+<dd><p>Format of returned results. In theory the Bookworm DB should be
 able to return results as "json", "tsv", "csv", or even "feather";
-currently only "json" works.</p></dd>
+currently only "json" works (and it's the only supported format here).</p></dd>
 
 
 <dt>lims</dt>
@@ -181,6 +183,19 @@ where the function does not know how to return a tibble, or when you want
 to use the raw json to produce a different data structure.</p></dd>
 
 
+<dt>verbose</dt>
+<dd><p>If <code>TRUE</code>, shows the JSON query once built.</p></dd>
+
+
+<dt>query</dt>
+<dd><p>You can directly pass on a query string (in JSON). This is
+useful for very complex queries, but there's no checking that the
+parameters are correct so you may encounter unexpected errors. See
+https://bookworm-project.github.io/Docs/query_structure.html for more on
+the query structure. If you use <code>query</code>, all other parameters are silently
+ignored. Use with care!</p></dd>
+
+
 <dt>...</dt>
 <dd><p>Additional parameters passed to the query builder; these would be
 the fields that method = <code>returnPossibleFields</code> returns, including fields
@@ -191,7 +206,8 @@ publisher, format, is_gov_doc, page_count_bin, word_count_bin,
 publication_country, publication_state, publication_place. These are not
 documented, and in some cases one must know the exact string to search for;
 for example, a search with <code>mainauthor = "Tocqueville"</code> won't find
-anything, but a search with <code>mainauthor = "Tocqueville, Alexis de 1805-1859."</code> may.</p></dd>
+anything, but a search with <code>mainauthor = "Tocqueville, Alexis de 1805-1859."</code> may. These fields should be accessible via
+<code>options("hathiTools.bookworm.fields")</code></p></dd>
 
 </dl></div>
     <div id="value">
@@ -209,18 +225,61 @@ parameter, the word (if any), and the counts and counttypes. For <code>method = 
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"monarchy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"TextPercent"</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span>, <span class="st">"monarchy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"WordsPerMillion"</span>, <span class="st">"WordCount"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {"words_collation":"Case_Insensitive","groups":["date_year"],"database":"Bookworm2021","counttype":["WordsPerMillion","WordCount"],"search_limits":[{"word":["democracy"],"date_year":{"$gte":[1760],"$lte":[2000]}},{"word":["monarchy"],"date_year":{"$gte":[1760],"$lte":[2000]}}],"method":"data","format":"json"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 964 × 4</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    word      date_year   value counttype      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> democracy      <span style="text-decoration: underline;">1</span>760   0.382 WordsPerMillion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> democracy      <span style="text-decoration: underline;">1</span>760 108     WordCount      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> democracy      <span style="text-decoration: underline;">1</span>761   0.253 WordsPerMillion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> democracy      <span style="text-decoration: underline;">1</span>761  60     WordCount      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> democracy      <span style="text-decoration: underline;">1</span>762   0.332 WordsPerMillion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> democracy      <span style="text-decoration: underline;">1</span>762  92     WordCount      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> democracy      <span style="text-decoration: underline;">1</span>763   0.455 WordsPerMillion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> democracy      <span style="text-decoration: underline;">1</span>763 113     WordCount      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> democracy      <span style="text-decoration: underline;">1</span>764   0.593 WordsPerMillion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> democracy      <span style="text-decoration: underline;">1</span>764 148     WordCount      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 954 more rows</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">result2</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"class"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"date_year"</span>, <span class="st">"lc_classes"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1900</span>,<span class="fl">2000</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {"words_collation":"Case_Insensitive","groups":["date_year","lc_classes"],"database":"Bookworm2021","counttype":["WordsPerMillion"],"search_limits":[{"word":["democracy"],"date_year":{"$gte":[1900],"$lte":[2000]}}],"method":"data","format":"json"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2,222 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    word      date_year lc_classes                            value counttype    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                 <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> democracy      <span style="text-decoration: underline;">1</span>900 unknown                               4.44  WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> democracy      <span style="text-decoration: underline;">1</span>900 Language and Literature               4.87  WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> democracy      <span style="text-decoration: underline;">1</span>900 Social Sciences                       7.27  WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> democracy      <span style="text-decoration: underline;">1</span>900 General and Old World History         8.99  WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> democracy      <span style="text-decoration: underline;">1</span>900 Science                               0.166 WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> democracy      <span style="text-decoration: underline;">1</span>900 Philosophy, Psychology, and Religion  4.28  WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> democracy      <span style="text-decoration: underline;">1</span>900 Technology                            0.372 WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> democracy      <span style="text-decoration: underline;">1</span>900 Law                                   0.488 WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> democracy      <span style="text-decoration: underline;">1</span>900 Political Science                    13.1   WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> democracy      <span style="text-decoration: underline;">1</span>900 General Works                        14.6   WordsPerMill…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 2,212 more rows</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">result4</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"democracy"</span><span class="op">)</span>, lims <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1760</span>, <span class="fl">2000</span><span class="op">)</span>, counttype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"TotalTexts"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  language <span class="op">=</span> <span class="st">"English"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">result5</span> <span class="op">&lt;-</span> <span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="st">"date_year"</span>, date_year <span class="op">=</span> <span class="st">"1941"</span>,</span></span>
-<span class="r-in"><span>  class <span class="op">=</span> <span class="st">"Education"</span>, method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="fu">query_bookworm</span><span class="op">(</span>word <span class="op">=</span> <span class="st">"democracy"</span>, groups <span class="op">=</span> <span class="st">"date_year"</span>, date_year <span class="op">=</span> <span class="st">"1941"</span>,</span></span>
+<span class="r-in"><span>  lc_classes <span class="op">=</span> <span class="st">"Education"</span>, method <span class="op">=</span> <span class="st">"search_results"</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> {"words_collation":"Case_Insensitive","groups":["date_year"],"database":"Bookworm2021","counttype":["WordsPerMillion"],"search_limits":[{"word":["democracy"],"date_year":["1941"],"lc_classes":["Education"]}],"method":"search_results","format":"json"}</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 100 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    htid                      title                                         url  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                         <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> nc01.ark:/13960/t2v41mn4r Teaching democracy in the North Carolina pub… http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> mdp.39015062763720        The education of free men in American democr… http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> uc1.$b67929               The education of free men in American democr… http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> mdp.39015068297905        The education of free men in American democr… http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> uc1.$b67873               Pennsylvania bill of rights week. Recommenda… http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> mdp.39015035886111        Education in a world of fear,                 http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> coo.31924013433044        Education in a world of fear,                 http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> mdp.39015031665543        Education and the morale of a free people.    http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> uiug.30112108068831       Proceedings of the convention.                http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> uc1.$b67928               Education and the morale of a free people.    http…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 90 more rows</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>

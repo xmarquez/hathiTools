@@ -81,7 +81,7 @@ function uses code authored by Ben Schmidt, from his Hathidy package
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_hathi_counts</span><span class="op">(</span></span>
 <span>  <span class="va">htid</span>,</span>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.ef.dir"</span><span class="op">)</span>,</span>
-<span>  cache_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.cachetype"</span><span class="op">)</span></span>
+<span>  cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.cacheformat"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -99,13 +99,13 @@ be found. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
 "hathi-ef" on load.</p></dd>
 
 
-<dt>cache_type</dt>
-<dd><p>Type of caching used. Defaults to
-<code>getOption("hathiTools.cachetype")</code>, which is "csv.gz" on load. Allowed
-cache types are: compressed csv (the default), "none" (no local caching of
-JSON download; only JSON file kept), "rds", "feather" (suitable for use
-with arrow; needs the arrow package installed), or "text2vec.csv" (a
-csv suitable for use with the package
+<dt>cache_format</dt>
+<dd><p>File format of cache for Extracted Features files.
+Defaults to <code>getOption("hathiTools.cacheformat")</code>, which is "csv.gz" on
+load. Allowed cache types are: compressed csv (the default), "none" (no
+local caching of JSON download; only JSON file kept), "rds", "feather"
+(suitable for use with arrow; needs the arrow package installed), or
+"text2vec.csv" (a csv suitable for use with the package
 <a href="https://cran.r-project.org/package=text2vec" class="external-link">text2vec</a>).</p></dd>
 
 </dl></div>
@@ -122,15 +122,29 @@ csv suitable for use with the package
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Download the 1863 version of "Democracy in America" by Tocqueville and get</span></span></span>
 <span class="r-in"><span><span class="co"># its extracted features</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">get_hathi_counts</span><span class="op">(</span><span class="st">"aeu.ark:/13960/t3qv43c3w"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 137,182 × 6</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    htid                     token  POS   count section  page</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>iJi<span style="color: #949494;">"</span>  NN        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>.8<span style="color: #949494;">"</span>   CD        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>11.6<span style="color: #949494;">"</span> CD        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>.<span style="color: #949494;">"</span>    .         2 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>33<span style="color: #949494;">"</span>   CD        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>U<span style="color: #949494;">"</span>    NNP       1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>TEST<span style="color: #949494;">"</span> NN        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>\\<span style="color: #949494;">"</span>   SYM       2 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>MT-3<span style="color: #949494;">"</span> NN        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>J2<span style="color: #949494;">"</span>   NN        1 body        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 137,172 more rows</span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
