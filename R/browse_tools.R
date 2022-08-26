@@ -12,7 +12,7 @@
 #' @importFrom utils browseURL
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' if(interactive()) {
 #'    workset <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1800:1850)
 #'    browse_htids(workset)
@@ -43,7 +43,7 @@ browse_htids.hathi_workset <- function(htids) {
     browseURL(url)
     resp <- ""
     while(resp != "n") {
-      resp <- readline(stringr::str_glue("Press n to view next htid ({i}) in browser, q to quit: "))
+      resp <- readline(stringr::str_glue("Press n to view next htid in browser, q to quit: "))
       if(resp == "q") {
         return(invisible())
       }
@@ -61,7 +61,7 @@ browse_htids.character <- function(htids) {
     browseURL(url)
     resp <- ""
     while(resp != "n") {
-      resp <- readline(stringr::str_glue("Press n to view next htid ({i}) in browser, q to quit: "))
+      resp <- readline(stringr::str_glue("Press n to view next htid in browser, q to quit: "))
       if(resp == "q") {
         return(invisible())
       }
