@@ -1,7 +1,7 @@
 #' Builds a Workset of Hathi Trust vol IDs by querying the Workset Builder 2.0
 #'
 #' Queries the SOLR endpoint of the Workset Builder 2.0 (beta) at
-#' [https://solr2.htrc.illinois.edu/solr-ef/](https://solr2.htrc.illinois.edu/solr-ef/).
+#' [https://solr2.htrc.illinois.edu/solr-ef20/](https://solr2.htrc.illinois.edu/solr-ef20/).
 #' This API is experimental, and so this function can fail at any time if the
 #' API changes.
 #'
@@ -16,12 +16,6 @@
 #'   be included (e.g., "liberal democracy"), and the database will then return
 #'   matches where both terms appear in the *same page* (though not necessarily
 #'   next to each other).
-#' @param genre A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
-#'   Trust full metadata. Can be a set of genre strings, e.g.,
-#'   `c("dictionary","biography")`, which are interpreted using the value of
-#'   `genre_join` (by default "AND", so the metadata must contain both genre
-#'   strings; if "OR", the query will look for volumes that contain any of the
-#'   genre strings).
 #' @param lang Language. Default is "eng" (English); a string like "English" or
 #'   any 2 or 3 letter ISO639 code (available in the dataset [iso639] included
 #'   with this package) is allowed. (If no language code is found, the default
@@ -46,29 +40,25 @@
 #'   than one. Default is "AND"; the query will ask for all volumes where all
 #'   tokens occur. "OR" means the query will ask for all volumes where any of
 #'   the tokens occur.
-#' @param genre_join The logical connector for different genre strings. Default
-#'   is "AND"; the query will ask for all volumes containing all the selected
-#'   genre strings. "OR" means the query will ask for all volumes where any of
-#'   the genre strings occur.
 #' @param max_vols Maximum number of volumes to return. Default is `Inf`, all
-#'   volumes; for queries expected to return large numbers of volumes, it's
-#'   sometimes best to specify a small number just to test that the query is
-#'   what one wants.
+#'   volumes. Unfortunately the calculation is done locally, rather than
+#'   remotely, so generally even if it is set at a small number, you'll still
+#'   need to download all returned htids.
+#' @param query_string You can pass a query string directly - this is very
+#'   useful for complex queries. For a guide to SOLR query syntax, see
+#'   https://solr.apache.org/guide/6_6/the-standard-query-parser.html#the-standard-query-parser;
+#'    for information about what fields are available see the Workset Builder
+#'   page https://solr2.htrc.illinois.edu/solr-ef20/
+#' @param verbose Whether to display the query string used. Default is `FALSE`.
+#'   This is useful to learn how to use the more complex SOLR query syntax.
 #'
 #' @return A [tibble] with volume_ids, number of occurrences of the terms in the
 #'   volume, and if `volumes_only` is `FALSE` a column for page ids.
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' res <- workset_builder("democracy", genre = c("biography", "dictionary"))
-#' # Better to run two separate queries so the genres can be distinguished per
-#' # volume, but one can in principle use "OR" to find volumes that contain
-#' # "democracy" in either genre.
-#' res <- workset_builder("democracy", genre = c("biography", "dictionary"),
-#'        genre_join = "OR")
-#'
-#' # All volumes that mention "tylenol" and "paracetamol" in the same page
+#' \donttest{
+#' # All volumes that mention "tylenol" and "paracetamol", not necessarily in the same page
 #' res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 #'
 #' # All volumes mentioning "demagogue" published between 1800 and 1900
@@ -81,139 +71,132 @@
 #' # All volumes with "Tocqueville" in the author field
 #' res <- workset_builder(name = "Tocqueville")
 #' }
-workset_builder <- function(token, genre, title,
+workset_builder <- function(token, title,
                             name, imprint, pub_date,
                             lang = "eng",
                             volumes_only = TRUE,
                             token_join = c("AND", "OR"),
-                            genre_join = c("AND", "OR"),
-                            max_vols = Inf) {
+                            max_vols = Inf,
+                            query_string,
+                            verbose = FALSE) {
 
-  volumeid_s <- htid <- NULL
+  if(missing(query_string)) {
+    volumeid_s <- htid <- NULL
 
-  token_join <- match.arg(token_join, c("AND", "OR"))
+    token_join <- match.arg(token_join, c("AND", "OR"))
 
-  token_join <- paste0(" ", token_join, " ")
+    token_join <- paste0(" ", token_join, " ")
 
-  genre_join <- match.arg(genre_join, c("AND", "OR"))
-
-  genre_join <- paste0(" ", genre_join, " ")
-
-  if(missing(lang) || is.null(lang)) {
-    lang <- "alllangs"
-  }
-  stopifnot(length(lang) == 1)
-
-  if(!missing(token)) {
-    if(any(stringr::str_detect(token, "[:space:]"))) {
-      token <- paste0("\"", token, "\"")
+    if(missing(lang) || is.null(lang)) {
+      lang <- "alllangs"
     }
-    lang_short <- find_language(lang)
-
-    token_query <- paste0(lang_short, "_htrctokentext:", token)
-    token_query <- stringr::str_c("(", token_query, ")", sep = "") %>%
-      paste(collapse = token_join)
-  } else {
-    token_query <- ""
-  }
-
-  if(token_query == "" && !missing(lang)) {
     stopifnot(length(lang) == 1)
-    lang <- find_language(lang, "alpha3-b")
-    if(length(lang) > 0 && lang != "alllangs") {
-      token_query <- paste0("(volumelanguage_txt:", lang, ")")
-    } else{
+
+    if(!missing(token)) {
+      if(any(stringr::str_detect(token, "[:space:]"))) {
+        token <- paste0("\"", token, "\"")
+      }
+      lang_short <- find_language(lang)
+
+      token_query <- paste0(lang_short, "_htrctokentext:", token)
+      token_query <- stringr::str_c("(", token_query, ")", sep = "") %>%
+        paste(collapse = token_join)
+    } else {
       token_query <- ""
+      # volumes_only <- FALSE
     }
+
+    if(token_query == "" && !missing(lang)) {
+      stopifnot(length(lang) == 1)
+      lang <- find_language(lang, "alpha3-b")
+      if(length(lang) > 0 && lang != "alllangs") {
+        token_query <- paste0("(volumelanguage_txt:", lang, ")")
+      } else{
+        token_query <- ""
+      }
+    }
+
+
+    if(!missing(title)) {
+      title <- stringr::str_split(title, "[ ]") %>%
+        unlist() %>%
+        unique()
+      title <- title[ title != "" ]
+      title <- stringr::str_c("(volumetitle_txt:", title, ")")
+      title <- paste(title, collapse = " AND ")
+      if(token_query != "") {
+        token_query <- paste0("(",
+                              title,
+                              " AND ",
+                              token_query,
+                              ")")
+      } else {
+        token_query <- title
+      }
+    }
+
+    if(!missing(name)) {
+      name <- stringr::str_split(name, "[ ]") %>%
+        unlist() %>%
+        unique()
+      name <- name[ name != "" ]
+      name <- stringr::str_c("(volumecontributorName_txt:(\"", name, "\"))")
+      name <- paste(name, collapse = " AND ")
+      if(token_query != "") {
+        token_query <- paste0("(",
+                              name,
+                              " AND ",
+                              token_query,
+                              ")")
+      } else {
+        token_query <- name
+      }
+    }
+
+    if(!missing(imprint)) {
+      imprint <- stringr::str_split(imprint, " ") %>%
+        unlist() %>%
+        unique()
+      imprint <- imprint[ imprint != "" ]
+      imprint <- stringr::str_c("(volumepublisherName_txt:", imprint, ")")
+      imprint <- paste(imprint, collapse = " AND ")
+      if(token_query != "") {
+        token_query <- paste0("(",
+                              imprint,
+                              " AND ",
+                              token_query,
+                              ")")
+      } else {
+        token_query <- imprint
+      }
+    }
+
+    if(!missing(pub_date)) {
+      stopifnot(is.numeric(pub_date))
+      pub_date <- stringr::str_c("(volumepubDate_txt:", pub_date, ")")
+      pub_date <- paste(pub_date, collapse = " OR ")
+      pub_date <- paste0("(", pub_date, ")")
+      if(token_query != "") {
+        token_query <- paste0("(",
+                              pub_date,
+                              " AND ",
+                              token_query,
+                              ")")
+      } else {
+        token_query <- pub_date
+      }
+    }
+
+    if(!missing(token) && length(token) > 1) {
+      token_query <- paste0("(", token_query, ")")
+    }
+
+  } else {
+    token_query <- query_string
   }
 
-
-  if(!missing(genre)) {
-    genre <- stringr::str_c("(volumegenre_htrcstrings:(\"", tolower(genre), "\"))")
-    genre <- paste(genre, collapse = genre_join)
-    if(token_query != "") {
-      token_query <- paste0("(",
-                            genre,
-                            " AND ",
-                            token_query,
-                            ")")
-    } else {
-      token_query <- genre
-    }
-  }
-
-  if(!missing(title)) {
-    title <- stringr::str_split(title, "[ ]") %>%
-      unlist() %>%
-      unique()
-    title <- title[ title != "" ]
-    title <- stringr::str_c("(volumetitle_txt:", title, ")")
-    title <- paste(title, collapse = " AND ")
-    if(token_query != "") {
-      token_query <- paste0("(",
-                            title,
-                            " AND ",
-                            token_query,
-                            ")")
-    } else {
-      token_query <- title
-    }
-  }
-
-  if(!missing(name)) {
-    name <- stringr::str_split(name, "[ ]") %>%
-      unlist() %>%
-      unique()
-    name <- name[ name != "" ]
-    name <- stringr::str_c("(volumenames_txt:(\"", name, "\"))")
-    name <- paste(name, collapse = " AND ")
-    if(token_query != "") {
-      token_query <- paste0("(",
-                            name,
-                            " AND ",
-                            token_query,
-                            ")")
-    } else {
-      token_query <- name
-    }
-  }
-
-  if(!missing(imprint)) {
-    imprint <- stringr::str_split(imprint, " ") %>%
-      unlist() %>%
-      unique()
-    imprint <- imprint[ imprint != "" ]
-    imprint <- stringr::str_c("(volumeimprint_txt:", imprint, ")")
-    imprint <- paste(imprint, collapse = " AND ")
-    if(token_query != "") {
-      token_query <- paste0("(",
-                            imprint,
-                            " AND ",
-                            token_query,
-                            ")")
-    } else {
-      token_query <- imprint
-    }
-  }
-
-  if(!missing(pub_date)) {
-    stopifnot(is.numeric(pub_date))
-    pub_date <- stringr::str_c("(volumepubDate_txt:", pub_date, ")")
-    pub_date <- paste(pub_date, collapse = " OR ")
-    pub_date <- paste0("(", pub_date, ")")
-    if(token_query != "") {
-      token_query <- paste0("(",
-                            pub_date,
-                            " AND ",
-                            token_query,
-                            ")")
-    } else {
-      token_query <- pub_date
-    }
-  }
-
-  if(!missing(token) && length(token) > 1) {
-    token_query <- paste0("(", token_query, ")")
+  if(verbose) {
+    message("Query string: ", stringr::str_wrap(token_query))
   }
 
   res <- read_solr_stream(q = token_query,
@@ -372,21 +355,14 @@ get_workset_meta <- function(workset,
                              metadata_dir = getOption("hathiTools.metadata.dir"),
                              cache = TRUE) {
 
-  if(!missing(workset) && !"hathi_workset" %in% class(workset)) {
-    warning("This function works best with worksets generated by ",
-            "workset_builder. I cannot determine if this file was generated ",
-            "by workset_builder; results may not be accurate or fail.")
-  }
+  id <- url <- NULL
 
-  if(is.character(workset)) {
-    num_vols <- length(unique(workset))
-    htids <- stringr::str_c(unique(workset), "-metadata") %>%
+  htids <- check_htids(workset)
+
+  num_vols <- length(htids)
+
+  htids <- stringr::str_c(unique(htids), "-metadata") %>%
       paste0(collapse = ",")
-  } else {
-    num_vols <- length(unique(workset$htid))
-    htids <- stringr::str_c(unique(workset$htid), "-metadata") %>%
-      paste0(collapse = ",")
-  }
 
   htids <- paste0("value=", htids)
 
@@ -402,7 +378,11 @@ get_workset_meta <- function(workset,
       if(fs::file_exists(filename)) {
         message("Metadata has already been downloaded.",
                 " Returning cached metadata.")
-        return(vroom::vroom(filename))
+        return(vroom::vroom(filename) %>%
+                 dplyr::rename(url = id) %>%
+                 dplyr::mutate(htid = url %>%
+                          stringr::str_remove("http://hdl.handle.net/2027/"),
+                        .before = dplyr::everything()))
       }
     }
   }
@@ -410,8 +390,8 @@ get_workset_meta <- function(workset,
   message("Getting download key...")
 
   httr::with_config(
-    config = httr::config(ssl_verifypeer = FALSE),
-    res <- httr::POST("https://solr2.htrc.illinois.edu/htrc-ef-access/get?action=url-shortener",
+    config = httr::config(ssl_verifypeer = TRUE),
+    res <- httr::POST("https://solr2.htrc.illinois.edu/htrc-ef20-access/get?action=url-shortener",
                       body = htids,
                       encode = "form",
                       httr::content_type("application/x-www-form-urlencoded"),
@@ -420,13 +400,13 @@ get_workset_meta <- function(workset,
 
   key <- res$content %>% rawToChar()
 
-  download_url <- stringr::str_glue("https://solr2.htrc.illinois.edu/htrc-ef-access/get?action=download-ids&key={key}&output=csv")
+  download_url <- stringr::str_glue("https://solr2.htrc.illinois.edu/htrc-ef20-access/get?action=download-ids&key={key}&output=csv")
 
   message("Downloading metadata for ", num_vols, " volumes. ",
           "This might take some time.")
 
   h <- curl::new_handle()
-  curl::handle_setopt(h, ssl_verifypeer = FALSE)
+  curl::handle_setopt(h, ssl_verifypeer = TRUE)
 
   if(cache) {
     curl::curl_download(download_url, filename, quiet = FALSE, handle = h)
@@ -438,41 +418,33 @@ get_workset_meta <- function(workset,
   }
 
 
-  meta
+  meta %>%
+    dplyr::rename(url = id) %>%
+    dplyr::mutate(htid = url %>%
+                    stringr::str_remove("http://hdl.handle.net/2027/"),
+                  .before = dplyr::everything())
 
 }
 
 #' @importFrom utils URLencode
-build_solr_query <- function(q = "((volumegenre_txt:fiction)) AND ((en_htrctokentext:democracy))",
+build_solr_query <- function(q,
                              fl= "volumeid_s,id",
                              fq,
-                             volumes_only = FALSE,
-                             rows = Inf) {
+                             volumes_only = FALSE) {
 
-  stream_handler <- "https://solr2.htrc.illinois.edu/robust-solr/solr3456-faceted-htrc-full-ef16/stream"
-  solr_endpoint <- "solr3456-faceted-htrc-full-ef16"
-  if(is.infinite(rows)) {
-    qt <- "/export"
-  } else {
-    qt <- "/select"
-  }
-  if(qt == "/select") {
-    rows <- ceiling(rows/15)
-    sort <- paste0("rows=", rows, ",",
-                   "sort=\"volumeid_s asc\",start=0")
-  } else {
-    sort <- "sort=\"volumeid_s asc\""
-  }
+  stream_handler <- "https://solr2.htrc.illinois.edu/robust-solr8/solr345678-faceted-htrc-full-ef2-shards24x2/stream"
+  solr_endpoint <- "solr345678-faceted-htrc-full-ef2-shards24x2"
+  qt <- "/export"
+  sort <- "sort=\"volumeid_s asc\""
   indent <- "off"
   wt <- "json"
 
   facet.field = c("volumegenre_htrcstrings",
-                  "volumelanguage_htrcstring",
-                  "volumerightsAttributes_htrcstring",
-                  "volumenames_htrcstrings",
-                  "volumepubPlace_htrcstring",
+                  "volumelanguage_htrcstrings",
+                  "volumeaccessRights_htrcstring",
+                  "volumecontributorName_htrcstrings",
+                  "volumepubPlaceName_htrcstrings",
                   "volumebibliographicFormat_htrcstring",
-                  "volumeclassification_lcc_htrcstrings",
                   "volumeconcept_htrcstrings")
 
 
@@ -517,21 +489,19 @@ build_solr_query <- function(q = "((volumegenre_txt:fiction)) AND ((en_htrctoken
 
 }
 
-read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctokentext:democracy))",
+read_solr_stream <- function(q,
                              fq= NULL,
-                             volumes_only = FALSE,
-                             rows = Inf) {
+                             volumes_only,
+                             rows) {
 
   `result-set` <- EOF <- RESPONSE_TIME <- `count(*)` <- volumeid_s <- htid <- NULL
 
   query_string <- build_solr_query(q = q,
                                    fl = "volumeid_s,id",
                                    fq = fq,
-                                   volumes_only,
-                                   rows = rows)
+                                   volumes_only = volumes_only)
 
-  tmp <- tempfile(fileext = "json")
-
+  tmp <- tempfile(fileext = ".json")
 
   h <- curl::new_handle()
   curl::handle_setopt(h, ssl_verifypeer = FALSE)
@@ -545,16 +515,11 @@ read_solr_stream <- function(q = "((en_htrctokentext:liberal)) AND ((en_htrctoke
     dplyr::select(-EOF, -RESPONSE_TIME)
 
   if(volumes_only) {
+    names(res) <- c("htid", "n")
     res <- res %>%
-      dplyr::rename(n = `count(*)`,
-                    htid = volumeid_s)
-    if(!is.infinite(rows)) {
-      res <- res %>%
-        dplyr::slice(1:rows)
-    }
+      dplyr::slice_max(order_by = n, n = rows)
   } else {
-    res <- res %>%
-      dplyr::rename(htid = volumeid_s)
+    names(res)[1] <- "htid"
     if(!is.infinite(rows)) {
       res <- res %>%
         dplyr::filter(htid %in% unique(htid)[1:min(rows, nrow(res))])
