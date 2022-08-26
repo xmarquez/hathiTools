@@ -6,7 +6,6 @@
 \usage{
 workset_builder(
   token,
-  genre,
   title,
   name,
   imprint,
@@ -14,8 +13,9 @@ workset_builder(
   lang = "eng",
   volumes_only = TRUE,
   token_join = c("AND", "OR"),
-  genre_join = c("AND", "OR"),
-  max_vols = Inf
+  max_vols = Inf,
+  query_string,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -30,13 +30,6 @@ where either of the tokens appear. Search is case-insensitive; phrases can
 be included (e.g., "liberal democracy"), and the database will then return
 matches where both terms appear in the \emph{same page} (though not necessarily
 next to each other).}
-
-\item{genre}{A genre string, e.g. "Fiction" or "Not Fiction" in the Hathi
-Trust full metadata. Can be a set of genre strings, e.g.,
-\code{c("dictionary","biography")}, which are interpreted using the value of
-\code{genre_join} (by default "AND", so the metadata must contain both genre
-strings; if "OR", the query will look for volumes that contain any of the
-genre strings).}
 
 \item{title}{Title field. Multiple words will be joined with "AND"; can be a
 phrase (e.g., "Democracy in America").}
@@ -69,15 +62,19 @@ than one. Default is "AND"; the query will ask for all volumes where all
 tokens occur. "OR" means the query will ask for all volumes where any of
 the tokens occur.}
 
-\item{genre_join}{The logical connector for different genre strings. Default
-is "AND"; the query will ask for all volumes containing all the selected
-genre strings. "OR" means the query will ask for all volumes where any of
-the genre strings occur.}
-
 \item{max_vols}{Maximum number of volumes to return. Default is \code{Inf}, all
-volumes; for queries expected to return large numbers of volumes, it's
-sometimes best to specify a small number just to test that the query is
-what one wants.}
+volumes. Unfortunately the calculation is done locally, rather than
+remotely, so generally even if it is set at a small number, you'll still
+need to download all returned htids.}
+
+\item{query_string}{You can pass a query string directly - this is very
+useful for complex queries. For a guide to SOLR query syntax, see
+https://solr.apache.org/guide/6_6/the-standard-query-parser.html#the-standard-query-parser;
+for information about what fields are available see the Workset Builder
+page https://solr2.htrc.illinois.edu/solr-ef20/}
+
+\item{verbose}{Whether to display the query string used. Default is \code{FALSE}.
+This is useful to learn how to use the more complex SOLR query syntax.}
 }
 \value{
 A \link{tibble} with volume_ids, number of occurrences of the terms in the
@@ -85,20 +82,13 @@ volume, and if \code{volumes_only} is \code{FALSE} a column for page ids.
 }
 \description{
 Queries the SOLR endpoint of the Workset Builder 2.0 (beta) at
-\url{https://solr2.htrc.illinois.edu/solr-ef/}.
+\url{https://solr2.htrc.illinois.edu/solr-ef20/}.
 This API is experimental, and so this function can fail at any time if the
 API changes.
 }
 \examples{
-\dontrun{
-res <- workset_builder("democracy", genre = c("biography", "dictionary"))
-# Better to run two separate queries so the genres can be distinguished per
-# volume, but one can in principle use "OR" to find volumes that contain
-# "democracy" in either genre.
-res <- workset_builder("democracy", genre = c("biography", "dictionary"),
-       genre_join = "OR")
-
-# All volumes that mention "tylenol" and "paracetamol" in the same page
+\donttest{
+# All volumes that mention "tylenol" and "paracetamol", not necessarily in the same page
 res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 
 # All volumes mentioning "demagogue" published between 1800 and 1900
