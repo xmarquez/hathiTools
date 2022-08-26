@@ -22,7 +22,7 @@ Browse a set of Hathi Trust IDs interactively at the Hathi Trust digital
 library site
 }
 \examples{
-\dontrun{
+\donttest{
 if(interactive()) {
    workset <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1800:1850)
    browse_htids(workset)
