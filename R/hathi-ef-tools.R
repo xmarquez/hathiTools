@@ -420,7 +420,7 @@ download_hathi_ef <- function(htid,
     }
     ef <- read_json(htid, dir = dir)
 
-    ef <- cache_ef_file(ef, local_cache, cache_format = cache_format)
+    ef <- cache_ef_file(ef, htid, local_cache, cache_format = cache_format)
 
   }
   ef %>%

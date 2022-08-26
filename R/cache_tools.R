@@ -385,7 +385,7 @@ read_cached_file <- function(filename, cache_format) {
   res
 }
 
-cache_ef_file <- function(ef, filename, cache_format) {
+cache_ef_file <- function(ef, htid, filename, cache_format) {
 
   section <- page <- token <- count <- POS <- NULL
 
@@ -400,6 +400,9 @@ cache_ef_file <- function(ef, filename, cache_format) {
 
 
   }
+
+  ef$htid <- htid
+
   if(cache_format %in% c("csv.gz", "csv", "text2vec.csv")) {
     vroom::vroom_write(ef, filename, delim = ",")
   }
