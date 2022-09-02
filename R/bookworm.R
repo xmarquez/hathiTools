@@ -134,7 +134,7 @@ query_bookworm <- function(word, groups = "date_year",
                            lims = c(1920, 2000),
                            compare_to,
                            as_json = FALSE,
-                           verbose = TRUE,
+                           verbose = FALSE,
                            query, ...) {
 
   if(missing(query)) {
