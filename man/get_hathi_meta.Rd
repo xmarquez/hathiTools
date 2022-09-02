@@ -8,7 +8,7 @@ features file}
 get_hathi_meta(
   htid,
   dir = getOption("hathiTools.ef.dir"),
-  cache_format = c("rds", "csv.gz", "csv", "feather")
+  cache_format = getOption("hathiTools.cacheformat")
 )
 }
 \arguments{
