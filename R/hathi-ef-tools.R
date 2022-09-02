@@ -45,20 +45,27 @@ get_hathi_counts <- function(htid,
          "Use `read_cached_htids()` to read extracted features for multiple HT ids.")
   }
 
-  cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
+  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv",
+                                            "none", "text2vec.csv",
+                                            "feather", "parquet"))
 
   local_cache <- local_loc(htid, suffix = cache_format, dir = dir)
 
   if(!file.exists(local_cache)) {
-      ef <- download_hathi_ef(htid, dir = dir, cache_format = cache_format)
-    } else {
-      ef <- read_cached_file(local_cache,
-                             cache_format = cache_format)
+    local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
+    if(!file.exists(local_json)) {
+      download_hathi_ef(htid, dir = dir, cache_format = cache_format)
     }
+    ef <- load_json(htid, dir = dir) %>%
+      parse_listified_book()
 
-  ef %>%
-    dplyr::mutate(htid = htid, .before = dplyr::everything())
+    ef <- cache_save(ef, local_cache, cache_format)
+  }
+  else {
+    ef <- read_cached_file(local_cache, cache_format = cache_format)
+  }
+
+  ef
 }
 
 #'Reads the volume-level metadata of a single downloaded Hathi Trust extracted
@@ -215,13 +222,14 @@ get_hathi_counts <- function(htid,
 #' get_hathi_meta("mdp.39015001796443", dir = tmp)
 #' }
 get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
-                            cache_format = c("rds", "csv.gz", "csv", "feather")) {
+                            cache_format = getOption("hathiTools.cacheformat")) {
   if(length(htid) != 1) {
     stop("This function only works with a single HT id. ",
          "Use `read_cached_htids()` to read metadata for multiple HT ids.")
   }
 
-  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather"))
+  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather",
+                                            "parquet"))
 
   local_cache <- local_loc(htid, suffix = paste0("meta.", cache_format),
                            dir = dir)
@@ -229,30 +237,15 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
   if(!file.exists(local_cache)) {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
     if(!file.exists(local_json)) {
-      download_hathi_ef(htid, dir = dir)
+      download_hathi_ef(htid, cache_format = cache_format, dir = dir)
     }
-    meta <- load_json(htid, dir = dir)$metadata %>%
-      purrr::compact() %>%
-      purrr::map(flatten_data) %>%
-      tibble::as_tibble() %>%
-      dplyr::mutate(htid = htid,
-                    .before = dplyr::everything())
+    meta <- load_json(htid, dir = dir) %>%
+      parse_meta_volume()
 
-    if(cache_format %in% c("csv.gz", "csv")) {
-      vroom::vroom_write(meta, local_cache, delim = ",")
-    }
-    if(cache_format == "rds") {
-      saveRDS(meta, local_cache, compress = TRUE)
-    }
-    if(cache_format == "feather") {
-      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
-        stop("Must have 'arrow' package installed to use 'feather' cache")
-      }
-      arrow::write_feather(meta, local_cache)
-    }
+    cache_save(meta, local_cache, cache_format)
   }
   else {
-    meta <- read_cached_file(local_cache)
+    meta <- read_cached_file(local_cache, cache_format = cache_format)
   }
 
   meta
@@ -352,50 +345,28 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
 #'
 #' }
 get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir"),
-                                cache_format = c("rds", "csv.gz", "csv", "feather")) {
+                                cache_format = getOption("hathiTools.cacheformat")) {
   if(length(htid) != 1) {
     stop("This function only works with a single HT id. ",
          "Use `read_cached_htids()` to read page metadata for multiple HT ids.")
   }
 
-  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather"))
+  cache_format <- match.arg(cache_format, c("rds", "csv.gz", "csv", "feather", "parquet"))
 
   local_cache <- local_loc(htid, suffix = paste0("pagemeta.", cache_format), dir = dir)
 
   if(!file.exists(local_cache)) {
     local_json <- local_loc(htid, suffix = "json.bz2", dir = dir)
     if(!file.exists(local_json)) {
-      download_hathi_ef(htid, dir = dir)
+      download_hathi_ef(htid, cache_format = cache_format, dir = dir)
     }
     page_meta <- load_json(htid, dir = dir) %>%
       parse_page_meta_volume()
 
-    if(cache_format %in% c("csv.gz", "csv")) {
-      vroom::vroom_write(page_meta, local_cache, delim = ",")
-    }
-    if(cache_format == "rds") {
-      saveRDS(page_meta, local_cache, compress = TRUE)
-    }
-    if(cache_format == "feather") {
-      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
-        stop("Must have 'arrow' package installed to use 'feather' cache")
-      }
-      arrow::write_feather(page_meta, local_cache)
-    }
+    cache_save(page_meta, local_cache, cache_format)
   }
   else {
-    if(cache_format %in% c("csv.gz", "csv")) {
-      page_meta <- vroom::vroom(local_cache, delim = ",")
-    }
-    if(cache_format == "rds") {
-      page_meta <- readRDS(local_cache)
-    }
-    if(cache_format == "feather") {
-      if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
-        stop("Must have 'arrow' package installed to use 'feather' cache")
-      }
-      page_meta <- arrow::read_feather(local_cache)
-    }
+    page_meta <- read_cached_file(local_cache, cache_format = cache_format)
   }
 
   page_meta
@@ -403,11 +374,11 @@ get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir"),
 }
 
 download_hathi_ef <- function(htid,
-                              dir = getOption("hathiTools.ef.dir"),
-                              cache_format = getOption("hathiTools.cacheformat")) {
+                              dir,
+                              cache_format) {
 
   cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
+                                        "feather", "text2vec.csv", "parquet"))
 
   local_cache <- local_loc(htid, suffix = cache_format, dir = dir)
   if(file.exists(local_cache)) {
@@ -418,9 +389,9 @@ download_hathi_ef <- function(htid,
     if(!file.exists(local_json)) {
       download_http(htid, dir = dir)
     }
-    ef <- read_json(htid, dir = dir)
-
-    ef <- cache_ef_file(ef, htid, local_cache, cache_format = cache_format)
+    ef <- cache_single_htid(htid = htid, local_cache = local_cache,
+                            cache_type = "ef", cache_format = cache_format,
+                            dir = dir)
 
   }
   ef %>%
@@ -495,116 +466,6 @@ stubbytree <- function(htid) {
   stringr::str_c(splitted[1], stubbydir, sep = "/")
 }
 
-stubby_url_to_rsync <- function(htid) {
-  tree <- stubbytree(htid)
-  clean <- id_clean(htid)
-  url <- stringr::str_glue("{tree}/{clean}.json.bz2")
-  url
-}
-
-parse_page <- function(page) {
-  parts <- c("body", "header", "footer")
-  seq <- as.numeric(page$seq)
-  body <- parts %>%
-    purrr::map(~parse_section(page, .x)) %>%
-    purrr::discard(is.null) %>%
-    purrr::map(~{
-      .x$page = seq
-      .x
-    })
-  body
-}
-
-parse_section <- function(page, section) {
-  d <- page[[section]]$tokenPosCount
-  if (length(d)) {
-    lens <- sapply(d, length)
-    poses <- lapply(d, names) %>% unlist()
-    return(tibble::tibble(token = rep(names(d), times = lens), POS = poses,
-                          count = unlist(d), section = section))
-  }
-  return(NULL)
-}
-
-parse_listified_book <- function(listified_version) {
-  page <- NULL
-  listified_version$features$pages %>%
-    purrr::map(parse_page) %>%
-    purrr::flatten() %>%
-    dplyr::bind_rows() %>%
-    dplyr::mutate(page = as.numeric(page))
-}
-
-parse_page_meta <- function(page) {
-  seq <- section <- beginChar <- beginCount <- endChar <- endCount <- NULL
-  endCharCount <- beingCharCount <- NULL
-  to_parse <- names(page)[!names(page) %in% c("body", "header", "footer")]
-  beginCharCount <- page[c("body", "header", "footer")] %>%
-    purrr::compact() %>%
-    purrr::map_df(~tibble::enframe(unlist(.$beginCharCount),
-                                   name = "beginChar",
-                                   value = "beginCount"), .id = "section")
-
-  if(nrow(beginCharCount) == 0) {
-    beginCharCount <- tibble(section = character(0),
-                             beginCharCount = list(tibble(beginChar = character(0),
-                                                           beginCount = numeric(0))))
-  } else {
-    beginCharCount <- beginCharCount %>%
-      dplyr::group_by(section) %>%
-      dplyr::summarise(beginCharCount = list(tibble(beginChar, beginCount)))
-  }
-
-  endCharCount <- page[c("body", "header", "footer")] %>%
-    purrr::compact() %>%
-    purrr::map_df(~tibble::enframe(unlist(.$endCharCount),
-                                   name = "endChar",
-                                   value = "endCount"), .id = "section")
-
-  if(nrow(endCharCount) == 0) {
-    endCharCount <- tibble(section = character(0),
-                            endCharCount = list(tibble(endChar = character(0),
-                                                       endCount = numeric(0))))
-  } else {
-    endCharCount <- endCharCount %>%
-      dplyr::group_by(section) %>%
-      dplyr::summarise(endCharCount = list(tibble(endChar, endCount)))
-  }
-
-  sectionStats <- page[c("body", "header", "footer")] %>%
-    purrr::map_df(~dplyr::as_tibble(purrr::compact(.x[c("tokenCount",
-                                                        "lineCount",
-                                                        "emptyLineCount",
-                                                        "sentenceCount",
-                                                        "capAlphaSeq")])),
-                  .id = "section")
-
-  names(sectionStats)[-1] <- paste0("section", names(sectionStats)[-1])
-
-  sectionStats <- sectionStats %>%
-    dplyr::left_join(beginCharCount, by = "section") %>%
-    dplyr::left_join(endCharCount, by = "section")
-
-  page <- page[to_parse] %>%
-    purrr::compact() %>%
-    tibble::as_tibble_row() %>%
-    dplyr::mutate(seq = as.numeric(seq)) %>%
-    dplyr::bind_cols(sectionStats) %>%
-    dplyr::rename(page = seq)
-
-  page
-}
-
-parse_page_meta_volume <- function(listified_version) {
-  page <- NULL
-  res <- listified_version$features$pages %>%
-    purrr::map_df(parse_page_meta)
-
-  res$htid <- listified_version$htid
-  res
-
-}
-
 download_http <- function(htid, dir) {
   local_name <- local_loc(htid, suffix = c("json.bz2"), dir = dir)
   if(file.exists(local_name)) {
@@ -619,15 +480,118 @@ download_http <- function(htid, dir) {
   }
 }
 
-read_json <- function(htid, dir) {
-  page <- count <- NULL
-
-  listified_version <- load_json(htid,
-                                 check_suffixes = c("json.bz2", "json"),
-                                 dir = dir) %>%
-    parse_listified_book() %>%
-    dplyr::mutate(page = as.numeric(page), count = as.numeric(count))
+stubby_url_to_rsync <- function(htid) {
+  tree <- stubbytree(htid)
+  clean <- id_clean(htid)
+  url <- stringr::str_glue("{tree}/{clean}.json.bz2")
+  url
 }
 
+parse_page <- function(page) {
+  parts <- c("body", "header", "footer")
+  seq <- as.numeric(page$seq)
+  body <- parts %>%
+    purrr::map(~parse_token_pos_count(page, .x)) %>%
+    purrr::discard(is.null) %>%
+    purrr::map(~{
+      .x$page = seq
+      .x
+    })
+  body
+}
 
+parse_token_pos_count <- function(page, section) {
+  d <- page[[section]][["tokenPosCount"]]
+  if (length(d)) {
+    lens <- sapply(d, length)
+    poses <- lapply(d, names) %>% unlist(use.names = FALSE)
+    res <- tibble::tibble(token = rep(names(d), times = lens), POS = poses,
+                          count = unlist(d), section = section)
+    names(res$POS) <- NULL
+    return(res)
+  }
+  return(NULL)
+}
+
+parse_listified_book <- function(listified_version) {
+  page <- NULL
+  listified_version$features$pages %>%
+    purrr::map(parse_page) %>%
+    purrr::flatten() %>%
+    dplyr::bind_rows() %>%
+    dplyr::mutate(htid = listified_version$htid,
+                  page = as.integer(page),
+                  .before = dplyr::everything())
+}
+
+parse_meta_volume <- function(listified_version) {
+  meta <- listified_version$metadata %>%
+    purrr::compact() %>%
+    purrr::map_if(~{length(.x) > 1}, ~paste(names(.x), .x, sep = "=", collapse = ", ")) %>%
+    tibble::as_tibble()
+
+  meta %>%
+    dplyr::mutate(htid = listified_version$htid, .before = dplyr::everything())
+}
+
+parse_page_meta_volume <- function(listified_version) {
+
+  htid <- page <- seq <- sectionTokenCount <- tokenCount <- NULL
+
+  generalPageMeta <- listified_version$features$pages %>%
+    purrr::map_df(parse_general_page_meta)
+
+  allSections <- c("header", "body", "footer") %>%
+    purrr::set_names(c("header", "body", "footer")) %>%
+    purrr::map_df(~parse_section_complete(listified_version$features$pages, .x)) %>%
+    dplyr::filter(!is.na(sectionTokenCount))
+
+  generalPageMeta$htid <- listified_version$htid
+  allSections$page <- as.integer(allSections$page)
+
+  generalPageMeta %>%
+    dplyr::left_join(allSections, by = "page") %>%
+    dplyr::filter(tokenCount > 0) %>%
+    dplyr::relocate(htid, page, seq, .before = dplyr::everything())
+
+}
+
+parse_char_count <- function(section) {
+  if(length(section)) {
+    return(toString(jsonlite::toJSON(section)))
+  }
+  return(NULL)
+}
+
+parse_section_complete <- function(pages, section_name) {
+
+  pages %>%
+    purrr::map(section_name) %>%
+    purrr::set_names(1:length(pages)) %>%
+    purrr::map_df(~tibble::tibble(sectionTokenCount = .x$tokenCount,
+                   sectionLineCount = .x$lineCount,
+                   sectionEmptyLineCount = .x$emptyLineCount,
+                   sectionSentenceCount = .x$sentenceCount,
+                   sectionCapAlphaSeq = .x$capAlphaSeq,
+                   sectionBeginCharCount = parse_char_count(.x$beginCharCount),
+                   sectionEndCharCount = parse_char_count(.x$endCharCount)),
+           .id = "page") %>%
+    dplyr::mutate(section = section_name)
+
+}
+
+parse_general_page_meta <- function(pages) {
+  seq <- pages$seq %||% NA
+  version <- pages$version %||% NA
+  tokenCount <- pages$tokenCount %||% NA
+  lineCount <- pages$lineCount %||% NA
+  emptyLineCount <- pages$emptyLineCount %||% NA
+  sentenceCount <- pages$sentenceCount %||% NA
+  calculatedLanguage <- pages$calculatedLanguage %||% NA
+
+  tibble::tibble(seq, version, tokenCount, lineCount,
+                 emptyLineCount, sentenceCount,
+                 calculatedLanguage, page = as.integer(seq))
+
+}
 
