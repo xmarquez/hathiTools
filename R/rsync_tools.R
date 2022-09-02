@@ -29,7 +29,8 @@ rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
     message("Creating directory to sync JSON EF files at ", dir)
   }
 
-  hathi_ef_directory <- fs::dir_create(dir)
+  hathi_ef_directory <- fs::dir_create(dir) %>%
+    fs::path_rel()
 
   tmp <- tempfile(tmpdir = ".", fileext = ".txt")
 
