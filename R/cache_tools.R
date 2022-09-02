@@ -14,13 +14,6 @@
 #'   and the page metadata in `dir`. Omitting one of these caches or finds only
 #'   the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
 #'   their associated metadata or page metadata).
-#' @param cache_metadata_format File format of volume metadata cache. Default
-#'   (and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-#'   [arrow] package). Can be multiple for [find_cached_htids] and
-#'   [clear_cache].
-#' @param cache_pagemetadata_format File format of page metadata cache. Default
-#'   (and recommended) is "rds"; can also be "feather" (requires the [arrow]
-#'   package). Can be multiple for [find_cached_htids] and [clear_cache].
 #' @param keep_json Whether to keep the downloaded json files. Default is
 #'   `TRUE`; if `FALSE`, it only keeps the local cached files (e.g., the csv
 #'   files) and deletes the associated JSON files.
@@ -33,102 +26,49 @@ cache_htids <- function(htids,
                         dir = getOption("hathiTools.ef.dir"),
                         cache_type = c("ef", "meta", "pagemeta"),
                         cache_format = getOption("hathiTools.cacheformat"),
-                        cache_metadata_format =  "rds",
-                        cache_pagemetadata_format = "rds",
                         keep_json = TRUE) {
 
   exists.y <- exists.x <- page <- count <- htid <- NULL
+  local_loc.x <- cache_type.x <- cache_format.x <- NULL
 
   cache_type <- match.arg(cache_type, c("ef", "meta", "pagemeta"),
                           several.ok = TRUE)
 
-  cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
-                                        "feather", "text2vec.csv"))
-
-  cache_metadata_format <- match.arg(cache_metadata_format,
-                                     c("rds", "csv.gz", "feather"))
-
-  cache_pagemetadata_format <- match.arg(cache_pagemetadata_format,
-                                         c("rds", "feather"))
+  cache_format <- match.arg(cache_format, c("csv.gz", "rds",
+                                            "feather", "text2vec.csv",
+                                            "parquet"),
+                            several.ok = TRUE)
 
   htids <- check_htids(htids)
 
   json_file_locs <-  find_cached_htids(htids,
                                        dir = dir,
-                                       cache_type = "ef",
+                                       cache_type = "none",
                                        cache_format = "none",
                                        existing_only = FALSE)
 
-  if(cache_format == "none") {
-    message("No files cached. Returning JSON EF file locations.")
-    return(json_file_locs)
-  }
+  to_cache <- find_cached_htids(htids,
+                                dir = dir,
+                                cache_type = cache_type,
+                                cache_format = cache_format,
+                                existing_only = FALSE) %>%
+    needs_cache(json_file_locs, cache_format) %>%
+    dplyr::group_by(htid) %>%
+    dplyr::summarise(local_cache = list(local_loc.x),
+                     cache_type = list(cache_type.x),
+                     cache_format = list(cache_format.x),
+                     dir = dir)
 
-  if("ef" %in% cache_type) {
-    to_cache <- find_cached_htids(htids,
-                                  dir = dir,
-                                  cache_type = "ef",
-                                  cache_format = cache_format,
-                                  existing_only = FALSE) %>%
-      needs_cache(json_file_locs, cache_format)
+  message("Preparing to cache ",
+          nrow(to_cache), " EF files to ",
+          fs::path_real(dir), " (",
+          fs::path_rel(dir), ") ")
 
-    to_cache %>%
-      dplyr::pull(htid) %>%
-      purrr::iwalk(~{
-        if((.y - 1) %% 5 == 0) {
-          message("Now caching file ", .y, " of ", nrow(to_cache))
-        }
-        get_hathi_counts(.x, dir = dir, cache_format = cache_format)
-      })
-
-  }
-
-  if("meta" %in% cache_type) {
-    to_cache <- find_cached_htids(htids,
-                                  dir = dir,
-                                  cache_type = "meta",
-                                  cache_format = cache_metadata_format,
-                                  existing_only = FALSE) %>%
-      needs_cache(json_file_locs, paste0("page.", cache_metadata_format))
-
-    to_cache %>%
-      dplyr::pull(htid) %>%
-      purrr::iwalk(~{
-        if((.y - 1) %% 5 == 0) {
-          message("Now caching metadata for file ", .y, " of ", nrow(to_cache))
-        }
-        get_hathi_meta(.x, dir = dir, cache_format = cache_metadata_format)
-      })
-  }
-
-  if("pagemeta" %in% cache_type) {
-    to_cache <- find_cached_htids(htids,
-                                  dir = dir,
-                                  cache_type = "pagemeta",
-                                  cache_format = cache_pagemetadata_format,
-                                  existing_only = FALSE) %>%
-      needs_cache(json_file_locs, paste0("pagemeta.", cache_pagemetadata_format))
-
-    to_cache %>%
-      dplyr::filter(htid %in% json_file_locs$htid[json_file_locs$exists]) %>%
-      dplyr::pull(htid) %>%
-      purrr::iwalk(~{
-        if((.y - 1) %% 5 == 0) {
-          message("Now caching page metadata for file ", .y, " of ", nrow(to_cache))
-        }
-        get_hathi_page_meta(.x, dir = dir, cache_format = cache_pagemetadata_format)
-      })
-  }
-
-  if(!keep_json) {
-    message("Now deleting associated JSON files!")
-    fs::file_delete(json_file_locs$local_loc)
-  }
+  to_cache %>%
+    purrr::pwalk(cache_single_htid)
 
   res <- find_cached_htids(htids, dir = dir, cache_type = cache_type,
-                           cache_format = cache_format,
-                           cache_metadata_format = cache_metadata_format,
-                           cache_pagemetadata_format = cache_pagemetadata_format)
+                           cache_format = cache_format)
 
   res
 
@@ -149,60 +89,35 @@ find_cached_htids <- function(htids,
                               dir = getOption("hathiTools.ef.dir"),
                               cache_type = c("ef", "meta", "pagemeta"),
                               cache_format = getOption("hathiTools.cacheformat"),
-                              cache_metadata_format =  c("rds", "csv.gz", "feather"),
-                              cache_pagemetadata_format = c("rds", "feather"),
                               existing_only = TRUE) {
 
-  cache_type <- match.arg(cache_type, c("ef", "meta", "pagemeta"), several.ok = TRUE)
+  cache_type <- match.arg(cache_type, c("none", "ef", "meta", "pagemeta"), several.ok = TRUE)
 
   cache_format <- match.arg(cache_format, c("csv.gz", "none", "rds",
-                                            "feather", "text2vec.csv"),
+                                            "feather", "text2vec.csv",
+                                            "parquet"),
                             several.ok = TRUE)
-
-  names(cache_format) <- rep("ef", length(cache_format))
-
-  cache_metadata_format <- match.arg(cache_metadata_format,
-                                     c("rds", "csv.gz", "feather"),
-                                     several.ok = TRUE)
-
-  names(cache_metadata_format) <- rep("meta", length(cache_metadata_format))
-
-  cache_pagemetadata_format <- match.arg(cache_pagemetadata_format,
-                                         c("rds", "feather"),
-                                         several.ok = TRUE)
-
-  names(cache_pagemetadata_format) <- rep("pagemeta", length(cache_pagemetadata_format))
-
-  if("none" %in% cache_format) {
-    cache_format[cache_format == "none"] <- "json.bz2"
-  }
-
-  cache_format <- c(cache_format,
-                    cache_metadata_format,
-                    cache_pagemetadata_format)
-
-  cache_format <- cache_format[cache_type]
 
   htids <- check_htids(htids)
 
-  suffixes <- paste0(names(cache_format), ".", cache_format) %>%
-    stringr::str_remove("ef\\.")
-
-  names(suffixes) <- names(cache_format)
-
-  res <- tibble::tibble()
-
-  for(suffix in suffixes) {
-    local_files <- htids %>%
-      purrr::map_chr(local_loc, suffix = suffix, dir = dir)
-
-    res <- rbind(res,
-                 tibble::tibble(htid = htids,
-                                local_loc = local_files,
-                                cache_format = suffix,
-                                cache_type = names(suffix),
-                                exists = fs::file_exists(local_files)))
+  if("none" %in% cache_type) {
+    cache_format <- unique(c("none", cache_format))
   }
+
+  if("none" %in% cache_format) {
+    cache_type <- unique(c("none", cache_type))
+  }
+
+  caches <- tidyr::expand_grid(cache_type, cache_format, htids) %>%
+    dplyr::filter(!(cache_type == "none" & cache_format != "none"),
+                  !(cache_type != "none" & cache_format == "none")) %>%
+    dplyr::mutate(cache_format = dplyr::case_when(cache_format == "none" ~ "json.bz2",
+                                                  TRUE ~ cache_format),
+                  suffix = paste0(cache_type, ".", cache_format) %>%
+                    stringr::str_remove("ef\\.|none\\."))
+
+  res <- caches %>%
+    purrr::pmap_df(find_cached_file, dir = dir)
 
   if(existing_only) {
     res <- res %>%
@@ -211,7 +126,18 @@ find_cached_htids <- function(htids,
 
   res
 
+}
 
+find_cached_file <- function(cache_type, cache_format, htids, suffix, dir) {
+  htid <- NULL
+
+  tibble::tibble(htid = htids,
+                 local_loc = local_loc(htid = htid,
+                                       suffix = suffix,
+                                       dir = dir),
+                 cache_format = cache_format,
+                 cache_type = cache_type,
+                 exists = fs::file_exists(local_loc))
 }
 
 #' Removes cached files for a set of HT ids
@@ -223,29 +149,29 @@ find_cached_htids <- function(htids,
 #'   only the rest (e.g., cache_type = "ef" removes only the EF files, not their
 #'   associated metadata or page metadata).
 #' @param cache_format The format of the cached EF files to remove. Defaults to
-#'   `getOption("hathiTools.cacheformat")`, which is "csv.gz" on load, as well
-#'   as any cached volume-level or page-level metadata ("meta" and "pagemeta").
-#'   Other possibilities are: "rds", "feather" (suitable for use with [arrow];
-#'   needs the [arrow] package installed), or "text2vec.csv" (a csv suitable for
-#'   use with the package
-#'   [text2vec](https://cran.r-project.org/package=text2vec))
+#'   c("csv.gz", "rds", "feather", "text2vec.csv", "parquet"), i.e., all
+#'   formats.
 #' @param keep_json Whether to keep any downloaded JSON files. Default is
 #'   `TRUE`; if `FALSE` will delete all JSON extracted features associated with
 #'   the set of htids.
 #'
-#' @return (Invisible) a character vector with the locations of the deleted
-#'   files.
+#' @return (Invisible) a character vector with the deleted paths.
 #'
 #' @export
 clear_cache <- function(htids,
                         dir = getOption("hathiTools.ef.dir"),
                         cache_type = c("ef", "meta", "pagemeta"),
-                        cache_format = getOption("hathiTools.cacheformat"),
-                        cache_metadata_format =  c("rds", "csv.gz", "feather"),
-                        cache_pagemetadata_format = c("rds", "feather"),
+                        cache_format = c("csv.gz", "rds", "feather",
+                                         "text2vec.csv", "parquet"),
                         keep_json = TRUE) {
 
   htids <- check_htids(htids)
+
+  cache_format <- match.arg(cache_format,
+                            c("csv.gz", "rds",
+                              "feather", "text2vec.csv",
+                              "parquet"),
+                            several.ok = TRUE)
 
   if(!keep_json) {
     cache_type <- c("none", cache_type)
@@ -254,12 +180,12 @@ clear_cache <- function(htids,
   caches <- find_cached_htids(htids,
                               dir = dir,
                               cache_type = cache_type,
-                              cache_format = cache_format,
-                              cache_metadata_format = cache_metadata_format,
-                              cache_pagemetadata_format = cache_pagemetadata_format) %>%
-    dplyr::filter(exists)
+                              cache_format = cache_format)
 
-  message("Now deleting ", nrow(caches), " files!")
+  message("Now deleting ",
+          nrow(caches), " cached files in ",
+          fs::path_real(dir), " (",
+          fs::path_rel(dir), ") ")
 
   fs::file_delete(caches$local_loc)
 
@@ -268,9 +194,12 @@ clear_cache <- function(htids,
 #' Read Cached HTIDs
 #'
 #' @inheritParams find_cached_htids
-#' @param filter_expression A filter expression to filter each returned
-#'   [tibble][tibble::tibble] by (so as to only load into memory desired
-#'   features).
+#' @param nest_char_count Whether to create a column with a tibble for the
+#'   `sectionBeginCharCount` and `sectionEndCharCount` columns in the page
+#'   metadata. The default is `FALSE`; if so the counts of characters at the
+#'   beginning and end of lines are left as a JSON-formatted string (which can
+#'   in turn be transformed into a tibble manually).
+#'
 #'
 #' @return A [tibble][tibble::tibble] with the extracted features, plus the
 #'   desired (volume-level or page-level) metadata.
@@ -281,91 +210,217 @@ read_cached_htids <- function(htids,
                               dir = getOption("hathiTools.ef.dir"),
                               cache_type = c("ef", "meta", "pagemeta"),
                               cache_format = getOption("hathiTools.cacheformat"),
-                              cache_metadata_format =  "rds",
-                              cache_pagemetadata_format = "rds",
-                              filter_expression = TRUE) {
+                              nest_char_count = FALSE) {
   htids <- check_htids(htids)
 
-  stopifnot(length(cache_format) == 1)
-  stopifnot(length(cache_metadata_format) == 1)
-  stopifnot(length(cache_pagemetadata_format) == 1)
+  cache_format <- match.arg(cache_format, c("csv.gz", "rds", "feather",
+                                            "text2vec.csv", "parquet"))
 
   cached <- find_cached_htids(htids,
                               dir = dir,
                               cache_type = cache_type,
-                              cache_format = cache_format,
-                              cache_metadata_format =  cache_metadata_format,
-                              cache_pagemetadata_format = cache_pagemetadata_format) %>%
-    tidyr::pivot_wider(id_cols = "htid", names_from = "cache_format", values_from = "local_loc")
+                              cache_format = cache_format) %>%
+    tidyr::pivot_wider(id_cols = "htid", names_from = "cache_type", values_from = "local_loc")
+
+  if(nrow(cached) == 0) {
+    stop("No files cached to ", cache_format, " found. ",
+         "Run cache_htids(htids, cache_format = ",cache_format,
+         ") first.")
+  }
 
   if(is.null(cached[[cache_format]])) {
     cached[[cache_format]] <- NA_character_
   }
 
-  if(is.null(cached[[paste0("meta.", cache_metadata_format)]])) {
-    cached[[paste0("meta.", cache_metadata_format)]] <- NA_character_
+  if(is.null(cached[["meta"]])) {
+    cached[["meta"]] <- NA_character_
   }
 
-  if(is.null(cached[[paste0("pagemeta.", cache_metadata_format)]])) {
-    cached[[paste0("pagemeta.", cache_metadata_format)]] <- NA_character_
+  if(is.null(cached[["pagemeta"]])) {
+    cached[["pagemeta"]] <- NA_character_
   }
 
-  names(cached)[names(cached) == cache_format] <- "local_loc"
-  names(cached)[names(cached) == paste0("meta.", cache_metadata_format)] <- "meta_loc"
-  names(cached)[names(cached) == paste0("pagemeta.", cache_metadata_format)] <- "pagemeta_loc"
-
-  efs <- cached %>%
-    purrr::pmap_df(assemble_from_cache,
-                   cache_format = cache_format,
-                   cache_metadata_format = cache_metadata_format,
-                   cache_pagemetadata_format = cache_pagemetadata_format,
-                   filter_expression = dplyr::enquo(filter_expression))
-
-  efs
-
-
+  method_name <- get(paste0("assemble_from_cache.", cache_format))
+  method_name(cached, cache_format, cache_type, nest_char_count)
 
 }
 
-assemble_from_cache <- function(htid, local_loc, meta_loc, pagemeta_loc,
-                                cache_format,
-                                cache_metadata_format,
-                                cache_pagemetadata_format,
-                                include_page_meta, filter_expression) {
+assemble_from_cache.text2vec.csv <- function(cached, cache_format, cache_type, nest_char_count) {
 
-  mainEntityOfPage <- page <- alternateTitle <- NULL
+  assemble_from_cache.csv.gz(cached, cache_format, cache_type, nest_char_count)
 
-  if(!is.na(local_loc)) {
-    ef <- read_cached_file(local_loc, cache_format = cache_format)
-    ef$htid <- htid
-  } else {
-    ef <- tibble::tibble(htid = htid)
+}
+
+
+#' @importFrom stats na.omit
+assemble_from_cache.csv.gz <- function(cached, cache_format, cache_type, nest_char_count) {
+
+  ef <- meta <- pagemeta <- NULL
+
+  fun_ef <- function(x) {vroom::vroom(x, delim = ",",
+                                      show_col_types = FALSE,
+                                      col_types = vroom::cols(count = "i",
+                                                              page = "i"))}
+  fun_meta <- function(x) {vroom::vroom(x, delim = ",",
+                                        show_col_types = FALSE,
+                                        col_types = vroom::cols(pubDate = "i",
+                                                                dateCreated = "i",
+                                                                lastRightsUpdateDate = "i"))}
+
+  fun_pagemeta <- function(x) {vroom::vroom(x, delim = ",",
+                                            show_col_types = FALSE,
+                                            col_types = vroom::cols(tokenCount = "i",
+                                                                    page = "i",
+                                                                    lineCount = "i",
+                                                                    emptyLineCount = "i",
+                                                                    sentenceCount = "i",
+                                                                    sectionTokenCount = "i",
+                                                                    sectionLineCount = "i",
+                                                                    sectionEmptyLineCount = "i",
+                                                                    sectionSentenceCount = "i",
+                                                                    sectionCapAlphaSeq = "i"))}
+
+
+  if("ef" %in% cache_type && !all(is.na(cached$ef))) {
+    ef_loc <- stats::na.omit(cached$ef)
+    suppressWarnings(ef <- fun_ef(ef_loc))
   }
+  if("meta" %in% cache_type && !all(is.na(cached$meta))) {
+    meta_loc <- stats::na.omit(cached$meta)
+    meta <- meta_loc %>%
+      purrr::map_df(fun_meta)
+  }
+  if("pagemeta" %in% cache_type && !all(is.na(cached$pagemeta))) {
+    pagemeta_loc <- stats::na.omit(cached$pagemeta)
+    pagemeta <- pagemeta_loc %>%
+      purrr::map_df(fun_pagemeta)
 
-  if(!is.na(meta_loc)) {
-    meta <- read_cached_file(meta_loc, cache_metadata_format)
-    if("alternateTitle" %in% names(meta) && is.character(meta[["alternateTitle"]])) {
-      meta <- meta %>%
-        dplyr::mutate(alternateTitle = list(alternateTitle))
+    if(nest_char_count) {
+      pagemeta <- pagemeta %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(dplyr::across(dplyr::any_of(c("sectionBeginCharCount",
+                                                    "sectionEndCharCount")),
+                                    ~list(tibble::enframe(jsonlite::fromJSON(.))))) %>%
+        dplyr::ungroup()
+
     }
-    if("mainEntityOfPage" %in% names(meta) && is.character(meta[["mainEntityOfPage"]])) {
-      meta <- meta %>%
-        dplyr::mutate(mainEntityOfPage = list(mainEntityOfPage))
+  }
+  to_join <- list(ef, meta, pagemeta) %>%
+    purrr::compact()
+
+  assemble_df(to_join)
+
+}
+
+#' @importFrom stats na.omit
+assemble_from_cache.parquet <- function(cached, cache_format, cache_type, nest_char_count) {
+
+  if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+    stop("Must have 'arrow' package installed to use 'parquet' cache")
+  }
+
+  ef <- meta <- pagemeta <- sectionBeginCharCount <- sectionEndCharCount <- NULL
+
+  if("ef" %in% cache_type && !all(is.na(cached$ef))) {
+    ef_loc <- stats::na.omit(cached$ef)
+    ef <- arrow::open_dataset(ef_loc, format = "parquet")
+  }
+  if("meta" %in% cache_type && !all(is.na(cached$meta))) {
+    meta_loc <- stats::na.omit(cached$meta)
+    meta <- arrow::open_dataset(meta_loc, format = "parquet")
+  }
+  if("pagemeta" %in% cache_type && !all(is.na(cached$pagemeta))) {
+    pagemeta_loc <- stats::na.omit(cached$pagemeta)
+    pagemeta <- arrow::open_dataset(pagemeta_loc, format = "parquet")
+  }
+  to_join <- list(ef, meta, pagemeta) %>%
+    purrr::compact()
+
+  assemble_df(to_join)
+
+}
+
+#' @importFrom stats na.omit
+assemble_from_cache.feather <- function(cached, cache_format, cache_type, nest_char_count) {
+
+  if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+    stop("Must have 'arrow' package installed to use 'feather' cache")
+  }
+
+  ef <- meta <- pagemeta <- sectionBeginCharCount <- sectionEndCharCount <- NULL
+
+  if("ef" %in% cache_type && !all(is.na(cached$ef))) {
+    ef_loc <- stats::na.omit(cached$ef)
+    ef <- arrow::open_dataset(ef_loc, format = "feather")
+  }
+  if("meta" %in% cache_type && !all(is.na(cached$meta))) {
+    meta_loc <- stats::na.omit(cached$meta)
+    meta <- arrow::open_dataset(meta_loc, format = "feather")
+  }
+  if("pagemeta" %in% cache_type && !all(is.na(cached$pagemeta))) {
+    pagemeta_loc <- stats::na.omit(cached$pagemeta)
+    pagemeta <- arrow::open_dataset(pagemeta_loc, format = "feather")
+  }
+  to_join <- list(ef, meta, pagemeta) %>%
+    purrr::compact()
+
+  assemble_df(to_join)
+
+}
+
+#' @importFrom stats na.omit
+assemble_from_cache.rds <- function(cached, cache_format, cache_type, nest_char_count) {
+
+  ef <- meta <- pagemeta <- NULL
+
+  if("ef" %in% cache_type && !all(is.na(cached$ef))) {
+    ef_loc <- stats::na.omit(cached$ef)
+    ef <- ef_loc %>%
+      purrr::map_df(readRDS)
+  }
+  if("meta" %in% cache_type && !all(is.na(cached$meta))) {
+    meta_loc <- stats::na.omit(cached$meta)
+    meta <- meta_loc %>%
+      purrr::map_df(readRDS)
+  }
+  if("pagemeta" %in% cache_type && !all(is.na(cached$pagemeta))) {
+    pagemeta_loc <- stats::na.omit(cached$pagemeta)
+    pagemeta <- pagemeta_loc %>%
+      purrr::map_df(readRDS)
+
+    if(nest_char_count) {
+      pagemeta <- pagemeta %>%
+        dplyr::rowwise() %>%
+        dplyr::mutate(dplyr::across(dplyr::any_of(c("sectionBeginCharCount",
+                                                    "sectionEndCharCount")),
+                                    ~list(tibble::enframe(jsonlite::fromJSON(.))))) %>%
+        dplyr::ungroup()
+
     }
-    ef <- ef %>%
-      dplyr::left_join(meta, by = "htid")
+
   }
+  to_join <- list(ef, meta, pagemeta) %>%
+    purrr::compact()
 
-  if(!is.na(pagemeta_loc)) {
-    pagemeta <- read_cached_file(pagemeta_loc, cache_metadata_format)
-    ef <- ef %>%
-      dplyr::left_join(pagemeta, by = c("htid", "section", "page"))
+  assemble_df(to_join)
+
+}
+
+assemble_df <- function(to_join) {
+  if(length(to_join) == 0) {
+    return(NULL)
   }
-
-  ef %>%
-    dplyr::filter(!!filter_expression) %>%
-    dplyr::relocate(htid, .before = dplyr::everything())
-
+  if(length(to_join) == 1) {
+    return(to_join[[1]])
+  }
+  if(length(to_join) == 2) {
+    return(suppressMessages(dplyr::left_join(to_join[[1]], to_join[[2]])))
+  }
+  if(length(to_join) == 3) {
+    return(dplyr::left_join(to_join[[1]], to_join[[2]], by = "htid") %>%
+             dplyr::left_join(to_join[[3]], by = c("htid", "page", "section")))
+  }
+  return(NULL)
 }
 
 read_cached_file <- function(filename, cache_format) {
@@ -382,42 +437,111 @@ read_cached_file <- function(filename, cache_format) {
     }
     res <- arrow::read_feather(filename)
   }
-  res
-}
-
-cache_ef_file <- function(ef, htid, filename, cache_format) {
-
-  section <- page <- token <- count <- POS <- NULL
-
-  if(stringr::str_detect(cache_format, "text2vec")) {
-
-    ef <- ef %>%
-      dplyr::group_by(section, page) %>%
-      dplyr::summarise(token = stringr::str_c(rep(token, count), "_", rep(POS, count), collapse = " "),
-                       .groups = "drop")
-
-    ef$page <- as.numeric(ef$page)
-
-
-  }
-
-  ef$htid <- htid
-
-  if(cache_format %in% c("csv.gz", "csv", "text2vec.csv")) {
-    vroom::vroom_write(ef, filename, delim = ",")
-  }
-  if(cache_format == "rds") {
-    saveRDS(ef, filename, compress = TRUE)
-  }
-  if(cache_format == "feather") {
+  if(cache_format %in% c("parquet")) {
     if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
       stop("Must have 'arrow' package installed to use 'feather' cache")
     }
-    arrow::write_feather(ef, filename)
+    res <- arrow::read_parquet(filename)
+  }
+  res %>%
+    standardize_cols()
+}
+
+cache_single_htid <- function(htid, local_cache, cache_type, cache_format, dir) {
+  stopifnot(length(htid) == 1)
+  stopifnot(length(cache_format) == length(cache_type))
+  stopifnot(length(cache_format) == length(local_cache))
+
+  parsed_json <- load_json(htid = htid, dir = dir)
+
+  ef <- meta <- pagemeta <- NULL
+
+  for(ct in unique(cache_type)) {
+    if(ct == "ef") {
+      message("Now caching EF file for ", htid)
+      ef <- parsed_json %>%
+        parse_listified_book()
+
+      for(i in which(cache_type == ct)) {
+        cache_save(ef, local_cache[i], cache_format[i])
+      }
+    }
+    if(ct == "meta") {
+      message("Now caching volume-level metadata for ", htid)
+      meta <- parsed_json %>%
+        parse_meta_volume()
+
+      for(i in which(cache_type == ct)) {
+        cache_save(meta, local_cache[i], cache_format[i])
+      }
+    }
+    if(ct == "pagemeta") {
+      message("Now caching page-level metadata for ", htid)
+      pagemeta <- parsed_json %>%
+        parse_page_meta_volume()
+
+      for(i in which(cache_type == ct)) {
+        cache_save(pagemeta, local_cache[i], cache_format[i])
+      }
+    }
   }
 
-  ef
+  assemble_df(purrr::compact(list(ef, meta, pagemeta)))
+}
 
+standardize_cols <- function(obj) {
+  obj %>%
+    dplyr::mutate(dplyr::across(dplyr::any_of(c("page", "count",
+                                                "pubDate", "dateCreated",
+                                                "lastRightsUpdateDate",
+                                                "tokenCount", "lineCount",
+                                                "emptyLineCount", "sentenceCount",
+                                                "sectionTokenCount",
+                                                "sectionLineCount",
+                                                "sectionEmptyLineCount",
+                                                "sectionSentenceCount",
+                                                "sectionCapAlphaSeq")),
+                                as.integer)) %>%
+    dplyr::mutate(dplyr::across(dplyr::any_of(c("lccn", "oclc")),
+                                as.double))
+}
+
+cache_save <- function(obj, local_cache, cache_format) {
+  obj <- standardize_cols(obj)
+
+  if(stringr::str_detect(cache_format, "csv.gz")) {
+    vroom::vroom_write(obj, local_cache, delim = ",")
+  }
+
+  if(stringr::str_detect(cache_format, "text2vec.csv")) {
+    if(all(c("htid", "page", "token", "POS", "section", "count") %in% names(obj))) {
+      htid <- page <- token <- POS  <- section <- count <- NULL
+      obj <- obj %>%
+        dplyr::group_by(htid, page, section) %>%
+        dplyr::summarise(tokens = paste(rep(paste(token, POS, sep = "_"),
+                                            times = count), collapse = " "))
+    }
+    vroom::vroom_write(obj, local_cache, delim = ",")
+  }
+
+  if(stringr::str_detect(cache_format, "rds")) {
+    saveRDS(obj, local_cache, compress = TRUE)
+  }
+
+  if(stringr::str_detect(cache_format, "feather")) {
+    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+      stop("Must have 'arrow' package installed to use 'feather' cache")
+    }
+    arrow::write_feather(obj, local_cache)
+  }
+
+  if(stringr::str_detect(cache_format, "parquet")) {
+    if(!(length(find.package("arrow", quiet = TRUE)) > 0)) {
+      stop("Must have 'arrow' package installed to use 'parquet' cache")
+    }
+    arrow::write_parquet(obj, local_cache)
+  }
+  return(obj)
 }
 
 needs_cache <- function(cached_file_locs, json_file_locs, cache_format) {
@@ -436,10 +560,15 @@ needs_cache <- function(cached_file_locs, json_file_locs, cache_format) {
       dplyr::filter(!exists.y) %>%
       nrow()
 
-    cached_already <- cached_file_locs %>%
+    cached_already_formats<- cached_file_locs %>%
       dplyr::left_join(json_file_locs, by = "htid") %>%
-      dplyr::filter(exists.x) %>%
+      dplyr::filter(exists.x)
+
+    cached_already <- cached_already_formats %>%
       nrow()
+
+    cached_already_formats <- unique(cached_already_formats$cache_format.x) %>%
+      paste(collapse = ", ")
 
     if(non_existent_json > 0) {
       message(non_existent_json, " HTIDs cannot be cached, since their JSON EF",
@@ -447,7 +576,7 @@ needs_cache <- function(cached_file_locs, json_file_locs, cache_format) {
       message("Try using rsync_from_hathi(htids) to download them.")
     }
     if(cached_already > 0) {
-      message(cached_already, " HTIDs have already been cached to ", cache_format, " format.")
+      message(cached_already, " HTIDs have already been cached to ", cached_already_formats, " format.")
     }
   }
 
