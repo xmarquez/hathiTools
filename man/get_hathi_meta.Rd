@@ -155,7 +155,7 @@ for large numbers of htids by downloading the big hathifile using
 \link{download_hathifile} and then filtering it.
 }
 \examples{
-\dontrun{
+\donttest{
 # Download the 1862 version of "Democracy in America" by Tocqueville and get
 # its metadata
 

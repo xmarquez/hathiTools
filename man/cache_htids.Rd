@@ -24,15 +24,15 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 \item{cache_type}{Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
 and the page metadata in \code{dir}. Omitting one of these caches or finds only
-the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+the rest (e.g., \code{cache_type = "ef"} caches only the EF files, not
 their associated metadata or page metadata).}
 
 \item{cache_format}{File format of cache for Extracted Features files.
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
-local caching of JSON download; only JSON file kept), "rds", "feather"
-(suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
-"text2vec.csv" (a csv suitable for use with the package
+local caching of JSON download; only JSON file kept), "rds", "feather" and
+"parquet" (suitable for use with \link{arrow}; needs the \link{arrow} package
+installed), or "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
 \item{keep_json}{Whether to keep the downloaded json files. Default is
@@ -46,6 +46,6 @@ whether each htid was successfully cached.
 \description{
 It is useful to run this function after running \link{rsync_from_hathi}; this way,
 you can cache all your slow-to-load JSON Extracted Features files to a faster
-to load format (e.g., \code{feather} or \code{csv}). By default, this function also
-caches the associated metadata as separate .rds files.
+to load format (e.g., \code{feather} or \code{csv}), and read them into a single data
+frame or \link[arrow:Dataset]{arrow::Dataset} for further work.
 }

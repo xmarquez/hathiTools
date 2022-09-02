@@ -135,11 +135,11 @@ thousands of records, you are probably better off using the big hathifile
 (see \link{download_hathifile} and \link{load_raw_hathifile}).
 }
 \examples{
-\dontrun{
+\donttest{
 workset <- workset_builder(name = "Tocqueville")
-meta <- get_workset_meta(workset)
+get_workset_meta(workset[1:5, ])
 
 ## We can also pass a vector of htids:
-meta <- get_workset_meta(workset$htid)
+get_workset_meta(workset$htid[1:5])
 }
 }

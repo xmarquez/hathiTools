@@ -24,19 +24,20 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 \item{cache_type}{Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
 and the page metadata in \code{dir}. Omitting one of these caches or finds only
-the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+the rest (e.g., \code{cache_type = "ef"} caches only the EF files, not
 their associated metadata or page metadata).}
 
 \item{cache_format}{File format of cache for Extracted Features files.
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
-local caching of JSON download; only JSON file kept), "rds", "feather"
-(suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
-"text2vec.csv" (a csv suitable for use with the package
+local caching of JSON download; only JSON file kept), "rds", "feather" and
+"parquet" (suitable for use with \link{arrow}; needs the \link{arrow} package
+installed), or "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
 \item{existing_only}{Whether to return only file paths to files that actually
-exist. Default is \code{TRUE}.}
+exist. Default is \code{TRUE}. Use \code{FALSE} to find whether some files still need
+to be cached.}
 }
 \value{
 A \link{tibble} with the paths of the cached files and an indicator of

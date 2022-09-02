@@ -2,7 +2,7 @@
 % Please edit documentation in R/cache_tools.R
 \name{clear_cache}
 \alias{clear_cache}
-\title{Removes cached files for a set of HT ids}
+\title{Removes cached files for a set of Hathi Trust ids}
 \usage{
 clear_cache(
   htids,
@@ -39,5 +39,9 @@ the set of htids.}
 (Invisible) a character vector with the deleted paths.
 }
 \description{
-Removes cached files for a set of HT ids
+Removes cached files for a set of Hathi Trust ids
+}
+\note{
+Warning! This function does not double-check that you want to delete your
+cache. It will go ahead and do it.
 }

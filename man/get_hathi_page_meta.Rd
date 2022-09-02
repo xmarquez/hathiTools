@@ -53,28 +53,27 @@ algorithm.}
 
 \item{section}{The section of the page.}
 
-\item{sectiontokenCount}{The total number of tokens detected in the section of
-the page.}
+\item{sectiontokenCount}{The total number of tokens detected in the section
+of the page.}
 
-\item{sectionlineCount}{The total number of lines detected in the section of
-the page.}
+\item{sectionlineCount}{The total number of lines detected in the section
+of the page.}
 
-\item{sectionemptyLineCount}{The total number of empty lines detected in the
-section of the page.}
+\item{sectionemptyLineCount}{The total number of empty lines detected in
+the section of the page.}
 
 \item{sectionsentenceCount}{The total number of sentences detected in the
 section of the page.}
 
-\item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence of
-capital characters starting a line. Only available for the "body" section.}
+\item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence
+of capital characters starting a line. Only available for the "body"
+section.}
 
-\item{beginCharCount}{A \link[tibble:tibble]{tibble} column with the first non-White
-Space characters detected on lines in the section (beginChar) and their
-occurrence counts (beginCharCount)}.
+\item{sectionBeginCharCount}{A JSON-formatted character column with the
+first non-White Space characters detected on lines in the section.}
 
-\item{endCharCount}{A \link[tibble:tibble]{tibble} column of the last non-White
-Space characters on detected lines in the section (endChar) and their
-occurrence counts (endCharCount).}
+\item{sectionEndCharCount}{A JSON-formatted character column with the
+last non-White Space characters detected on lines in the section.}
 
 }
 }
@@ -91,21 +90,14 @@ Note that if you want to extract the page-level metadata of more than one
 Hathi Trust ID at a time, it may be best to download the JSON files for these
 HTIDs first using \link{rsync_from_hathi} and then running this function.
 }
-\note{
-It is not recommended to save page-level metadata in csv format; you will
-lose the \code{beginCharCount} and \code{endCharCount} variables.
-}
 \examples{
-\dontrun{
+\donttest{
 # Download the 1862 version of "Democracy in America" by Tocqueville and get
 # its page-level metadata
 
 tmp <- tempdir()
 
-page_meta <- get_hathi_page_meta("mdp.39015001796443", dir = tmp)
-
-page_meta \%>\% tidyr::unnest(sectionStats)
-page_meta \%>\% tidyr::unnest(sectionStats) \%>\% tidyr::unnest(beginCharCount)
+get_hathi_page_meta("mdp.39015001796443", dir = tmp)
 
 }
 }

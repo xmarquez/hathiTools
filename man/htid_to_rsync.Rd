@@ -27,9 +27,9 @@ If you have a lot of files to download, generating the list of relative
 stubbytree paths and using rsync is much faster than using
 \link{get_hathi_counts} over a list of htids. But rsync only downloads json
 files, so calling \link{get_hathi_counts} on a downloaded json file will be
-slower the first time as the function will cache the json file to csv. It
-is best to run \link{cache_htids} after using rsync to reduce this performance
-penalty.
+slower the first time as the function will cache the json file to csv or
+another format. It is best to run \link{cache_htids} after using rsync to reduce
+this performance penalty.
 }
 
 \examples{
