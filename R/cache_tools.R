@@ -2,8 +2,8 @@
 #'
 #' It is useful to run this function after running [rsync_from_hathi]; this way,
 #' you can cache all your slow-to-load JSON Extracted Features files to a faster
-#' to load format (e.g., `feather` or `csv`). By default, this function also
-#' caches the associated metadata as separate .rds files.
+#' to load format (e.g., `feather` or `csv`), and read them into a single data
+#' frame or [arrow::Dataset] for further work.
 #'
 #' @param htids A character vector of Hathi Trust ids, a workset created with
 #'   [workset_builder], or a data frame with a column named "htid" containing
@@ -12,7 +12,7 @@
 #' @param cache_type Type of information cached. The default is c("ef", "meta",
 #'   "pagemeta"), which refers to the extracted features, the volume metadata,
 #'   and the page metadata in `dir`. Omitting one of these caches or finds only
-#'   the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+#'   the rest (e.g., `cache_type = "ef"` caches only the EF files, not
 #'   their associated metadata or page metadata).
 #' @param keep_json Whether to keep the downloaded json files. Default is
 #'   `TRUE`; if `FALSE`, it only keeps the local cached files (e.g., the csv
@@ -79,7 +79,8 @@ cache_htids <- function(htids,
 #'
 #' @inheritParams cache_htids
 #' @param existing_only Whether to return only file paths to files that actually
-#'   exist. Default is `TRUE`.
+#'   exist. Default is `TRUE`. Use `FALSE` to find whether some files still need
+#'   to be cached.
 #'
 #' @return A [tibble] with the paths of the cached files and an indicator of
 #'   whether each htid has an existing cached file.
@@ -140,7 +141,7 @@ find_cached_file <- function(cache_type, cache_format, htids, suffix, dir) {
                  exists = fs::file_exists(local_loc))
 }
 
-#' Removes cached files for a set of HT ids
+#' Removes cached files for a set of Hathi Trust ids
 #'
 #' @inheritParams find_cached_htids
 #' @param cache_type Type of information to remove. The default is c("ef",
@@ -154,6 +155,11 @@ find_cached_file <- function(cache_type, cache_format, htids, suffix, dir) {
 #' @param keep_json Whether to keep any downloaded JSON files. Default is
 #'   `TRUE`; if `FALSE` will delete all JSON extracted features associated with
 #'   the set of htids.
+#'
+#' @note
+#'
+#' Warning! This function does not double-check that you want to delete your
+#' cache. It will go ahead and do it.
 #'
 #' @return (Invisible) a character vector with the deleted paths.
 #'
