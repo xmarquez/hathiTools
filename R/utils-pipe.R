@@ -9,3 +9,7 @@
 #' @importFrom magrittr %>%
 #' @usage lhs \%>\% rhs
 NULL
+
+`%||%` <- function(x, y) {
+  ifelse(is.null(x), y, x)
+}
