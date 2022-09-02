@@ -495,6 +495,7 @@ read_solr_stream <- function(q,
                              rows) {
 
   `result-set` <- EOF <- RESPONSE_TIME <- `count(*)` <- volumeid_s <- htid <- NULL
+  n <- NULL
 
   query_string <- build_solr_query(q = q,
                                    fl = "volumeid_s,id",
