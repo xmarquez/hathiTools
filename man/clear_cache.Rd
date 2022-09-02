@@ -8,9 +8,7 @@ clear_cache(
   htids,
   dir = getOption("hathiTools.ef.dir"),
   cache_type = c("ef", "meta", "pagemeta"),
-  cache_format = getOption("hathiTools.cacheformat"),
-  cache_metadata_format = c("rds", "csv.gz", "feather"),
-  cache_pagemetadata_format = c("rds", "feather"),
+  cache_format = c("csv.gz", "rds", "feather", "text2vec.csv", "parquet"),
   keep_json = TRUE
 )
 }
@@ -30,29 +28,15 @@ only the rest (e.g., cache_type = "ef" removes only the EF files, not their
 associated metadata or page metadata).}
 
 \item{cache_format}{The format of the cached EF files to remove. Defaults to
-\code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on load, as well
-as any cached volume-level or page-level metadata ("meta" and "pagemeta").
-Other possibilities are: "rds", "feather" (suitable for use with \link{arrow};
-needs the \link{arrow} package installed), or "text2vec.csv" (a csv suitable for
-use with the package
-\href{https://cran.r-project.org/package=text2vec}{text2vec})}
-
-\item{cache_metadata_format}{File format of volume metadata cache. Default
-(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-\link{arrow} package). Can be multiple for \link{find_cached_htids} and
-\link{clear_cache}.}
-
-\item{cache_pagemetadata_format}{File format of page metadata cache. Default
-(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
-package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
+c("csv.gz", "rds", "feather", "text2vec.csv", "parquet"), i.e., all
+formats.}
 
 \item{keep_json}{Whether to keep any downloaded JSON files. Default is
 \code{TRUE}; if \code{FALSE} will delete all JSON extracted features associated with
 the set of htids.}
 }
 \value{
-(Invisible) a character vector with the locations of the deleted
-files.
+(Invisible) a character vector with the deleted paths.
 }
 \description{
 Removes cached files for a set of HT ids

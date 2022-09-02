@@ -9,9 +9,7 @@ read_cached_htids(
   dir = getOption("hathiTools.ef.dir"),
   cache_type = c("ef", "meta", "pagemeta"),
   cache_format = getOption("hathiTools.cacheformat"),
-  cache_metadata_format = "rds",
-  cache_pagemetadata_format = "rds",
-  filter_expression = TRUE
+  nest_char_count = FALSE
 )
 }
 \arguments{
@@ -37,18 +35,11 @@ local caching of JSON download; only JSON file kept), "rds", "feather"
 "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
-\item{cache_metadata_format}{File format of volume metadata cache. Default
-(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-\link{arrow} package). Can be multiple for \link{find_cached_htids} and
-\link{clear_cache}.}
-
-\item{cache_pagemetadata_format}{File format of page metadata cache. Default
-(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
-package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
-
-\item{filter_expression}{A filter expression to filter each returned
-\link[tibble:tibble]{tibble} by (so as to only load into memory desired
-features).}
+\item{nest_char_count}{Whether to create a column with a tibble for the
+\code{sectionBeginCharCount} and \code{sectionEndCharCount} columns in the page
+metadata. The default is \code{FALSE}; if so the counts of characters at the
+beginning and end of lines are left as a JSON-formatted string (which can
+in turn be transformed into a tibble manually).}
 }
 \value{
 A \link[tibble:tibble]{tibble} with the extracted features, plus the

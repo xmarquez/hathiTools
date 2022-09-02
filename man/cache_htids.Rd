@@ -9,8 +9,6 @@ cache_htids(
   dir = getOption("hathiTools.ef.dir"),
   cache_type = c("ef", "meta", "pagemeta"),
   cache_format = getOption("hathiTools.cacheformat"),
-  cache_metadata_format = "rds",
-  cache_pagemetadata_format = "rds",
   keep_json = TRUE
 )
 }
@@ -36,15 +34,6 @@ local caching of JSON download; only JSON file kept), "rds", "feather"
 (suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
 "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
-
-\item{cache_metadata_format}{File format of volume metadata cache. Default
-(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-\link{arrow} package). Can be multiple for \link{find_cached_htids} and
-\link{clear_cache}.}
-
-\item{cache_pagemetadata_format}{File format of page metadata cache. Default
-(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
-package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
 
 \item{keep_json}{Whether to keep the downloaded json files. Default is
 \code{TRUE}; if \code{FALSE}, it only keeps the local cached files (e.g., the csv

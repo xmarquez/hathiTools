@@ -9,8 +9,6 @@ find_cached_htids(
   dir = getOption("hathiTools.ef.dir"),
   cache_type = c("ef", "meta", "pagemeta"),
   cache_format = getOption("hathiTools.cacheformat"),
-  cache_metadata_format = c("rds", "csv.gz", "feather"),
-  cache_pagemetadata_format = c("rds", "feather"),
   existing_only = TRUE
 )
 }
@@ -36,15 +34,6 @@ local caching of JSON download; only JSON file kept), "rds", "feather"
 (suitable for use with \link{arrow}; needs the \link{arrow} package installed), or
 "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
-
-\item{cache_metadata_format}{File format of volume metadata cache. Default
-(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-\link{arrow} package). Can be multiple for \link{find_cached_htids} and
-\link{clear_cache}.}
-
-\item{cache_pagemetadata_format}{File format of page metadata cache. Default
-(and recommended) is "rds"; can also be "feather" (requires the \link{arrow}
-package). Can be multiple for \link{find_cached_htids} and \link{clear_cache}.}
 
 \item{existing_only}{Whether to return only file paths to files that actually
 exist. Default is \code{TRUE}.}
