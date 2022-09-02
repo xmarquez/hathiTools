@@ -1,6 +1,6 @@
 Package: hathiTools
 Title: Access the Hathi Trust Bookworm and Extracted Features Files from R
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     c(person(given = "Xavier",
            family = "Marquez",
