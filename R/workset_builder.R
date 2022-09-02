@@ -59,17 +59,17 @@
 #' @examples
 #' \donttest{
 #' # All volumes that mention "tylenol" and "paracetamol", not necessarily in the same page
-#' res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
+#' workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 #'
 #' # All volumes mentioning "demagogue" published between 1800 and 1900
-#' res <- workset_builder("demagogue", pub_date = 1800:1900)
+#' workset_builder("demagogue", pub_date = 1800:1900)
 #'
 #' # All volumes mentioning "demagogue" with "Tocqueville" and "Reeve"
 #' # in the author field
-#' res <- workset_builder("demagogue", name = c("Tocqueville", "Reeve"))
+#' workset_builder("demagogue", name = c("Tocqueville", "Reeve"))
 #'
 #' # All volumes with "Tocqueville" in the author field
-#' res <- workset_builder(name = "Tocqueville")
+#' workset_builder(name = "Tocqueville")
 #' }
 workset_builder <- function(token, title,
                             name, imprint, pub_date,
@@ -344,12 +344,12 @@ workset_builder <- function(token, title,
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' workset <- workset_builder(name = "Tocqueville")
-#' meta <- get_workset_meta(workset)
+#' get_workset_meta(workset[1:5, ])
 #'
 #' ## We can also pass a vector of htids:
-#' meta <- get_workset_meta(workset$htid)
+#' get_workset_meta(workset$htid[1:5])
 #' }
 get_workset_meta <- function(workset,
                              metadata_dir = getOption("hathiTools.metadata.dir"),
