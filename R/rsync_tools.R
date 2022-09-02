@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 #' rsync_from_hathi(res$htid[1:10])
 #' }
@@ -84,9 +84,9 @@ rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
 #'   stubbytree paths and using rsync is much faster than using
 #'   [get_hathi_counts] over a list of htids. But rsync only downloads json
 #'   files, so calling [get_hathi_counts] on a downloaded json file will be
-#'   slower the first time as the function will cache the json file to csv. It
-#'   is best to run [cache_htids] after using rsync to reduce this performance
-#'   penalty.
+#'   slower the first time as the function will cache the json file to csv or
+#'   another format. It is best to run [cache_htids] after using rsync to reduce
+#'   this performance penalty.
 #'
 #' @return The list of relative paths saved to the file (invisibly).
 #' @export
@@ -101,7 +101,9 @@ htid_to_rsync <- function(htids, file) {
 
   writeLines(rel_paths, file)
 
-  message(stringr::str_glue("Use rsync -av --files-from {file} data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory"))
+  message(stringr::str_glue("Use rsync -av --files-from {file}"),
+          " data.analytics.hathitrust.org::features-2020.03/ ",
+          "hathi-ef/ to download EF files to hathi-ef directory")
 
   invisible(rel_paths)
 
