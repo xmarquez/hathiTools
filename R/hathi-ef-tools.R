@@ -17,9 +17,9 @@
 #' @param cache_format File format of cache for Extracted Features files.
 #'   Defaults to `getOption("hathiTools.cacheformat")`, which is "csv.gz" on
 #'   load. Allowed cache types are: compressed csv (the default), "none" (no
-#'   local caching of JSON download; only JSON file kept), "rds", "feather"
-#'   (suitable for use with [arrow]; needs the [arrow] package installed), or
-#'   "text2vec.csv" (a csv suitable for use with the package
+#'   local caching of JSON download; only JSON file kept), "rds", "feather" and
+#'   "parquet" (suitable for use with [arrow]; needs the [arrow] package
+#'   installed), or "text2vec.csv" (a csv suitable for use with the package
 #'   [text2vec](https://cran.r-project.org/package=text2vec)).
 #'
 #' @author Ben Schmidt
@@ -213,7 +213,7 @@ get_hathi_counts <- function(htid,
 #'@export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Download the 1862 version of "Democracy in America" by Tocqueville and get
 #' # its metadata
 #'
@@ -265,15 +265,12 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
 #' HTIDs first using [rsync_from_hathi] and then running this function.
 #'
 #' @inheritParams get_hathi_meta
-#' @note
-#'
-#' It is not recommended to save page-level metadata in csv format; you will
-#' lose the `beginCharCount` and `endCharCount` variables.
 #'
 #' @return A [tibble][tibble::tibble] with the page-level metadata for the
 #'   corresponding Hathi Trust ID. The page-level metadata contains the
 #'   following fields (taken from
 #'   [https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329](https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329)):
+#'
 #'
 #'
 #'   \describe{
@@ -302,28 +299,27 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
 #'
 #'   \item{section}{The section of the page.}
 #'
-#'   \item{sectiontokenCount}{The total number of tokens detected in the section of
-#'   the page.}
+#'   \item{sectiontokenCount}{The total number of tokens detected in the section
+#'   of the page.}
 #'
-#'   \item{sectionlineCount}{The total number of lines detected in the section of
-#'   the page.}
+#'   \item{sectionlineCount}{The total number of lines detected in the section
+#'   of the page.}
 #'
-#'   \item{sectionemptyLineCount}{The total number of empty lines detected in the
-#'   section of the page.}
+#'   \item{sectionemptyLineCount}{The total number of empty lines detected in
+#'   the section of the page.}
 #'
 #'   \item{sectionsentenceCount}{The total number of sentences detected in the
 #'   section of the page.}
 #'
-#'   \item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence of
-#'   capital characters starting a line. Only available for the "body" section.}
+#'   \item{sectioncapAlphaSeq}{The longest length of the alphabetical sequence
+#'   of capital characters starting a line. Only available for the "body"
+#'   section.}
 #'
-#'   \item{beginCharCount}{A [tibble][tibble::tibble] column with the first non-White
-#'   Space characters detected on lines in the section (beginChar) and their
-#'   occurrence counts (beginCharCount)}.
+#'   \item{sectionBeginCharCount}{A JSON-formatted character column with the
+#'   first non-White Space characters detected on lines in the section.}
 #'
-#'   \item{endCharCount}{A [tibble][tibble::tibble] column of the last non-White
-#'   Space characters on detected lines in the section (endChar) and their
-#'   occurrence counts (endCharCount).}
+#'   \item{sectionEndCharCount}{A JSON-formatted character column with the
+#'   last non-White Space characters detected on lines in the section.}
 #'
 #'   }
 #'
@@ -332,16 +328,13 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Download the 1862 version of "Democracy in America" by Tocqueville and get
 #' # its page-level metadata
 #'
 #' tmp <- tempdir()
 #'
-#' page_meta <- get_hathi_page_meta("mdp.39015001796443", dir = tmp)
-#'
-#' page_meta %>% tidyr::unnest(sectionStats)
-#' page_meta %>% tidyr::unnest(sectionStats) %>% tidyr::unnest(beginCharCount)
+#' get_hathi_page_meta("mdp.39015001796443", dir = tmp)
 #'
 #' }
 get_hathi_page_meta <- function(htid, dir = getOption("hathiTools.ef.dir"),
@@ -397,17 +390,6 @@ download_hathi_ef <- function(htid,
   ef %>%
     dplyr::mutate(htid = htid, .before = dplyr::everything())
 
-}
-
-flatten_data <- function(x) {
-  if(length(x) > 1) {
-    if(!is.null(names(x))) {
-      x <- stringr::str_c(names(x), x, sep = "=", collapse = ", ")
-    } else {
-      x <- toString(x)
-    }
-  }
-  x
 }
 
 id_encode <- function (htid) {
