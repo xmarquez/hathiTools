@@ -43,7 +43,7 @@ rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
                           "data.analytics.hathitrust.org::features-2020.03/",
                           hathi_ef_directory)
 
-    system2("rsync", args = command_args)
+    result <- system2("rsync", args = command_args)
 
   } else {
 
