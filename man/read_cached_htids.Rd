@@ -15,7 +15,10 @@ read_cached_htids(
 \arguments{
 \item{htids}{A character vector of Hathi Trust ids, a workset created with
 \link{workset_builder}, or a data frame with a column named "htid" containing
-the Hathi Trust ids that require caching.}
+the Hathi Trust ids that require caching. If the JSON Extracted Features
+files for these htids have not been downloaded via \link{rsync_from_hathi} or
+\link{get_hathi_counts} to \code{dir}, nothing will be cached (unless \code{attempt_rsync}
+is \code{TRUE}).}
 
 \item{dir}{The directory where the download extracted features files are to
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
@@ -23,9 +26,9 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 
 \item{cache_type}{Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
-and the page metadata in \code{dir}. Omitting one of these caches or finds only
-the rest (e.g., \code{cache_type = "ef"} caches only the EF files, not
-their associated metadata or page metadata).}
+and the page metadata. Omitting one of these caches or finds only the rest
+(e.g., \code{cache_type = "ef"} caches only the EF files, not their associated
+metadata or page metadata).}
 
 \item{cache_format}{File format of cache for Extracted Features files.
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
@@ -43,8 +46,30 @@ in turn be transformed into a tibble manually).}
 }
 \value{
 A \link[tibble:tibble]{tibble} with the extracted features, plus the
-desired (volume-level or page-level) metadata.
+desired (volume-level or page-level) metadata, or an \link[arrow:Dataset]{arrow Dataset}.
 }
 \description{
-Read Cached HTIDs
+Takes a set of Hathi Trust IDs and reads their extracted features and
+associated (page- and volume- level) metadata into memory or into an \link[arrow:Dataset]{arrow Dataset}. A typical workflow with this package should
+normally involve selecting an appropriate set of Hathi Trust IDs (via
+\link{workset_builder}), downloading their Extracted Features files to your local
+machine (via \link{rsync_from_hathi}), caching these slow-to-load JSON Extracted
+Features files to a faster-loading format using \link{cache_htids}, and then using
+\link{read_cached_htids} to read them into a single data frame or \link[arrow:Dataset]{arrow Dataset} for further work.
+}
+\examples{
+\donttest{
+htids <- c("mdp.39015008706338", "mdp.39015058109706")
+dir <- tempdir()
+
+# Download and cache files first:
+
+cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+
+# Now read them into memory:
+
+efs <- read_cached_htids(htids)
+efs
+
+}
 }

@@ -1,32 +1,58 @@
 #' Caches downloaded JSON Extracted Features files to another format
 #'
-#' It is useful to run this function after running [rsync_from_hathi]; this way,
-#' you can cache all your slow-to-load JSON Extracted Features files to a faster
-#' to load format (e.g., `feather` or `csv`), and read them into a single data
-#' frame or [arrow::Dataset] for further work.
+#' This function takes a set of Hathi Trust IDs (usually already downloaded via
+#' [rsync_from_hathi]) and caches the JSON files to another format (e.g., csv or
+#' rds or parquet) along them. A typical workflow with this package normally
+#' involves selecting an appropriate set of Hathi Trust IDs (via
+#' [workset_builder]), downloading their Extracted Features files to your local
+#' machine (via [rsync_from_hathi]), caching these slow-to-load JSON Extracted
+#' Features files to a faster-loading format using [cache_htids], and then using
+#' [read_cached_htids] to read them into a single data frame or [arrow
+#' Dataset][arrow::Dataset] for further work.
 #'
 #' @param htids A character vector of Hathi Trust ids, a workset created with
 #'   [workset_builder], or a data frame with a column named "htid" containing
-#'   the Hathi Trust ids that require caching.
+#'   the Hathi Trust ids that require caching. If the JSON Extracted Features
+#'   files for these htids have not been downloaded via [rsync_from_hathi] or
+#'   [get_hathi_counts] to `dir`, nothing will be cached (unless `attempt_rsync`
+#'   is `TRUE`).
 #' @inheritParams get_hathi_counts
 #' @param cache_type Type of information cached. The default is c("ef", "meta",
 #'   "pagemeta"), which refers to the extracted features, the volume metadata,
-#'   and the page metadata in `dir`. Omitting one of these caches or finds only
-#'   the rest (e.g., `cache_type = "ef"` caches only the EF files, not
-#'   their associated metadata or page metadata).
+#'   and the page metadata. Omitting one of these caches or finds only the rest
+#'   (e.g., `cache_type = "ef"` caches only the EF files, not their associated
+#'   metadata or page metadata).
 #' @param keep_json Whether to keep the downloaded json files. Default is
 #'   `TRUE`; if `FALSE`, it only keeps the local cached files (e.g., the csv
 #'   files) and deletes the associated JSON files.
+#' @param attempt_rsync If `TRUE`, and some JSON EF files are not found in
+#'   `dir`, the function will call [rsync_from_hathi] to attempt to download
+#'   these first.
 #'
 #' @return A [tibble] with the paths of the cached files and an indicator of
 #'   whether each htid was successfully cached.
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' htids <- c("mdp.39015008706338", "mdp.39015058109706")
+#' dir <- tempdir()
+#'
+#' # Caches nothing (nothing has been downloaded to `dir`):
+#'
+#' cache_htids(htids, dir = dir, cache_type = "ef")
+#'
+#' # Tries to rsync first, then caches
+#'
+#' cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+#'
+#' }
 cache_htids <- function(htids,
                         dir = getOption("hathiTools.ef.dir"),
                         cache_type = c("ef", "meta", "pagemeta"),
                         cache_format = getOption("hathiTools.cacheformat"),
-                        keep_json = TRUE) {
+                        keep_json = TRUE,
+                        attempt_rsync = FALSE) {
 
   exists.y <- exists.x <- page <- count <- htid <- NULL
   local_loc.x <- cache_type.x <- cache_format.x <- NULL
@@ -46,6 +72,22 @@ cache_htids <- function(htids,
                                        cache_type = "none",
                                        cache_format = "none",
                                        existing_only = FALSE)
+
+  not_found <- json_file_locs %>%
+    dplyr::filter(!exists)
+
+  if(attempt_rsync && nrow(not_found) > 0) {
+    message("Attempting to rsync ", nrow(not_found),
+            " Hathi Trust IDs before caching")
+
+    rsync_from_hathi(not_found, dir = dir)
+
+    json_file_locs <-  find_cached_htids(htids,
+                                         dir = dir,
+                                         cache_type = "none",
+                                         cache_format = "none",
+                                         existing_only = FALSE)
+  }
 
   to_cache <- find_cached_htids(htids,
                                 dir = dir,
@@ -86,6 +128,21 @@ cache_htids <- function(htids,
 #'   whether each htid has an existing cached file.
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' htids <- c("mdp.39015008706338", "mdp.39015058109706")
+#' dir <- tempdir()
+#'
+#' # Finds nothing (nothing has been downloaded or cached to `dir`):
+#'
+#' find_cached_htids(htids, cache_format = c("none", "csv"), dir = dir)
+#'
+#' cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+#'
+#' # Finds the cached files and their JSON ef files
+#'
+#' find_cached_htids(htids, cache_format = c("none", "csv"), dir = dir)
+#' }
 find_cached_htids <- function(htids,
                               dir = getOption("hathiTools.ef.dir"),
                               cache_type = c("ef", "meta", "pagemeta"),
@@ -164,6 +221,26 @@ find_cached_file <- function(cache_type, cache_format, htids, suffix, dir) {
 #' @return (Invisible) a character vector with the deleted paths.
 #'
 #' @export
+#' @examples
+#' \donttest{
+#' dir <- tempdir()
+#'
+#' htids <- c("mdp.39015008706338", "mdp.39015058109706")
+#' dir <- tempdir()
+#'
+#' cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+#'
+#' # Clears only "csv" cache
+#'
+#' deleted <- clear_cache(htids, dir = dir)
+#' deleted
+#'
+#' # Clears also JSON files
+#'
+#' deleted <- clear_cache(htids, dir = dir, keep_json = FALSE)
+#' deleted
+#'
+#' }
 clear_cache <- function(htids,
                         dir = getOption("hathiTools.ef.dir"),
                         cache_type = c("ef", "meta", "pagemeta"),
@@ -199,6 +276,16 @@ clear_cache <- function(htids,
 
 #' Read Cached HTIDs
 #'
+#' Takes a set of Hathi Trust IDs and reads their extracted features and
+#' associated (page- and volume- level) metadata into memory or into an [arrow
+#' Dataset][arrow::Dataset]. A typical workflow with this package should
+#' normally involve selecting an appropriate set of Hathi Trust IDs (via
+#' [workset_builder]), downloading their Extracted Features files to your local
+#' machine (via [rsync_from_hathi]), caching these slow-to-load JSON Extracted
+#' Features files to a faster-loading format using [cache_htids], and then using
+#' [read_cached_htids] to read them into a single data frame or [arrow
+#' Dataset][arrow::Dataset] for further work.
+#'
 #' @inheritParams find_cached_htids
 #' @param nest_char_count Whether to create a column with a tibble for the
 #'   `sectionBeginCharCount` and `sectionEndCharCount` columns in the page
@@ -208,10 +295,26 @@ clear_cache <- function(htids,
 #'
 #'
 #' @return A [tibble][tibble::tibble] with the extracted features, plus the
-#'   desired (volume-level or page-level) metadata.
+#'   desired (volume-level or page-level) metadata, or an [arrow
+#'   Dataset][arrow::Dataset].
 #'
 #' @export
 #'
+#' @examples
+#' \donttest{
+#' htids <- c("mdp.39015008706338", "mdp.39015058109706")
+#' dir <- tempdir()
+#'
+#' # Download and cache files first:
+#'
+#' cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+#'
+#' # Now read them into memory:
+#'
+#' efs <- read_cached_htids(htids)
+#' efs
+#'
+#' }
 read_cached_htids <- function(htids,
                               dir = getOption("hathiTools.ef.dir"),
                               cache_type = c("ef", "meta", "pagemeta"),

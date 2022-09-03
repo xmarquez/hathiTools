@@ -9,13 +9,17 @@ cache_htids(
   dir = getOption("hathiTools.ef.dir"),
   cache_type = c("ef", "meta", "pagemeta"),
   cache_format = getOption("hathiTools.cacheformat"),
-  keep_json = TRUE
+  keep_json = TRUE,
+  attempt_rsync = FALSE
 )
 }
 \arguments{
 \item{htids}{A character vector of Hathi Trust ids, a workset created with
 \link{workset_builder}, or a data frame with a column named "htid" containing
-the Hathi Trust ids that require caching.}
+the Hathi Trust ids that require caching. If the JSON Extracted Features
+files for these htids have not been downloaded via \link{rsync_from_hathi} or
+\link{get_hathi_counts} to \code{dir}, nothing will be cached (unless \code{attempt_rsync}
+is \code{TRUE}).}
 
 \item{dir}{The directory where the download extracted features files are to
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
@@ -23,9 +27,9 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 
 \item{cache_type}{Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
-and the page metadata in \code{dir}. Omitting one of these caches or finds only
-the rest (e.g., \code{cache_type = "ef"} caches only the EF files, not
-their associated metadata or page metadata).}
+and the page metadata. Omitting one of these caches or finds only the rest
+(e.g., \code{cache_type = "ef"} caches only the EF files, not their associated
+metadata or page metadata).}
 
 \item{cache_format}{File format of cache for Extracted Features files.
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
@@ -38,14 +42,37 @@ installed), or "text2vec.csv" (a csv suitable for use with the package
 \item{keep_json}{Whether to keep the downloaded json files. Default is
 \code{TRUE}; if \code{FALSE}, it only keeps the local cached files (e.g., the csv
 files) and deletes the associated JSON files.}
+
+\item{attempt_rsync}{If \code{TRUE}, and some JSON EF files are not found in
+\code{dir}, the function will call \link{rsync_from_hathi} to attempt to download
+these first.}
 }
 \value{
 A \link{tibble} with the paths of the cached files and an indicator of
 whether each htid was successfully cached.
 }
 \description{
-It is useful to run this function after running \link{rsync_from_hathi}; this way,
-you can cache all your slow-to-load JSON Extracted Features files to a faster
-to load format (e.g., \code{feather} or \code{csv}), and read them into a single data
-frame or \link[arrow:Dataset]{arrow::Dataset} for further work.
+This function takes a set of Hathi Trust IDs (usually already downloaded via
+\link{rsync_from_hathi}) and caches the JSON files to another format (e.g., csv or
+rds or parquet) along them. A typical workflow with this package normally
+involves selecting an appropriate set of Hathi Trust IDs (via
+\link{workset_builder}), downloading their Extracted Features files to your local
+machine (via \link{rsync_from_hathi}), caching these slow-to-load JSON Extracted
+Features files to a faster-loading format using \link{cache_htids}, and then using
+\link{read_cached_htids} to read them into a single data frame or \link[arrow:Dataset]{arrow Dataset} for further work.
+}
+\examples{
+\donttest{
+htids <- c("mdp.39015008706338", "mdp.39015058109706")
+dir <- tempdir()
+
+# Caches nothing (nothing has been downloaded to `dir`):
+
+cache_htids(htids, dir = dir, cache_type = "ef")
+
+# Tries to rsync first, then caches
+
+cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+
+}
 }

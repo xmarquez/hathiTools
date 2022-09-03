@@ -15,7 +15,10 @@ clear_cache(
 \arguments{
 \item{htids}{A character vector of Hathi Trust ids, a workset created with
 \link{workset_builder}, or a data frame with a column named "htid" containing
-the Hathi Trust ids that require caching.}
+the Hathi Trust ids that require caching. If the JSON Extracted Features
+files for these htids have not been downloaded via \link{rsync_from_hathi} or
+\link{get_hathi_counts} to \code{dir}, nothing will be cached (unless \code{attempt_rsync}
+is \code{TRUE}).}
 
 \item{dir}{The directory where the download extracted features files are to
 be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
@@ -44,4 +47,25 @@ Removes cached files for a set of Hathi Trust ids
 \note{
 Warning! This function does not double-check that you want to delete your
 cache. It will go ahead and do it.
+}
+\examples{
+\donttest{
+dir <- tempdir()
+
+htids <- c("mdp.39015008706338", "mdp.39015058109706")
+dir <- tempdir()
+
+cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
+
+# Clears only "csv" cache
+
+deleted <- clear_cache(htids, dir = dir)
+deleted
+
+# Clears also JSON files
+
+deleted <- clear_cache(htids, dir = dir, keep_json = FALSE)
+deleted
+
+}
 }
