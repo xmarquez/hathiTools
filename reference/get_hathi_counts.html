@@ -23,7 +23,7 @@ function uses code authored by Ben Schmidt, from his Hathidy package
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hathiTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -103,9 +103,9 @@ be found. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
 <dd><p>File format of cache for Extracted Features files.
 Defaults to <code>getOption("hathiTools.cacheformat")</code>, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
-local caching of JSON download; only JSON file kept), "rds", "feather"
-(suitable for use with arrow; needs the arrow package installed), or
-"text2vec.csv" (a csv suitable for use with the package
+local caching of JSON download; only JSON file kept), "rds", "feather" and
+"parquet" (suitable for use with arrow; needs the arrow package
+installed), or "text2vec.csv" (a csv suitable for use with the package
 <a href="https://cran.r-project.org/package=text2vec" class="external-link">text2vec</a>).</p></dd>
 
 </dl></div>
@@ -129,9 +129,10 @@ local caching of JSON download; only JSON file kept), "rds", "feather"
 <span class="r-in"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">get_hathi_counts</span><span class="op">(</span><span class="st">"aeu.ark:/13960/t3qv43c3w"</span>, dir <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Now caching EF file for aeu.ark:/13960/t3qv43c3w</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 137,182 × 6</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    htid                     token  POS   count section  page</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span> <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>iJi<span style="color: #949494;">"</span>  NN        1 body        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>.8<span style="color: #949494;">"</span>   CD        1 body        1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span> aeu.ark:/13960/t3qv43c3w <span style="color: #949494;">"</span>11.6<span style="color: #949494;">"</span> CD        1 body        1</span>

@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">hathiTools</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.2.0</span>
       </span>
     </div>
 
@@ -71,9 +71,7 @@
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.ef.dir"</span><span class="op">)</span>,</span>
 <span>  cache_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ef"</span>, <span class="st">"meta"</span>, <span class="st">"pagemeta"</span><span class="op">)</span>,</span>
 <span>  cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.cacheformat"</span><span class="op">)</span>,</span>
-<span>  cache_metadata_format <span class="op">=</span> <span class="st">"rds"</span>,</span>
-<span>  cache_pagemetadata_format <span class="op">=</span> <span class="st">"rds"</span>,</span>
-<span>  filter_expression <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  nest_char_count <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -95,7 +93,7 @@ be found. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
 <dd><p>Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
 and the page metadata in <code>dir</code>. Omitting one of these caches or finds only
-the rest (e.g., cache_type = "ef" caches or finds only the EF files, not
+the rest (e.g., <code>cache_type = "ef"</code> caches only the EF files, not
 their associated metadata or page metadata).</p></dd>
 
 
@@ -103,29 +101,18 @@ their associated metadata or page metadata).</p></dd>
 <dd><p>File format of cache for Extracted Features files.
 Defaults to <code>getOption("hathiTools.cacheformat")</code>, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
-local caching of JSON download; only JSON file kept), "rds", "feather"
-(suitable for use with arrow; needs the arrow package installed), or
-"text2vec.csv" (a csv suitable for use with the package
+local caching of JSON download; only JSON file kept), "rds", "feather" and
+"parquet" (suitable for use with arrow; needs the arrow package
+installed), or "text2vec.csv" (a csv suitable for use with the package
 <a href="https://cran.r-project.org/package=text2vec" class="external-link">text2vec</a>).</p></dd>
 
 
-<dt>cache_metadata_format</dt>
-<dd><p>File format of volume metadata cache. Default
-(and recommended) is "rds"; can also be "csv.gz" or "feather" (requires the
-arrow package). Can be multiple for <a href="find_cached_htids.html">find_cached_htids</a> and
-<a href="clear_cache.html">clear_cache</a>.</p></dd>
-
-
-<dt>cache_pagemetadata_format</dt>
-<dd><p>File format of page metadata cache. Default
-(and recommended) is "rds"; can also be "feather" (requires the arrow
-package). Can be multiple for <a href="find_cached_htids.html">find_cached_htids</a> and <a href="clear_cache.html">clear_cache</a>.</p></dd>
-
-
-<dt>filter_expression</dt>
-<dd><p>A filter expression to filter each returned
-<a href="https://tibble.tidyverse.org/reference/tibble.html" class="external-link">tibble</a> by (so as to only load into memory desired
-features).</p></dd>
+<dt>nest_char_count</dt>
+<dd><p>Whether to create a column with a tibble for the
+<code>sectionBeginCharCount</code> and <code>sectionEndCharCount</code> columns in the page
+metadata. The default is <code>FALSE</code>; if so the counts of characters at the
+beginning and end of lines are left as a JSON-formatted string (which can
+in turn be transformed into a tibble manually).</p></dd>
 
 </dl></div>
     <div id="value">
