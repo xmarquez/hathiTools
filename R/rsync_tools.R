@@ -19,7 +19,7 @@
 #' @examples
 #' \donttest{
 #' res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
-#' rsync_from_hathi(res$htid[1:10])
+#' rsync_from_hathi(res$htid[1:10], dir = tempdir())
 #' }
 rsync_from_hathi <- function(htids, dir = getOption("hathiTools.ef.dir")) {
 

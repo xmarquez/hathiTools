@@ -345,11 +345,12 @@ workset_builder <- function(token, title,
 #'
 #' @examples
 #' \donttest{
+#' dir <- tempdir()
 #' workset <- workset_builder(name = "Tocqueville")
-#' get_workset_meta(workset[1:5, ])
+#' get_workset_meta(workset[1:5, ], metadata_dir = dir)
 #'
 #' ## We can also pass a vector of htids:
-#' get_workset_meta(workset$htid[1:5])
+#' get_workset_meta(workset$htid[1:5], metadata_dir = dir)
 #' }
 get_workset_meta <- function(workset,
                              metadata_dir = getOption("hathiTools.metadata.dir"),
