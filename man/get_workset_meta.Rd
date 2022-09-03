@@ -136,10 +136,11 @@ thousands of records, you are probably better off using the big hathifile
 }
 \examples{
 \donttest{
+dir <- tempdir()
 workset <- workset_builder(name = "Tocqueville")
-get_workset_meta(workset[1:5, ])
+get_workset_meta(workset[1:5, ], metadata_dir = dir)
 
 ## We can also pass a vector of htids:
-get_workset_meta(workset$htid[1:5])
+get_workset_meta(workset$htid[1:5], metadata_dir = dir)
 }
 }
