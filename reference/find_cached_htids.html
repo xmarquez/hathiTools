@@ -80,7 +80,10 @@
     <dl><dt>htids</dt>
 <dd><p>A character vector of Hathi Trust ids, a workset created with
 <a href="workset_builder.html">workset_builder</a>, or a data frame with a column named "htid" containing
-the Hathi Trust ids that require caching.</p></dd>
+the Hathi Trust ids that require caching. If the JSON Extracted Features
+files for these htids have not been downloaded via <a href="rsync_from_hathi.html">rsync_from_hathi</a> or
+<a href="get_hathi_counts.html">get_hathi_counts</a> to <code>dir</code>, nothing will be cached (unless <code>attempt_rsync</code>
+is <code>TRUE</code>).</p></dd>
 
 
 <dt>dir</dt>
@@ -92,9 +95,9 @@ be found. Defaults to <code>getOption("hathiTools.ef.dir")</code>, which is just
 <dt>cache_type</dt>
 <dd><p>Type of information cached. The default is c("ef", "meta",
 "pagemeta"), which refers to the extracted features, the volume metadata,
-and the page metadata in <code>dir</code>. Omitting one of these caches or finds only
-the rest (e.g., <code>cache_type = "ef"</code> caches only the EF files, not
-their associated metadata or page metadata).</p></dd>
+and the page metadata. Omitting one of these caches or finds only the rest
+(e.g., <code>cache_type = "ef"</code> caches only the EF files, not their associated
+metadata or page metadata).</p></dd>
 
 
 <dt>cache_format</dt>
@@ -121,6 +124,45 @@ to be cached.</p></dd>
 whether each htid has an existing cached file.</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="va">htids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mdp.39015008706338"</span>, <span class="st">"mdp.39015058109706"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Finds nothing (nothing has been downloaded or cached to `dir`):</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">find_cached_htids</span><span class="op">(</span><span class="va">htids</span>, cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"csv"</span><span class="op">)</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5 variables: htid &lt;chr&gt;, local_loc &lt;glue&gt;, cache_format &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   cache_type &lt;chr&gt;, exists &lt;lgl&gt;</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span>, cache_type <span class="op">=</span> <span class="st">"ef"</span>, attempt_rsync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Attempting to rsync 2 Hathi Trust IDs before caching</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing to cache 2 EF files to /tmp/RtmpT6Hk7r (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Now caching EF file for mdp.39015008706338</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Now caching EF file for mdp.39015058109706</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   htid               local_loc                            cache…¹ cache…² exists</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmpT6Hk7r/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmpT6Hk7r/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​cache_format, ²​cache_type</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Finds the cached files and their JSON ef files</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">find_cached_htids</span><span class="op">(</span><span class="va">htids</span>, cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"none"</span>, <span class="st">"csv"</span><span class="op">)</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 4 × 5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   htid               local_loc                            cache…¹ cache…² exists</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmpT6Hk7r/mdp/31003/mdp.39015… json.b… none    TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmpT6Hk7r/mdp/31500/mdp.39015… json.b… none    TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span> mdp.39015008706338 /tmp/RtmpT6Hk7r/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span> mdp.39015058109706 /tmp/RtmpT6Hk7r/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​cache_format, ²​cache_type</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>
