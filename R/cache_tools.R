@@ -311,7 +311,7 @@ clear_cache <- function(htids,
 #'
 #' # Now read them into memory:
 #'
-#' efs <- read_cached_htids(htids)
+#' efs <- read_cached_htids(htids, dir = dir)
 #' efs
 #'
 #' }

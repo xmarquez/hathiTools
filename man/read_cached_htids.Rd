@@ -68,7 +68,7 @@ cache_htids(htids, dir = dir, cache_type = "ef", attempt_rsync = TRUE)
 
 # Now read them into memory:
 
-efs <- read_cached_htids(htids)
+efs <- read_cached_htids(htids, dir = dir)
 efs
 
 }
