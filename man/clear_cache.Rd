@@ -27,7 +27,7 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 \item{cache_type}{Type of information to remove. The default is c("ef",
 "meta", "pagemeta"), which refers to the extracted features, the volume
 metadata, and the page metadata in \code{dir}. Omitting one of these removes
-only the rest (e.g., cache_type = "ef" removes only the EF files, not their
+only them (e.g., cache_type = "ef" removes only the EF files, not their
 associated metadata or page metadata).}
 
 \item{cache_format}{The format of the cached EF files to remove. Defaults to
