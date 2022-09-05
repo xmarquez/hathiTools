@@ -1,0 +1,4 @@
+name|type|data|command|depend|seed|path|time|size|bytes|format|repository|iteration|parent|children|seconds|warnings|error
+.Random.seed|object|f5fb1734ac79172d|||||||||||||||
+using_the_hathi_bookworm|stem|b30147140f1d6f0e|4739921e6e4d10d5|d84d7cdd1c3c4b08|-230245211|vignettes/articles/using_the_hathi_bookworm.Rmd*vignettes/articles/using_the_hathi_bookworm.qmd|t19240.9551304004s|aab89f29484932ca|27359|file|local|vector|||16.71||
+.Random.seed|object|e1075e7417d2486b
