@@ -111,7 +111,7 @@
       # A tibble: 1 x 20
         htid         schem~1 id    type  dateC~2 title contr~3 pubDate publi~4 pubPl~5
         <chr>        <chr>   <chr> <chr>   <int> <chr> <chr>     <int> <chr>   <chr>  
-      1 aeu.ark:/13~ https:~ http~ =Dat~  2.02e7 Demo~ id=htt~    1838 id=htt~ id=htt~
+      1 aeu.ark:/13~ https:~ http~ "[[\~  2.02e7 Demo~ "{\"id~    1838 "{\"id~ "{\"id~
       # ... with 10 more variables: language <chr>, accessRights <chr>,
       #   accessProfile <chr>, sourceInstitution <chr>, mainEntityOfPage <chr>,
       #   oclc <chr>, isbn <chr>, genre <chr>, typeOfResource <chr>,

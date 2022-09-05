@@ -52,20 +52,20 @@
       # A tibble: 10 x 23
          htid        schem~1 id    type  dateC~2 title contr~3 pubDate publi~4 pubPl~5
          <chr>       <chr>   <chr> <chr>   <int> <chr> <chr>     <int> <chr>   <chr>  
-       1 mdp.390150~ https:~ http~ =Dat~  2.02e7 To t~ "id=ht~    1700 id=htt~ id=htt~
-       2 mdp.390150~ https:~ http~ =Dat~  2.02e7 A ne~  <NA>      1700 id=htt~ id=htt~
-       3 uc1.321060~ https:~ http~ =Dat~  2.02e7 The ~ "=list~    1700 id=htt~ <NA>   
-       4 njp.321010~ https:~ http~ =Dat~  2.02e7 The ~ "=list~    1702 id=htt~ id=htt~
-       5 nnc1.00233~ https:~ http~ =Dat~  2.02e7 The ~ "=list~    1702 id=htt~ id=htt~
-       6 nyp.334330~ https:~ http~ =Dat~  2.02e7 Misc~ "id=ht~    1709 id=htt~ id=htt~
-       7 nyp.334330~ https:~ http~ =Dat~  2.02e7 A Co~ "id=ht~    1702 id=htt~ id=htt~
-       8 mdp.390150~ https:~ http~ =Dat~  2.02e7 Poem~ "=list~    1703 id=htt~ id=htt~
-       9 mdp.390150~ https:~ http~ =Dat~  2.02e7 The ~ "id=ht~    1703 id=htt~ id=htt~
-      10 njp.321010~ https:~ http~ =Dat~  2.02e7 The ~ "id=ht~    1703 id=htt~ id=htt~
+       1 mdp.390150~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700 "{\"id~ "{\"id~
+       2 mdp.390150~ https:~ http~ "[[\~  2.02e7 A ne~  <NA>      1700 "{\"id~ "{\"id~
+       3 uc1.321060~ https:~ http~ "[[\~  2.02e7 The ~ "[{\"i~    1700 "{\"id~  <NA>  
+       4 njp.321010~ https:~ http~ "[[\~  2.02e7 The ~ "[{\"i~    1702 "{\"id~ "{\"id~
+       5 nnc1.00233~ https:~ http~ "[[\~  2.02e7 The ~ "[{\"i~    1702 "{\"id~ "{\"id~
+       6 nyp.334330~ https:~ http~ "[[\~  2.02e7 Misc~ "{\"id~    1709 "{\"id~ "{\"id~
+       7 nyp.334330~ https:~ http~ "[[\~  2.02e7 A Co~ "{\"id~    1702 "{\"id~ "{\"id~
+       8 mdp.390150~ https:~ http~ "[[\~  2.02e7 Poem~ "[{\"i~    1703 "{\"id~ "{\"id~
+       9 mdp.390150~ https:~ http~ "[[\~  2.02e7 The ~ "{\"id~    1703 "{\"id~ "{\"id~
+      10 njp.321010~ https:~ http~ "[[\~  2.02e7 The ~ "{\"id~    1703 "{\"id~ "{\"id~
       # ... with 13 more variables: language <chr>, accessRights <chr>,
       #   accessProfile <chr>, sourceInstitution <chr>, mainEntityOfPage <chr>,
-      #   oclc <dbl>, genre <chr>, typeOfResource <chr>, lastRightsUpdateDate <int>,
-      #   lcc <chr>, lccn <dbl>, category <chr>, enumerationChronology <chr>, and
+      #   oclc <chr>, genre <chr>, typeOfResource <chr>, lastRightsUpdateDate <int>,
+      #   lcc <chr>, lccn <chr>, category <chr>, enumerationChronology <chr>, and
       #   abbreviated variable names 1: schemaVersion, 2: dateCreated,
       #   3: contributor, 4: publisher, 5: pubPlace
       # i Use `colnames()` to see all variable names
@@ -104,21 +104,21 @@
       # A tibble: 528,066 x 42
          htid        token POS   count section  page schem~1 id    type  dateC~2 title
          <chr>       <chr> <chr> <int> <chr>   <int> <chr>   <chr> <chr>   <int> <chr>
-       1 mdp.390150~ i     UNK       1 body        3 https:~ http~ =Dat~  2.02e7 To t~
-       2 mdp.390150~ dice~ NNS       1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       3 mdp.390150~ Gun   NN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       4 mdp.390150~ Cimr~ NNP       1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       5 mdp.390150~ for   IN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       6 mdp.390150~ *     SYM       2 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       7 mdp.390150~ 1700  CD        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       8 mdp.390150~ quod~ JJ        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       9 mdp.390150~ MRDR~ NN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-      10 mdp.390150~ .     .         4 body        5 https:~ http~ =Dat~  2.02e7 To t~
+       1 mdp.390150~ i     UNK       1 body        3 https:~ http~ "[[\~  2.02e7 To t~
+       2 mdp.390150~ dice~ NNS       1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       3 mdp.390150~ Gun   NN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       4 mdp.390150~ Cimr~ NNP       1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       5 mdp.390150~ for   IN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       6 mdp.390150~ *     SYM       2 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       7 mdp.390150~ 1700  CD        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       8 mdp.390150~ quod~ JJ        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       9 mdp.390150~ MRDR~ NN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+      10 mdp.390150~ .     .         4 body        5 https:~ http~ "[[\~  2.02e7 To t~
       # ... with 528,056 more rows, 31 more variables: contributor <chr>,
       #   pubDate <int>, publisher <chr>, pubPlace <chr>, language <chr>,
       #   accessRights <chr>, accessProfile <chr>, sourceInstitution <chr>,
-      #   mainEntityOfPage <chr>, oclc <dbl>, genre <chr>, typeOfResource <chr>,
-      #   lastRightsUpdateDate <int>, lcc <chr>, lccn <dbl>, category <chr>,
+      #   mainEntityOfPage <chr>, oclc <chr>, genre <chr>, typeOfResource <chr>,
+      #   lastRightsUpdateDate <int>, lcc <chr>, lccn <chr>, category <chr>,
       #   enumerationChronology <chr>, seq <chr>, version <chr>, tokenCount <int>,
       #   lineCount <int>, emptyLineCount <int>, sentenceCount <int>, ...
       # i Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
@@ -131,21 +131,21 @@
       # A tibble: 528,066 x 42
          htid        token POS   count section  page schem~1 id    type  dateC~2 title
          <chr>       <chr> <chr> <int> <chr>   <int> <chr>   <chr> <chr>   <int> <chr>
-       1 mdp.390150~ i     UNK       1 body        3 https:~ http~ =Dat~  2.02e7 To t~
-       2 mdp.390150~ dice~ NNS       1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       3 mdp.390150~ Gun   NN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       4 mdp.390150~ Cimr~ NNP       1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       5 mdp.390150~ for   IN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       6 mdp.390150~ *     SYM       2 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       7 mdp.390150~ 1700  CD        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       8 mdp.390150~ quod~ JJ        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-       9 mdp.390150~ MRDR~ NN        1 body        5 https:~ http~ =Dat~  2.02e7 To t~
-      10 mdp.390150~ .     .         4 body        5 https:~ http~ =Dat~  2.02e7 To t~
+       1 mdp.390150~ i     UNK       1 body        3 https:~ http~ "[[\~  2.02e7 To t~
+       2 mdp.390150~ dice~ NNS       1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       3 mdp.390150~ Gun   NN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       4 mdp.390150~ Cimr~ NNP       1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       5 mdp.390150~ for   IN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       6 mdp.390150~ *     SYM       2 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       7 mdp.390150~ 1700  CD        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       8 mdp.390150~ quod~ JJ        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+       9 mdp.390150~ MRDR~ NN        1 body        5 https:~ http~ "[[\~  2.02e7 To t~
+      10 mdp.390150~ .     .         4 body        5 https:~ http~ "[[\~  2.02e7 To t~
       # ... with 528,056 more rows, 31 more variables: contributor <chr>,
       #   pubDate <int>, publisher <chr>, pubPlace <chr>, language <chr>,
       #   accessRights <chr>, accessProfile <chr>, sourceInstitution <chr>,
-      #   mainEntityOfPage <chr>, oclc <dbl>, genre <chr>, typeOfResource <chr>,
-      #   lastRightsUpdateDate <int>, lcc <chr>, lccn <dbl>, category <chr>,
+      #   mainEntityOfPage <chr>, oclc <chr>, genre <chr>, typeOfResource <chr>,
+      #   lastRightsUpdateDate <int>, lcc <chr>, lccn <chr>, category <chr>,
       #   enumerationChronology <chr>, seq <chr>, version <chr>, tokenCount <int>,
       #   lineCount <int>, emptyLineCount <int>, sentenceCount <int>, ...
       # i Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
@@ -176,7 +176,7 @@
       accessProfile: string
       sourceInstitution: string
       mainEntityOfPage: string
-      oclc: double
+      oclc: string
       genre: string
       typeOfResource: string
       lastRightsUpdateDate: int32
@@ -226,20 +226,20 @@
       # A tibble: 6,299 x 26
          htid    page section tokens schem~1 id    type  dateC~2 title contr~3 pubDate
          <chr>  <int> <chr>   <chr>  <chr>   <chr> <chr>   <int> <chr> <chr>     <int>
-       1 mdp.3~     3 body    i_UNK  https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       2 mdp.3~     5 body    dicer~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       3 mdp.3~     7 body    pi_NN~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       4 mdp.3~     9 body    E_NN ~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       5 mdp.3~    10 body    sweet~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       6 mdp.3~    10 header  Memor~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       7 mdp.3~    11 body    lasti~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       8 mdp.3~    11 header  ._. M~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-       9 mdp.3~    12 body    Coura~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
-      10 mdp.3~    12 header  8_CD ~ https:~ http~ =Dat~  2.02e7 To t~ id=htt~    1700
+       1 mdp.3~     3 body    i_UNK  https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       2 mdp.3~     5 body    dicer~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       3 mdp.3~     7 body    pi_NN~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       4 mdp.3~     9 body    E_NN ~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       5 mdp.3~    10 body    sweet~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       6 mdp.3~    10 header  Memor~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       7 mdp.3~    11 body    lasti~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       8 mdp.3~    11 header  ._. M~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+       9 mdp.3~    12 body    Coura~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
+      10 mdp.3~    12 header  8_CD ~ https:~ http~ "[[\~  2.02e7 To t~ "{\"id~    1700
       # ... with 6,289 more rows, 15 more variables: publisher <chr>, pubPlace <chr>,
       #   language <chr>, accessRights <chr>, accessProfile <chr>,
-      #   sourceInstitution <chr>, mainEntityOfPage <chr>, oclc <dbl>, genre <chr>,
-      #   typeOfResource <chr>, lastRightsUpdateDate <int>, lcc <chr>, lccn <dbl>,
+      #   sourceInstitution <chr>, mainEntityOfPage <chr>, oclc <chr>, genre <chr>,
+      #   typeOfResource <chr>, lastRightsUpdateDate <int>, lcc <chr>, lccn <chr>,
       #   category <chr>, enumerationChronology <chr>, and abbreviated variable names
       #   1: schemaVersion, 2: dateCreated, 3: contributor
       # i Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names
