@@ -1,12 +1,16 @@
 ---
 title: "Topic Modeling using the Hathi Trust Extracted Features Files"
+warning: false
+format: 
+  gfm:
+    output-file: "topic_modeling_using_hathi_ef.Rmd"
+    output-ext: "Rmd"
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  cache = TRUE,
-  fig.path = "images/topic-modeling-",
+  fig.path = "images/topic_modeling_using_hathi_ef-", 
   comment = "#>"
 )
 ```
@@ -24,6 +28,7 @@ As a starting point, we can download the IDs of all volumes where Alexis the Toc
 ```{r setup}
 library(hathiTools)
 library(tidyverse)
+library(jsonlite) # For processing some results
 
 tocqueville <- workset_builder(name = "Alexis de Tocqueville")
 tocqueville
@@ -36,13 +41,15 @@ set.seed(14)
 tocqueville_meta <- get_workset_meta(tocqueville %>%
                                        slice_sample(n = 20))
 tocqueville_meta %>%
-  select(title, pubDate, imprint, names, language) %>%
-  mutate(title = iconv(title, from = "UTF-8", to = "ASCII//TRANSLIT") %>% # Needed so that the table below displays properly
-           str_remove_all("`") %>%
-           str_remove_all("\\?")) %>%
+  select(title, pubDate, publisher, contributor, language) %>%
+  rowwise() %>%
+  mutate(publisher = jsonlite::fromJSON(publisher) %>% pluck("name") %>% list(),
+         contributor = jsonlite::fromJSON(contributor) %>% pluck("name") %>% list()) %>%
+  ungroup() %>%
   knitr::kable()
 
 ```
+(Note that you normally won't want to be using `get_workset_meta()` for more than 100 or so volumes - it will take a long time; best to cache the files locally and then extract their metadata, as explained in `[the example workflow vignette][vignette("example_workflow")]`).
 
 The function `workset_builder()` by default returns a data frame with column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the function just returned the number of pages in each volume. If we instead search for the volumes where Tocqueville is an author that *also* mention the word "democracy", the function returns both the volume id and the number of pages that contain the term.
 
@@ -62,7 +69,7 @@ tocqueville3
 
 ```
 
-We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the acual page shown on the Hathi Trust website).
+We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the actual page shown on the Hathi Trust website).
 
 ```r
 browse_htids(tocqueville3)
@@ -87,19 +94,32 @@ There are `r nrow(tocqueville_meta)` volumes listed here, but many are the same 
 
 ```{r}
 tocqueville_meta %>%
-  summarise(n_records = n_distinct(hathitrustRecordNumber),
+  summarise(n_records = n_distinct(htid),
             n_titles = n_distinct(title))
 ```
 
 ### Downloading and caching the associated Extracted Features files
 
-We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist). This function requires that your system has access to `rsync`. (In Windows, the easiest way to do this is to install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install); `rsync` should come already installed in most Mac and Linux machines).
+We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist; this is the default option ). This function requires that your system has access to `rsync`. (In Windows, the easiest way to do this is to install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install); `rsync` should come already installed in most Mac and Linux machines).
 
-```{r}
-rsync_from_hathi(tocqueville4)
+```{r, include = FALSE}
+
+clear_cache(tocqueville4, keep_json = FALSE)
+
 ```
 
-The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs (or to other formats, including Arrow's "Feather") in the "./hathi-ef" directory using the function `cache_htids()`:
+
+```{r}
+# The current directory for caching:
+getOption("hathiTools.ef.dir")
+
+rsync_from_hathi(tocqueville4)
+
+# Can also be specified explicitly
+
+```
+
+The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs (or to other formats, including "Feather" or "Parquet" formats from the [arrow][arrow::arrow] package) in the "./hathi-ef" directory using the function `cache_htids()`:
 
 ```{r}
 cached_files <- cache_htids(tocqueville4)
@@ -114,19 +134,7 @@ cached_files <- find_cached_htids(tocqueville4)
 cached_files
 ```
 
-The reason for an `exists` column is that sometimes extracted features files are not downloaded successfully -- they are not available in the Hathi Trust rsync server for whatever reason -- and so need to be excluded from further analysis (by filtering the returned dataset via `cached_files %>% filter(exists)`, for example). In any case these files can now be loaded into R very quickly:
-
-```{r, message = FALSE}
-tocqueville_ef <- cached_files %>%
-  filter(exists) %>%
-  pull(local_loc) %>%
-  set_names(cached_files$htid[cached_files$exists]) %>%
-  map_df(vroom::vroom, .id = "htid")
-
-tocqueville_ef
-```
-
-Or one can use the function read_cached_htids():
+These files can now be loaded into R very quickly:
 
 ```{r}
 tocqueville_ef <- read_cached_htids(tocqueville4)
@@ -134,7 +142,19 @@ tocqueville_ef
 ```
 
 
-Note that cache_htids() automatically caches not only the extracted features file, but also the volume-level and page-level metadata; the function read_cached_htids() by default adds both of these forms of metadata to your tibble. This can make it quite large! One can get the metadata separately.
+Note that `cache_htids()` automatically caches not only the extracted features file, but also the volume-level and page-level metadata; the function `read_cached_htids()` by default adds both of these forms of metadata to your data frame. But we can also extract the page-level and volume-level metadata separately:
+
+```{r}
+
+tocqueville_ef <- read_cached_htids(tocqueville4, cache_type = "ef")
+tocqueville_meta <- read_cached_htids(tocqueville4, cache_type = "meta")
+tocqueville_pagemeta <- read_cached_htids(tocqueville4, cache_type = "pagemeta")
+
+tocqueville_ef
+tocqueville_meta
+tocqueville_pagemeta
+```
+
 
 ### Creating a document-term matrix and fitting the model
 
@@ -144,16 +164,33 @@ This large data frame can be converted into a `quanteda::dfm()` document-feature
 library(tidytext)
 library(quanteda)
 
-tocqueville_meta$editions <- c("Reeve, Bowen, Bradley", "Nolla-Shleifer", "Reeve, Bowen, Bradley",
-                      "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley",
-                      "Reeve, Bowen, Bradley", "Schocken books Mill appraisal", "Sinclair-Probst dramatizations",
-                      "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley",
-                      "Goldhammer", "Bender abridgement of Reeve, Bowen, Bradley", "Lawrence",
-                      "Reeve", "Schocken books Mill appraisal", "Reeve, Bowen, Bradley", "Reeve, Bowen, Bradley",
-                      "Mayer-Lawrence", "Reeve", "Commager abridg. Reeve", "Commager abridg. Reeve")
-
 tocqueville_meta <- tocqueville_meta %>%
-  mutate(editions = paste(editions, enumerationChronology, pubDate))
+  rowwise() %>%
+  mutate(contributor = jsonlite::fromJSON(contributor) %>% 
+              pluck("name") %>%
+              paste(collapse = ", "),
+         publisher = jsonlite::fromJSON(publisher) %>% 
+              pluck("name") %>%
+              paste(collapse = ", "),
+         editor = str_remove(contributor, "Tocqueville, Alexis de, 1805-1859.?, ") %>%
+           str_extract_all("Goldhammer|Schleifer|Nolla|Mayer|Bender|Commager|Reeve|Bowen|Bradley|Boorstin", 
+                           simplify = TRUE) %>%
+           paste(collapse = ", "),
+         short_publisher = str_extract(publisher, "Knopf|Vintage|Britannica|Schocken |Sever & Francis|Oxford|Modern Library|Liberty Fund|Doubleday|Library of America") %>%
+           paste(collapse = ", "),
+         edition = str_c(short_publisher, " (", editor, ") ", 
+                         ifelse(is.na(enumerationChronology), "", str_to_lower(str_remove(enumerationChronology, 
+                                                                                          " ")))) %>%
+           str_remove(" \\(\\)"),
+         volume = parse_number(enumerationChronology) * 10 %>%
+           as.integer()) %>%
+  ungroup()
+
+tocqueville_meta %>%
+  select(htid, pubDate, edition, volume)
+```
+
+```{r}
 
 tocqueville_ef <- tocqueville_ef %>%
   filter(section == "body", !str_detect(token, "[^[:alnum:]]"),
@@ -165,14 +202,15 @@ tocqueville_ef <- tocqueville_ef %>%
   mutate(prop_page = page/max(page)) %>%
   ungroup() %>%
   filter(num_tokens > 10) %>% # This selects pages with at least 10 tokens
-  left_join(tocqueville_meta %>% # This adds the metadata
-              rename(htid = volumeIdentifier))
+  left_join(tocqueville_meta) %>%
+  left_join(tocqueville_pagemeta) %>%
+  filter(calculatedLanguage == "en")
 
 tocqueville_dfm <- tocqueville_ef %>%
   cast_dfm(text_id, token, count)
 
 docvars(tocqueville_dfm) <- tocqueville_ef %>%
-  select(-token, -POS, -count) %>%
+  select(-token, -POS, -count, -section) %>%
   distinct()
 
 tocqueville_dfm
@@ -183,8 +221,7 @@ We can use this document-feature matrix in a variety of ways. Here I train a pag
 First we subset the document-feature matrix, lowercase its features, remove stopwords, and trim the vocabulary to the top 20,000 features.
 
 ```{r}
-tocqueville_dfm_eng <- dfm_subset(tocqueville_dfm, subset = language == "eng") %>%
-  dfm_tolower() %>%
+tocqueville_dfm_eng <- dfm_tolower(tocqueville_dfm)  %>%
   dfm_trim(20000, termfreq_type = "rank") %>%
   dfm_remove(stopwords())
 
@@ -193,18 +230,24 @@ tocqueville_dfm_eng
 
 We then fit a structural topic model with 20 topics. This takes a while; normally you'd also do some sensitivity analysis and check whether the model works better with more or fewer topics, but this model is only illustrative (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
 
-
 ```{r}
+#| cache: true
 library(stm)
 
-model <- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE)
-# model <- stm(tocqueville_dfm_eng, K = 20, verbose = FALSE, prevalence = ~editions) # With prevalence covariates
+if(interactive()) {
+  verbose <- TRUE
+} else {
+  verbose <- FALSE
+}
+
+model <- stm(tocqueville_dfm_eng, K = 20, verbose = verbose)
 
 ```
 
 We then tidy this model using the tidiers from the `{tidytext}` package.
 
 ```{r}
+#| message: false
 tidy_model <- tidy(model, matrix = "gamma",
                    document_names =  docvars(tocqueville_dfm_eng)$text_id)
 
@@ -239,10 +282,7 @@ library(ggtext)
 
 
 tidy_model %>%
-  mutate(editions = str_replace_all(editions, "NA", "1 vol. edition") %>%
-           str_replace_all("V\\.[ ]?", "v.") %>%
-           str_replace_all("v\\. ", "v."),
-         editions = paste(editions, "HT#", hathitrustRecordNumber)) %>%
+  mutate(editions = paste(edition, "HT#", htid)) %>%
   ggplot() +
   geom_col(aes(x = page,  y = gamma, fill = label),
            position = "fill",
@@ -271,4 +311,4 @@ tidy_model %>%
 
 ```
 
-We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); the Nolla-Schleifer critical edition of the book clearly has facing-page French text, which accounts for the pattern of missing pages, and a lot of critical apparatus, which increases the proportion of certain topics on the page not common in other editions; etc. More could be said here, but this is just a starting point!
+We can see here some broad patterns: volume 2 of *Democracy in America* has more "abstract" topics (about equality, power, virtue, science, etc.) than volume 1; abridgements preserve roughtly the distribution of topics of the non-abridged versions (except for sections at the very end); Schelifer and Nolla's critical edition has facing-page French (which appears as missing pages, excluded from the analysis because the language is not English) and critical apparatus in footnotes (so the distribution of topics looks different); etc. More could be said here, but this is just a starting point!
