@@ -374,7 +374,11 @@ assemble_from_cache.csv.gz <- function(cached, cache_format, cache_type, nest_ch
                                         show_col_types = FALSE,
                                         col_types = vroom::cols(pubDate = "i",
                                                                 dateCreated = "i",
-                                                                lastRightsUpdateDate = "i"))}
+                                                                lastRightsUpdateDate = "i",
+                                                                isbn = "c",
+                                                                oclc = "c",
+                                                                lccn = "c")) %>%
+      suppressWarnings()}
 
   fun_pagemeta <- function(x) {vroom::vroom(x, delim = ",",
                                             show_col_types = FALSE,
@@ -611,8 +615,8 @@ standardize_cols <- function(obj) {
                                                 "sectionSentenceCount",
                                                 "sectionCapAlphaSeq")),
                                 as.integer)) %>%
-    dplyr::mutate(dplyr::across(dplyr::any_of(c("lccn", "oclc")),
-                                as.double))
+    dplyr::mutate(dplyr::across(dplyr::any_of(c("lccn", "oclc", "isbn")),
+                                as.character))
 }
 
 cache_save <- function(obj, local_cache, cache_format) {

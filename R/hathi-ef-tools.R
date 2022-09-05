@@ -509,7 +509,7 @@ parse_listified_book <- function(listified_version) {
 parse_meta_volume <- function(listified_version) {
   meta <- listified_version$metadata %>%
     purrr::compact() %>%
-    purrr::map_if(~{length(.x) > 1}, ~paste(names(.x), .x, sep = "=", collapse = ", ")) %>%
+    purrr::map_if(~{length(.x) > 1}, ~jsonlite::toJSON(.) %>% toString()) %>%
     tibble::as_tibble()
 
   meta %>%
