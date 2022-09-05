@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   topic_models_using_hathi_ef: topic_models_using_hathi_ef.html
   using_the_hathi_bookworm: using_the_hathi_bookworm.html
-last_built: 2022-09-04T00:04Z
+last_built: 2022-09-05T21:31Z
 urls:
   reference: https://xmarquez.github.io/hathiTools/reference
   article: https://xmarquez.github.io/hathiTools/articles
