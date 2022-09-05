@@ -1,24 +1,30 @@
 ---
 title: "Using the Hathi Trust Bookworm Tool"
+warning: false
+format: 
+  gfm:
+    output-file: "using_the_hathi_bookworm.Rmd"
+    output-ext: "Rmd"
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "images/using-the-hathi-bookworm-",
+  fig.path = "images/using-the-hathi-bookworm-", 
   comment = "#>"
 )
 ```
 
 The Hathi Trust Bookworm (https://bookworm.htrc.illinois.edu/develop/) is a tool similar to the [Google Books Ngram viewer](https://books.google.com/ngrams) that allows one to retrieve word frequency data from the texts in the [Hathi Trust Digital Library](https://www.hathitrust.org/). With about 17 million digitised volumes in its database (many of them originally digitised for the Google Books project), the Hathi Trust Bookworm is a very powerful tool to explore trends in word frequencies over time. Moreover, in contrast to the Google Ngram viewer, the Bookworm can search over the metadata of the collection, making possible more informative queries about the sources of particular word frequency trends.[^Ngram]
 
-[^Ngram]: The Google Ngram Viewer does have some advantages over the bookworm, primarily the ability to retrieve data about bigram, trigram, 4-gram, and 5-gram frequencies over time, and to conduct wildcard and part-of-speech searches.
+[^Ngram]: The Google Ngram Viewer does have some advantages over the bookworm, primarily the ability to retrieve data about bigram, trigram, 4-gram, and 5-gram frequencies over time, and to conduct wildcard and part-of-speech searches. This is not currently possible with the Bookworm.
 
 This package offers one function, `query_bookworm()`, that makes it relatively easy to retrieve word frequency and other data from the Hathi Trust Bookworm into R, and to use it for exploratory analyses of word frequency trends.
 
 For example, suppose we are interested in the changing frequencies of terms like "democracy", "dictatorship", "monarchy", and so on. We can download the frequency of these terms (according to various metrics) with a single call:
 
 ```{r setup}
+#| warning: false
 library(hathiTools)
 library(tidyverse)
 library(slider) # For moving averages
@@ -54,7 +60,7 @@ res %>%
 
 ```
 
-The trends are clear: "democracy" becomes a much more salient term during the 19th and 20th centuries, with big peaks around the World Wars and the end of the Cold War.
+The trends are clear: "democracy" becomes a much more salient term during the 19th and 20th centuries, with big peaks around the World Wars and the end of the Cold War, and an increasing level of usage in this corpus since the 1970s.
 
 We can also look at the frequency of democracy *relative* to another word (e.g., dictatorship) across time by using `counttype = "WordsRatio"`:
 
@@ -72,7 +78,7 @@ res2 %>%
 
 ```
 
-'Democracy' is always used more frequently than 'dictatorship' in the 20th century, but especially right around the First World War.
+'Democracy' is always used more frequently than 'dictatorship' in this corpus during the 20th century, but especially right around the First World War.
 
 We can also explore the kinds of books where 'democracy' is mentioned in the 20th century. This query groups the volumes that mention 'democracy' by both the year of publication and the volume classification in the Hathi Trust metadata:
 
@@ -102,7 +108,9 @@ res3 <- query_bookworm(word = "democracy",
                        groups = c("lc_classes", "languages"),
                        counttype = c("TextCount"))
 
-res3 %>% filter(languages == "eng") %>% arrange(desc(value))
+res3 %>% 
+  filter(languages == "eng") %>% 
+  arrange(desc(value))
 ```
 Among texts which have some classification (most don't!), ~90,000 political science texts mention the term.
 
@@ -138,7 +146,7 @@ res4 <- query_bookworm(word = "democracy",
 res4
 ```
 
-If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. See the article on see the article "[Topic Models Using Hathi Extracted Features](topic_models_using_hathi_ef)" for more examples of how to use this facility.
+If you need a bigger sample, use the function `workset_builder()` to query the Hathi Trust's [Workset Builder 2.0](https://solr2.htrc.illinois.edu/solr-ef/); this can help you download even hundreds of thousands of volume IDs that meet specified criteria. (See also the article on example workflows for more).
 
 We can investigate further any of these volumes by downloading their associated "Extracted Features" file (that is, a file with token counts and part of speech information that the Hathi Trust makes available). Here we download the word frequencies for the second Hathi Trust id, `r res4$title[2]`, available at `r res4$url[2]`, as a nice tidy `tibble` suitable for analysis with a package like `{tidytext}`.
 
@@ -160,21 +168,6 @@ meta <- get_hathi_meta(res4$htid[2], dir = tmp)
 meta
 ```
 
-To get the metadata for all of these volumes at the same time, it is best to rsync them and cache them:
-
-```{r}
-rsync_from_hathi(res4[2:5, ])
-
-cached_files <- cache_htids(res4[2:5, ])
-
-cached_files
-
-cached_files %>%
-  filter(cache_format == "Metadata") %>%
-  pull(local_loc) %>%
-  map_df(read_rds)
-```
-
 You can also browse interactively these titles on the Hathi Trust website:
 
 ```r
@@ -184,7 +177,7 @@ browse_htids(res4)
 
 If you want to download lots of volumes and have [rsync](https://linux.die.net/man/1/rsync) installed in your system, the functions `rsync_from_hathi()` and `htid_to_rsync()` can facilitate the process; see the article on "Creating and Using Hathi Trust Worksets" for more.
 
-One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the word key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
+One can get info about the Bookworm corpus itself by using `counttype = "TotalWords"` or `counttype = "TotalTexts"` and omitting the 'word' key. This query, for example gives you the total number of texts per language in the corpus used to build the Bookworm.
 
 ```{r, fig.cap="Figure 4"}
 res5 <- query_bookworm(counttype = "TotalTexts",
