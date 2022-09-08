@@ -1,0 +1,273 @@
+---
+title: "An Example Workflow"
+format: gfm
+output-file: example_workflow.Rmd
+keep-yaml: true
+warning: false
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.path = "images/example-workflow-", 
+  comment = "#>"
+)
+
+# if(!fs::file_exists(here::here("vignettes/articles/example_workflow.Rmd"))) {
+#   fs::file_create(here::here("vignettes/articles/example_workflow.Rmd"))
+# }
+```
+
+# An Example Workflow
+
+A typical workflow using this package involves selecting a sample of Hathi Trust IDs to work with using the function `workset_builder()`; downloading and caching their extracted features files; reading some selection of these files into memory, based on their metadata or some other characteristics; and using the in-memory data to create document-term or term-co-occurrence matrices that can be used for further analysis. 
+
+The main feature of this package is the extensive use of caching: sync once with Hathi Trust, cache all files to appropriate formats, and read them in bulk (including their metadata).
+
+This vignette gives an example of this workflow using texts from Jane Austen. 
+
+## Selecting a sample
+
+We first load the package and create a workset with all the texts that list "Jane Austen" as an author/contributor.
+
+```{r}
+library(tidyverse)
+library(hathiTools)
+
+workset <- workset_builder(name = "Jane Austen")
+workset
+```
+
+Let's look at the metadata of the first 10:
+
+```{r, cache = TRUE}
+
+meta <- get_workset_meta(workset[1:10,])
+
+meta %>%
+  select(htid, title, contributor, pubDate)
+```
+
+We can create six worksets for each of the main titles, and download their metadata:
+
+```{r, cache = TRUE}
+
+emma <- workset_builder(name = "Jane Austen", title = "Emma")
+mansfield_park <- workset_builder(name = "Jane Austen", title = "Mansfield Park")
+northanger_abbey <- workset_builder(name = "Jane Austen", title = "Northanger Abbey")
+sense_and_sensibility <- workset_builder(name = "Jane Austen", title = "Sense and Sensibility")
+pride_and_prejudice <- workset_builder(name = "Jane Austen", title = "Pride and Prejudice")
+persuasion <- workset_builder(name = "Jane Austen", title = "Persuasion")
+
+
+austen_novels <- bind_rows(list("Emma" = emma, 
+                           "Mansfield Park" = mansfield_park, 
+                           "Northanger Abbey" = northanger_abbey,
+                           "Sense and Sensibility" = sense_and_sensibility,
+                           "Pride and Prejudice" = pride_and_prejudice,
+                           "Persuasion" = persuasion), 
+                           .id = "Novel")
+
+meta <- get_workset_meta(austen_novels)
+
+```
+
+The workset metadata is by default cached in `"./metadata"`, so the function will not attempt to download it from Hathi a second time. Downloading metadata this way is quite slow, and likely to fail for more than about 1,000 volumes; a better way of gathering metadata for many volumes is to rsync the EF files (using `rsync_from_hathi()`), and then use `cache_htids()` to cache them (including the volume- and page-level metadata). 
+
+We can visualize this metadata:
+
+```{r}
+meta %>%
+  left_join(austen_novels) %>%
+  count(pubDate, Novel) %>%
+  ggplot(aes(x = pubDate, y = n, fill = Novel)) +
+  geom_col() +
+  theme_bw() + 
+  coord_cartesian(xlim = c(1825, 2020)) +
+  scale_fill_viridis_d() +
+  labs(x = "Publication date", y = "Number of copies in Hathi Trust",
+       fill = "")
+```
+
+Note that actual titles are quite various, including adaptations of Austen's work:
+
+```{r}
+meta %>%
+  left_join(austen_novels) %>%
+  count(Novel, title) %>%
+  knitr::kable()
+```
+
+Let's select a subset of these works to model more fully:
+
+```{r}
+set.seed(14)
+austen_sample <- austen_novels %>%
+  group_by(Novel) %>%
+  slice_sample(n = 3)
+
+```
+
+## Syncing and Caching Extracted Features
+
+We now rsync the JSON files of the volumes in this sample from Hathi Trust and cache them locally in fast-loading formats. 
+
+This package has opinionated defaults: if you don't do anything, it will assume you want to rsync and cache all your extracted features files to `getOption("hathiTools.ef.dir")`, which is just `r getOption("hathiTools.ef.dir")`.You can, however, set your options differently, either by specifying `dir` explicitly in `rsync_from_hathi()`, `cache_htids()`, `find_cached_htids()`, and `read_cached_htids()`, or by setting the `hathiTools.ef.dir` option directly (i.e., calling `options(hathiTools.ef.dir = "your_preferred_dir")`). 
+
+We'll use a temporary directory here:
+
+```{r}
+options(hathiTools.ef.dir = tempdir())
+```
+
+
+```{r}
+rsync_from_hathi(austen_sample)
+
+```
+
+Then we cache them to **csv** and **parquet** formats simultaneously (just because we can: you can also just cache them to one of these formats):
+
+```{r}
+cache_htids(austen_sample, cache_format = c("csv", "parquet"))
+```
+
+By default, `cache_htids()` caches EF files and associated volume-level and page-level metadata, though you can also just cache metadata or EF files separately:
+
+```{r}
+find_cached_htids(austen_sample, cache_format = c("csv", "parquet", "none")) %>%
+  count(cache_type, cache_format)
+```
+
+The function `find_cached_htids()` finds the physical location of files in the sample, in case you prefer to manipulate these directly:
+
+```{r}
+find_cached_htids(austen_sample, cache_format = "none")
+find_cached_htids(austen_sample, cache_type = "ef", cache_format = "csv")
+find_cached_htids(austen_sample, cache_type = "meta", cache_format = "csv")
+```
+
+
+Once cached, we can read this whole corpus into memory very quickly, including all the volume-level and page-level metadata. Here we load from the default cache format, which is given by `getOption("hathiTools.cacheformat")` and is `r getOption("hathiTools.cacheformat")` unless explicitly changed:
+
+```{r}
+
+full_corpus <- read_cached_htids(austen_sample)
+full_corpus
+
+```
+
+You can also load only particular bits of the data. For example, if you only want to load the extracted features files, volume-level metadata, and page-level metadata, you can do this:
+
+```{r}
+read_cached_htids(austen_sample, cache_type = "ef")
+
+read_cached_htids(austen_sample, cache_type = "meta")
+
+read_cached_htids(austen_sample, cache_type = "pagemeta")
+```
+
+For large corpora, we can also cache files to the feather or parquet format, and manipulate them with the {arrow} package:
+
+```{r}
+library(arrow)
+# cache_htids(austen_sample, cache_format = "parquet") Not needed - we already cached files to the right format
+
+austen_dataset <- read_cached_htids(austen_sample, cache_format = "parquet")
+
+austen_dataset 
+
+```
+
+This enables some very fast aggregations without having to load all the data in memory. For a small corpus like this this does not make a difference (we can put the entire corpus in memory), but in principle one can do operations like this with thousands of files:
+
+```{r}
+austen_dataset %>%
+  count(token, wt=count, sort = TRUE) %>%
+  collect()
+```
+
+Suppose we only want pages where the language is English, there are at least two sentences in the body of the text, and in those pages we only want the nouns that start with a capital letter. This is very fast and uses little memory:
+
+```{r}
+nouns_only_starts_with_cap <- austen_dataset %>%
+  filter(calculatedLanguage == "en", 
+         section == "body",
+         sectionSentenceCount > 2,
+         str_detect(POS, "^NN"),
+         str_detect(token, "^[A-Z][a-z]")) %>%
+  collect()
+```
+
+Finally, we can also clear the cache to get rid of files we don't want:
+
+```{r}
+clear_cache(austen_sample, cache_format = "csv")
+```
+
+We can now use the parquet dataset to create a `{quanteda}` document-feature or term-cooccurrence matrix for further analysis using {tidytext} and other packages.
+
+```{r}
+library(quanteda)
+library(tidytext)
+
+dfm <- nouns_only_starts_with_cap %>%
+  left_join(austen_sample) %>%
+  mutate(text_id = paste(htid, page, sep = "_"),
+         token = paste(token, Novel, sep = "_")) %>%
+  cast_dfm(text_id, token, count)
+
+dfm
+
+
+docvars(dfm) <- nouns_only_starts_with_cap %>%
+  select(-token:-section) %>%
+  distinct()
+
+```
+
+For example, we might want to see with character names co-occur on the page (a bit of network analysis):
+
+```{r}
+library(wordVectors) # from remotes::install_github("bmschmidt/wordVectors")
+fcm <- fcm(dfm %>% 
+             dfm_trim(min_termfreq = 20) %>% 
+             dfm_tfidf() %>%
+             dfm_compress())
+
+fcm %>% as.matrix() %>% as.VectorSpaceModel() %>% closest_to("Emma_Emma") 
+fcm %>% as.matrix() %>% as.VectorSpaceModel() %>% closest_to("Frank_Emma")
+fcm %>% as.matrix() %>% as.VectorSpaceModel() %>% closest_to("Fanny_Mansfield Park")
+
+```
+
+```{r}
+distances <- text2vec::sim2(fcm) %>% # requires package text2vec
+  as.matrix()
+
+library(tidygraph)
+library(ggraph)
+
+graph <- tidygraph::as_tbl_graph(distances) %>%
+  activate(edges) %>%
+  filter(weight > 0.7) %>%
+  activate(nodes) %>%
+  mutate(connectivity = centrality_degree(weights = weight)) %>%
+  filter(connectivity > 4) %>%
+  mutate(name_simple = str_remove(name, "_.+"),
+         novel = str_remove(name, ".+_"))
+
+austen_sample %>%
+  pull(Novel) %>%
+  unique() %>%
+  map(~graph %>%
+         filter(novel == .x) %>%
+         ggraph(layout = "stress") +
+         geom_edge_link(aes(alpha = weight)) +
+         geom_node_label(aes(label = name_simple, color = novel),
+                         show.legend = FALSE) +
+         theme_void() +
+         labs(title = .x) 
+  ) 
+```
+
