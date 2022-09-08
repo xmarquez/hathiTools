@@ -13,3 +13,4 @@
 ^vignettes/articles$
 ^cache$
 ^LICENSE\.md$
+^_targets$
