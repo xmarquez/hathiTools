@@ -36,6 +36,8 @@ URL: https://github.com/xmarquez/hathiTools
 Suggests: 
     testthat (>= 3.0.0),
     arrow,
-    rmarkdown
+    rmarkdown,
+    furrr,
+    future
 Config/testthat/edition: 3
 BugReports: https://github.com/xmarquez/hathiTools/issues
