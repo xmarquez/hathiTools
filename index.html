@@ -198,7 +198,7 @@
 <span><span class="co">#&gt; `summarise()` has grouped output by 'date_year'. You can override using the</span></span>
 <span><span class="co">#&gt; `.groups` argument.</span></span></code></pre></div>
 <p><img src="reference/figures/README-unnamed-chunk-2-1.png" width="100%"></p>
-<p>See the article “<a href="articles/using_the_hathi_bookworm">Using the Hathi Bookworm</a>” for more on how to query the bookworm to get word frequencies grouped by particular fields and/or limited to specific categories.</p>
+<p>See the article “<a href="articles/using_the_hathi_bookworm.html">Using the Hathi Bookworm</a>” for more on how to query the bookworm to get word frequencies grouped by particular fields and/or limited to specific categories.</p>
 </div>
 <div class="section level2">
 <h2 id="creating-worksets-of-hathi-trust-ids">Creating Worksets of Hathi Trust IDs<a class="anchor" aria-label="anchor" href="#creating-worksets-of-hathi-trust-ids"></a>
@@ -244,7 +244,7 @@
 <p>We can browse these volumes interactively in the Hathi Trust website:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/browse_htids.html">browse_htids</a></span><span class="op">(</span><span class="va">result2</span><span class="op">)</span></span></code></pre></div>
-<p>See the article “<a href="articles/topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” for more on creating and using worksets for specific analysis purposes.</p>
+<p>See the article “<a href="articles/topic_models_using_hathi_ef.html">Topic Models Using Hathi Extracted Features</a>” for more on creating and using worksets for specific analysis purposes.</p>
 </div>
 <div class="section level2">
 <h2 id="downloading-extracted-feature-files-for-specific-hathi-trust-volumes-and-caching-them-to-specific-formats">Downloading extracted feature files for specific Hathi Trust volumes and caching them to specific formats<a class="anchor" aria-label="anchor" href="#downloading-extracted-feature-files-for-specific-hathi-trust-volumes-and-caching-them-to-specific-formats"></a>
@@ -337,7 +337,7 @@
 <code class="sourceCode R"><span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="reference/htid_to_rsync.html">htid_to_rsync</a></span><span class="op">(</span><span class="va">result3</span><span class="op">$</span><span class="va">htid</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, file <span class="op">=</span> <span class="va">tmp</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp2Ju5y7\file3e98314b313e data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></span></code></pre></div>
+<span><span class="co">#&gt; Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmpeuc7FS\file367c50b12eda data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory</span></span></code></pre></div>
 <p>There’s a convenience function that will attempt to do this for you in one command, if you have rsync installed.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">tmpdir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span>
@@ -348,7 +348,7 @@
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">result3</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="op">]</span>, dir <span class="op">=</span> <span class="va">tmpdir</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 3 HTIDs have already been cached to csv.gz format.</span></span>
-<span><span class="co">#&gt; Preparing to cache 4 EF files to C:/Users/marquexa/AppData/Local/Temp/Rtmp2Ju5y7 (../../../AppData/Local/Temp/Rtmp2Ju5y7)</span></span>
+<span><span class="co">#&gt; Preparing to cache 4 EF files to C:/Users/marquexa/AppData/Local/Temp/Rtmpeuc7FS (../../../AppData/Local/Temp/Rtmpeuc7FS)</span></span>
 <span><span class="co">#&gt; Now caching EF file for mdp.39015058109706</span></span>
 <span><span class="co">#&gt; Now caching volume-level metadata for mdp.39015058109706</span></span>
 <span><span class="co">#&gt; Now caching page-level metadata for mdp.39015058109706</span></span>
@@ -405,7 +405,7 @@
 <span><span class="co">#&gt; #   lastRightsUpdateDate &lt;int&gt;, lcc &lt;chr&gt;, lccn &lt;chr&gt;, category &lt;chr&gt;,</span></span>
 <span><span class="co">#&gt; #   seq &lt;chr&gt;, version &lt;chr&gt;, tokenCount &lt;int&gt;, lineCount &lt;int&gt;, …</span></span>
 <span><span class="co">#&gt; # ℹ Use `print(n = ...)` to see more rows, and `colnames()` to see all variable names</span></span></code></pre></div>
-<p>See the articles “<a href="articles/topic_models_using_hathi_ef">Topic Models Using Hathi Extracted Features</a>” and “<a href="articles/example_workflow">An Example Workflow</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
+<p>See the articles “<a href="articles/topic_models_using_hathi_ef.html">Topic Models Using Hathi Extracted Features</a>” and “<a href="articles/example_workflow.html">An Example Workflow</a>” for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.</p>
 <p>It is also possible to download the big “<a href="https://www.hathitrust.org/hathifiles" class="external-link">hathifile</a>” to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.</p>
 </div>
 <div class="section level2">

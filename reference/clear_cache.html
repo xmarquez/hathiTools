@@ -141,25 +141,25 @@ cache. It will go ahead and do it.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   htid               local_loc                            cache…¹ cache…² exists</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmplkV3td/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmplkV3td/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmpdUz0R0/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmpdUz0R0/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​cache_format, ²​cache_type</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Clears only "csv" cache</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">deleted</span> <span class="op">&lt;-</span> <span class="fu">clear_cache</span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Now deleting 2 cached files in /tmp/RtmplkV3td (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Now deleting 2 cached files in /tmp/RtmpdUz0R0 (../..) </span>
 <span class="r-in"><span><span class="va">deleted</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmplkV3td/mdp/31003/mdp.39015008706338.csv.gz</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmplkV3td/mdp/31500/mdp.39015058109706.csv.gz</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmpdUz0R0/mdp/31003/mdp.39015008706338.csv.gz</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmpdUz0R0/mdp/31500/mdp.39015058109706.csv.gz</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Clears also JSON files</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">deleted</span> <span class="op">&lt;-</span> <span class="fu">clear_cache</span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span>, keep_json <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Now deleting 2 cached files in /tmp/RtmplkV3td (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Now deleting 2 cached files in /tmp/RtmpdUz0R0 (../..) </span>
 <span class="r-in"><span><span class="va">deleted</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmplkV3td/mdp/31003/mdp.39015008706338.json.bz2</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmplkV3td/mdp/31500/mdp.39015058109706.json.bz2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmpdUz0R0/mdp/31003/mdp.39015008706338.json.bz2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000; font-weight: bold;">/tmp/RtmpdUz0R0/mdp/31500/mdp.39015058109706.json.bz2</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
