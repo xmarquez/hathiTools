@@ -6,3 +6,7 @@ hathi-ef
 .Rhistory
 docs
 cache
+run.R
+run.sh
+/.quarto/
+_targets.R

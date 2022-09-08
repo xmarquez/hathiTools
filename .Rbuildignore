@@ -14,3 +14,7 @@
 ^cache$
 ^LICENSE\.md$
 ^_targets$
+^run.R$
+^run.sh$
+^_targets.R$
+^.quarto$
