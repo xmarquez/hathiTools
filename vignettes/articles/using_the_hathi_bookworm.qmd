@@ -1,10 +1,9 @@
 ---
 title: "Using the Hathi Trust Bookworm Tool"
+format: gfm
+output-file: using_the_hathi_bookworm.Rmd
+keep-yaml: true
 warning: false
-format: 
-  gfm:
-    output-file: "using_the_hathi_bookworm.Rmd"
-    output-ext: "Rmd"
 ---
 
 ```{r, include = FALSE}
@@ -14,6 +13,8 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+
+# Using the Hathi Trust Bookworm Tool
 
 The Hathi Trust Bookworm (https://bookworm.htrc.illinois.edu/develop/) is a tool similar to the [Google Books Ngram viewer](https://books.google.com/ngrams) that allows one to retrieve word frequency data from the texts in the [Hathi Trust Digital Library](https://www.hathitrust.org/). With about 17 million digitised volumes in its database (many of them originally digitised for the Google Books project), the Hathi Trust Bookworm is a very powerful tool to explore trends in word frequencies over time. Moreover, in contrast to the Google Ngram viewer, the Bookworm can search over the metadata of the collection, making possible more informative queries about the sources of particular word frequency trends.[^Ngram]
 
@@ -112,6 +113,7 @@ res3 %>%
   filter(languages == "eng") %>% 
   arrange(desc(value))
 ```
+
 Among texts which have some classification (most don't!), ~90,000 political science texts mention the term.
 
 And this query finds how many volumes between 1900 and 2000 had Alexis de Tocqueville as a first author published in English:

@@ -1,3 +1,13 @@
+---
+title: "Using the Hathi Trust Bookworm Tool"
+format: gfm
+output-file: using_the_hathi_bookworm.Rmd
+keep-yaml: true
+warning: false
+---
+
+# Using the Hathi Trust Bookworm Tool
+
 The Hathi Trust Bookworm (https://bookworm.htrc.illinois.edu/develop/)
 is a tool similar to the [Google Books Ngram
 viewer](https://books.google.com/ngrams) that allows one to retrieve
