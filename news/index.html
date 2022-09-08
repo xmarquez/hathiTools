@@ -32,6 +32,9 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/example_workflow.html">An Example Workflow</a>
+    </li>
+    <li>
       <a href="../articles/topic_models_using_hathi_ef.html">Topic Modeling using the Hathi Trust Extracted Features Files</a>
     </li>
     <li>
@@ -60,6 +63,17 @@
       <small>Source: <a href="https://github.com/xmarquez/hathiTools/blob/HEAD/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="page-header" data-toc-text="0.2.0" id="hathitools-020">hathiTools 0.2.0<a class="anchor" aria-label="anchor" href="#hathitools-020"></a></h2>
+<ul><li>More consistent API for caching functions (includes now by default caching directory, cache format, and cache type)</li>
+<li>Faster caching, especially of page metadata</li>
+<li>Caching to parquet and feather formats</li>
+<li>Changes to <code><a href="../reference/query_bookworm.html">query_bookworm()</a></code> to work with Bookworm2021 version of the bookworm database</li>
+<li>
+<code><a href="../reference/query_bookworm.html">query_bookworm()</a></code> now accepts a literal query string</li>
+<li>Changes to <code><a href="../reference/workset_builder.html">workset_builder()</a></code> to work with the latest version of the EF workset builder (2.0)</li>
+<li>New vignettes to show example workflows, tokenization, etc.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="page-header" data-toc-text="0.1.0" id="hathitools-010">hathiTools 0.1.0<a class="anchor" aria-label="anchor" href="#hathitools-010"></a></h2>
 <ul><li>Added a <code>NEWS.md</code> file to track changes to the package.</li>

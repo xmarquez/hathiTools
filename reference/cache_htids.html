@@ -39,6 +39,9 @@ read_cached_htids to read them into a single data frame or arrow Dataset for fur
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/example_workflow.html">An Example Workflow</a>
+    </li>
+    <li>
       <a href="../articles/topic_models_using_hathi_ef.html">Topic Modeling using the Hathi Trust Extracted Features Files</a>
     </li>
     <li>
@@ -86,7 +89,8 @@ Features files to a faster-loading format using cache_htids, and then using
 <span>  cache_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ef"</span>, <span class="st">"meta"</span>, <span class="st">"pagemeta"</span><span class="op">)</span>,</span>
 <span>  cache_format <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"hathiTools.cacheformat"</span><span class="op">)</span>,</span>
 <span>  keep_json <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  attempt_rsync <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  attempt_rsync <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  attempt_parallel <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -136,6 +140,13 @@ files) and deletes the associated JSON files.</p></dd>
 <code>dir</code>, the function will call <a href="rsync_from_hathi.html">rsync_from_hathi</a> to attempt to download
 these first.</p></dd>
 
+
+<dt>attempt_parallel</dt>
+<dd><p>Default is <code>FALSE</code>. If <code>TRUE</code>, will attempt to use
+the <a href="https://furrr.futureverse.org/reference/furrr-package.html" class="external-link">furrr</a> package to cache files in parallel. You will need
+to call <code><a href="https://future.futureverse.org/reference/plan.html" class="external-link">future::plan()</a></code> beforehand to determine the specific parallel
+strategy to be used; <code>plan(multisession)</code> usually works fine.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -156,7 +167,7 @@ whether each htid was successfully cached.</p>
 <span class="r-in"><span><span class="fu">cache_htids</span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span>, cache_type <span class="op">=</span> <span class="st">"ef"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2 HTIDs cannot be cached, since their JSON EF files have not been downloaded or do not exist in the Hathi Trust rsync server.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Try using rsync_from_hathi(htids) to download them.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing to cache 0 EF files to /tmp/RtmpAMGyUV (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> All existing JSON files already cached to required formats.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 0 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 5 variables: htid &lt;chr&gt;, local_loc &lt;glue&gt;, cache_format &lt;chr&gt;,</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   cache_type &lt;chr&gt;, exists &lt;lgl&gt;</span></span>
@@ -165,14 +176,14 @@ whether each htid was successfully cached.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">cache_htids</span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span>, cache_type <span class="op">=</span> <span class="st">"ef"</span>, attempt_rsync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Attempting to rsync 2 Hathi Trust IDs before caching</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing to cache 2 EF files to /tmp/RtmpAMGyUV (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing to cache 2 EF files to /tmp/RtmplkV3td (../..) </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Now caching EF file for mdp.39015008706338</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Now caching EF file for mdp.39015058109706</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   htid               local_loc                            cache…¹ cache…² exists</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmpAMGyUV/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmpAMGyUV/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmplkV3td/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmplkV3td/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​cache_format, ²​cache_type</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>

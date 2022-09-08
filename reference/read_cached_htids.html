@@ -38,6 +38,9 @@ read_cached_htids to read them into a single data frame or arrow Dataset for fur
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu"><li>
+      <a href="../articles/example_workflow.html">An Example Workflow</a>
+    </li>
+    <li>
       <a href="../articles/topic_models_using_hathi_ef.html">Topic Modeling using the Hathi Trust Extracted Features Files</a>
     </li>
     <li>
@@ -148,12 +151,12 @@ desired (volume-level or page-level) metadata, or an <a href="https://arrow.apac
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="cache_htids.html">cache_htids</a></span><span class="op">(</span><span class="va">htids</span>, dir <span class="op">=</span> <span class="va">dir</span>, cache_type <span class="op">=</span> <span class="st">"ef"</span>, attempt_rsync <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> 2 HTIDs have already been cached to csv.gz format.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Preparing to cache 0 EF files to /tmp/RtmpAMGyUV (../..) </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> All existing JSON files already cached to required formats.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 5</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   htid               local_loc                            cache…¹ cache…² exists</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;glue&gt;</span>                               <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmpAMGyUV/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmpAMGyUV/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span> mdp.39015008706338 /tmp/RtmplkV3td/mdp/31003/mdp.39015… csv.gz  ef      TRUE  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span> mdp.39015058109706 /tmp/RtmplkV3td/mdp/31500/mdp.39015… csv.gz  ef      TRUE  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with abbreviated variable names ¹​cache_format, ²​cache_type</span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Now read them into memory:</span></span></span>
