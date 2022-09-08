@@ -10,7 +10,8 @@ cache_htids(
   cache_type = c("ef", "meta", "pagemeta"),
   cache_format = getOption("hathiTools.cacheformat"),
   keep_json = TRUE,
-  attempt_rsync = FALSE
+  attempt_rsync = FALSE,
+  attempt_parallel = FALSE
 )
 }
 \arguments{
@@ -46,6 +47,11 @@ files) and deletes the associated JSON files.}
 \item{attempt_rsync}{If \code{TRUE}, and some JSON EF files are not found in
 \code{dir}, the function will call \link{rsync_from_hathi} to attempt to download
 these first.}
+
+\item{attempt_parallel}{Default is \code{FALSE}. If \code{TRUE}, will attempt to use
+the \link[furrr:furrr-package]{furrr} package to cache files in parallel. You will need
+to call \code{future::plan()} beforehand to determine the specific parallel
+strategy to be used; \code{plan(multisession)} usually works fine.}
 }
 \value{
 A \link{tibble} with the paths of the cached files and an indicator of

@@ -28,6 +28,10 @@
 #' @param attempt_rsync If `TRUE`, and some JSON EF files are not found in
 #'   `dir`, the function will call [rsync_from_hathi] to attempt to download
 #'   these first.
+#' @param attempt_parallel Default is `FALSE`. If `TRUE`, will attempt to use
+#'   the [furrr][furrr::furrr] package to cache files in parallel. You will need
+#'   to call `future::plan()` beforehand to determine the specific parallel
+#'   strategy to be used; `plan(multisession)` usually works fine.
 #'
 #' @return A [tibble] with the paths of the cached files and an indicator of
 #'   whether each htid was successfully cached.
@@ -52,7 +56,8 @@ cache_htids <- function(htids,
                         cache_type = c("ef", "meta", "pagemeta"),
                         cache_format = getOption("hathiTools.cacheformat"),
                         keep_json = TRUE,
-                        attempt_rsync = FALSE) {
+                        attempt_rsync = FALSE,
+                        attempt_parallel = FALSE) {
 
   exists.y <- exists.x <- page <- count <- htid <- NULL
   local_loc.x <- cache_type.x <- cache_format.x <- NULL
@@ -101,13 +106,38 @@ cache_htids <- function(htids,
                      cache_format = list(cache_format.x),
                      dir = dir)
 
+  if(nrow(to_cache) == 0) {
+    message("All existing JSON files already cached to required formats.")
+    res <- find_cached_htids(htids, dir = dir, cache_type = cache_type,
+                             cache_format = cache_format)
+
+    return(res)
+  }
+
   message("Preparing to cache ",
           nrow(to_cache), " EF files to ",
           fs::path_real(dir), " (",
           fs::path_rel(dir), ") ")
 
-  to_cache %>%
-    purrr::pwalk(cache_single_htid)
+
+  if(attempt_parallel) {
+    if(!requireNamespace("furrr", quietly = TRUE)) {
+      stop("You must have the 'furrr' package installed to cache files in parallel.")
+    }
+    existing_plan <- future::plan() %>%
+      attr("class") %>%
+      `[`(2:3) %>%
+      toString()
+
+    message("Currently using a ", existing_plan, " strategy. ",
+            "Use future::plan() to change parallel processing strategies.")
+    to_cache %>%
+      furrr::future_pwalk(cache_single_htid)
+
+  } else {
+    to_cache %>%
+      purrr::pwalk(cache_single_htid)
+  }
 
   res <- find_cached_htids(htids, dir = dir, cache_type = cache_type,
                            cache_format = cache_format)
@@ -377,7 +407,8 @@ assemble_from_cache.csv.gz <- function(cached, cache_format, cache_type, nest_ch
                                                                 lastRightsUpdateDate = "i",
                                                                 isbn = "c",
                                                                 oclc = "c",
-                                                                lccn = "c")) %>%
+                                                                lccn = "c",
+                                                                enumerationChronology = "c")) %>%
       suppressWarnings()}
 
   fun_pagemeta <- function(x) {vroom::vroom(x, delim = ",",
@@ -615,7 +646,8 @@ standardize_cols <- function(obj) {
                                                 "sectionSentenceCount",
                                                 "sectionCapAlphaSeq")),
                                 as.integer)) %>%
-    dplyr::mutate(dplyr::across(dplyr::any_of(c("lccn", "oclc", "isbn")),
+    dplyr::mutate(dplyr::across(dplyr::any_of(c("lccn", "oclc", "isbn",
+                                                "enumerationChronology")),
                                 as.character))
 }
 
