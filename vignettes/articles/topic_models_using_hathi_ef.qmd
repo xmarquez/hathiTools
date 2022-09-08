@@ -1,19 +1,21 @@
 ---
 title: "Topic Modeling using the Hathi Trust Extracted Features Files"
+format: gfm
+output-file: topic_models_using_hathi_ef.Rmd
+keep-yaml: true
 warning: false
-format: 
-  gfm:
-    output-file: "topic_modeling_using_hathi_ef.Rmd"
-    output-ext: "Rmd"
 ---
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  fig.path = "images/topic_modeling_using_hathi_ef-", 
+  fig.path = "images/topic_models_using_hathi_ef-", 
   comment = "#>"
 )
+
 ```
+
+# Topic Modeling using the Hathi Trust Extracted Features Files
 
 The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models. This vignette explains how one can use these files to do basic topic modeling of many volumes.
 
@@ -23,12 +25,13 @@ Alexis de Tocqueville's *Democracy in America* is a very influential text. Ever 
 
 ### Selecting the sample
 
-As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 15.6 million volumes indexed by the Hathi Trust [Workset Builder](https://solr2.htrc.illinois.edu/solr-ef/):
+As a starting point, we can download the IDs of all volumes where Alexis the Tocqueville appears as an author in the 17 million volumes indexed by the Hathi Trust [Workset Builder](https://solr2.htrc.illinois.edu/solr-ef/):
 
 ```{r setup}
 library(hathiTools)
 library(tidyverse)
 library(jsonlite) # For processing some results
+library(stm)
 
 tocqueville <- workset_builder(name = "Alexis de Tocqueville")
 tocqueville
@@ -49,7 +52,8 @@ tocqueville_meta %>%
   knitr::kable()
 
 ```
-(Note that you normally won't want to be using `get_workset_meta()` for more than 100 or so volumes - it will take a long time; best to cache the files locally and then extract their metadata, as explained in `[the example workflow vignette][vignette("example_workflow")]`).
+
+(Note that you normally won't want to be using `get_workset_meta()` for more than 100 or so volumes - it will take a long time; best to cache the files locally and then extract their metadata, as explained in `[the example workflow vignette](vignette("example_workflow"))`).
 
 The function `workset_builder()` by default returns a data frame with column for the Hathi Trust id and a column for how many times the `token` key is mentioned; since we didn't include any tokens to search for in our query, the function just returned the number of pages in each volume. If we instead search for the volumes where Tocqueville is an author that *also* mention the word "democracy", the function returns both the volume id and the number of pages that contain the term.
 
@@ -71,9 +75,8 @@ tocqueville3
 
 We can browse any of these pages interactively on the Hathi Trust website, just to get a sense of what they look like. (Most will be in the public domain; note that the page sequences are zero-indexed, so they are one less than the actual page shown on the Hathi Trust website).
 
-```r
+``` r
 browse_htids(tocqueville3)
-
 ```
 
 For our topic modeling exercise, we will focus on volumes of Tocqueville published since 1950 (better OCR!) with "Democracy in America" in the title.
@@ -83,7 +86,7 @@ tocqueville4 <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1950:
 tocqueville4
 ```
 
-In principle we can download their full metadata using the function get_workset_meta(), though the SOLR service hasn't been working recently.  (Also, it's a slow download, so use with care if you have a lot of Hathi Trust ids!).
+In principle we can download their full metadata using the function get_workset_meta(), though the SOLR service hasn't been working recently. (Also, it's a slow download, so use with care if you have a lot of Hathi Trust ids!).
 
 ```{r}
 tocqueville_meta <- get_workset_meta(tocqueville4)
@@ -100,7 +103,7 @@ tocqueville_meta %>%
 
 ### Downloading and caching the associated Extracted Features files
 
-We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `/hathi-ef` directory by default, which will be created if it doesn't exist; this is the default option ). This function requires that your system has access to `rsync`. (In Windows, the easiest way to do this is to install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install); `rsync` should come already installed in most Mac and Linux machines).
+We first download the "extracted features" files for these texts through the Hathi Trust rsync server. The `rsync_from_hathi()` function attempts to do this automatically (to the `"./hathi-ef"` directory by default, which will be created if it doesn't exist; this is the default option ). This function requires that your system has access to `rsync`. (In Windows, the easiest way to do this is to install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install); `rsync` should come already installed in most Mac and Linux machines).
 
 ```{r, include = FALSE}
 
@@ -108,18 +111,15 @@ clear_cache(tocqueville4, keep_json = FALSE)
 
 ```
 
-
 ```{r}
 # The current directory for caching:
 getOption("hathiTools.ef.dir")
 
 rsync_from_hathi(tocqueville4)
 
-# Can also be specified explicitly
-
 ```
 
-The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs (or to other formats, including "Feather" or "Parquet" formats from the [arrow][arrow::arrow] package) in the "./hathi-ef" directory using the function `cache_htids()`:
+The downloaded files are in JSON format, which is slow to load and parse into data frames. We can cache these files to fast-loading CSVs (or to other formats, including **Feather** or **Parquet** formats from the {arrow} package) in the `"./hathi-ef"` directory also using the function `cache_htids()`:
 
 ```{r}
 cached_files <- cache_htids(tocqueville4)
@@ -141,7 +141,6 @@ tocqueville_ef <- read_cached_htids(tocqueville4)
 tocqueville_ef
 ```
 
-
 Note that `cache_htids()` automatically caches not only the extracted features file, but also the volume-level and page-level metadata; the function `read_cached_htids()` by default adds both of these forms of metadata to your data frame. But we can also extract the page-level and volume-level metadata separately:
 
 ```{r}
@@ -155,10 +154,9 @@ tocqueville_meta
 tocqueville_pagemeta
 ```
 
-
 ### Creating a document-term matrix and fitting the model
 
-This large data frame can be converted into a `quanteda::dfm()` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = NN or NNP or NOUN) in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model.
+This large data frame can be converted into a `quanteda::dfm()` document-feature matrix using the `{tidytext}` package (with each page a different document). Here we filter the data frame so that it contains only nouns (POS = "NN" or "NNP" or "NOUN") in the "body" section of the page, excluding all strings smaller than 3 characters and all pages that end up with fewer than 10 tokens. We will use the results to calculate a per-page topic model. 
 
 ```{r}
 library(tidytext)
@@ -230,8 +228,7 @@ tocqueville_dfm_eng
 
 We then fit a structural topic model with 20 topics. This takes a while; normally you'd also do some sensitivity analysis and check whether the model works better with more or fewer topics, but this model is only illustrative (see [this very useful article by Julia Silge](https://juliasilge.com/blog/evaluating-stm/) on training, evaluating, and interpreting topic models). I also don't incorporate any prevalence correlates, but this is trivial to do given that the metadata is incorporated into the document-feature matrix.
 
-```{r}
-#| cache: true
+```{r, cache = TRUE}
 library(stm)
 
 if(interactive()) {
