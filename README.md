@@ -142,9 +142,9 @@ total_texts %>%
 <img src="man/figures/README-unnamed-chunk-2-1.png" width="100%" />
 
 See the article “[Using the Hathi
-Bookworm](articles/using_the_hathi_bookworm)” for more on how to query
-the bookworm to get word frequencies grouped by particular fields and/or
-limited to specific categories.
+Bookworm](articles/using_the_hathi_bookworm.html)” for more on how to
+query the bookworm to get word frequencies grouped by particular fields
+and/or limited to specific categories.
 
 ## Creating Worksets of Hathi Trust IDs
 
@@ -201,8 +201,8 @@ browse_htids(result2)
 ```
 
 See the article “[Topic Models Using Hathi Extracted
-Features](articles/topic_models_using_hathi_ef)” for more on creating
-and using worksets for specific analysis purposes.
+Features](articles/topic_models_using_hathi_ef.html)” for more on
+creating and using worksets for specific analysis purposes.
 
 ## Downloading extracted feature files for specific Hathi Trust volumes and caching them to specific formats
 
@@ -310,7 +310,7 @@ extracted features via rsync:
 tmp <- tempfile()
 
 htid_to_rsync(result3$htid[1:5], file = tmp)
-#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmp2Ju5y7\file3e98314b313e data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
+#> Use rsync -av --files-from C:\Users\marquexa\AppData\Local\Temp\Rtmpeuc7FS\file367c50b12eda data.analytics.hathitrust.org::features-2020.03/ hathi-ef/ to download EF files to hathi-ef directory
 ```
 
 There’s a convenience function that will attempt to do this for you in
@@ -329,7 +329,7 @@ also in one command:
 ``` r
 cache_htids(result3[1:5, ], dir = tmpdir)
 #> 3 HTIDs have already been cached to csv.gz format.
-#> Preparing to cache 4 EF files to C:/Users/marquexa/AppData/Local/Temp/Rtmp2Ju5y7 (../../../AppData/Local/Temp/Rtmp2Ju5y7)
+#> Preparing to cache 4 EF files to C:/Users/marquexa/AppData/Local/Temp/Rtmpeuc7FS (../../../AppData/Local/Temp/Rtmpeuc7FS)
 #> Now caching EF file for mdp.39015058109706
 #> Now caching volume-level metadata for mdp.39015058109706
 #> Now caching page-level metadata for mdp.39015058109706
@@ -392,10 +392,10 @@ tocqueville_ef
 ```
 
 See the articles “[Topic Models Using Hathi Extracted
-Features](articles/topic_models_using_hathi_ef)” and “[An Example
-Workflow](articles/example_workflow)” for more on rsyncing large numbers
-of Hathi Trust JSON extracted features files and caching them to other
-formats for analysis.
+Features](articles/topic_models_using_hathi_ef.html)” and “[An Example
+Workflow](articles/example_workflow.html)” for more on rsyncing large
+numbers of Hathi Trust JSON extracted features files and caching them to
+other formats for analysis.
 
 It is also possible to download the big
 “[hathifile](https://www.hathitrust.org/hathifiles)” to get basic

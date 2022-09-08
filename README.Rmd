@@ -88,7 +88,7 @@ total_texts %>%
        x = "Year", y = "")
 ```
 
-See the article "[Using the Hathi Bookworm](articles/using_the_hathi_bookworm)" for more on how to query the bookworm to get word frequencies grouped by particular fields and/or limited to specific categories.
+See the article "[Using the Hathi Bookworm](articles/using_the_hathi_bookworm.html)" for more on how to query the bookworm to get word frequencies grouped by particular fields and/or limited to specific categories.
 
 ## Creating Worksets of Hathi Trust IDs
 
@@ -112,7 +112,7 @@ We can browse these volumes interactively in the Hathi Trust website:
 browse_htids(result2)
 ```
 
-See the article "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef)" for more on creating and using worksets for specific analysis purposes.
+See the article "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef.html)" for more on creating and using worksets for specific analysis purposes.
 
 ## Downloading extracted feature files for specific Hathi Trust volumes and caching them to specific formats
 
@@ -179,7 +179,7 @@ tocqueville_ef <- read_cached_htids(result3[1:5, ], dir = tmpdir)
 tocqueville_ef
 ```
 
-See the articles "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef)" and "[An Example Workflow](articles/example_workflow)" for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.
+See the articles "[Topic Models Using Hathi Extracted Features](articles/topic_models_using_hathi_ef.html)" and "[An Example Workflow](articles/example_workflow.html)" for more on rsyncing large numbers of Hathi Trust JSON extracted features files and caching them to other formats for analysis.
 
 It is also possible to download the big "[hathifile](https://www.hathitrust.org/hathifiles)" to get basic metadata for ALL of the texts in the Hathi Trust digital library; this is useful for selecting random samples.
 
