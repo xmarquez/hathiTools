@@ -379,7 +379,8 @@ get_workset_meta <- function(workset,
       if(fs::file_exists(filename)) {
         message("Metadata has already been downloaded.",
                 " Returning cached metadata.")
-        return(vroom::vroom(filename) %>%
+        return(vroom::vroom(filename, show_col_types = FALSE,
+                            progress = FALSE) %>%
                  dplyr::rename(url = id) %>%
                  dplyr::mutate(htid = url %>%
                           stringr::str_remove("http://hdl.handle.net/2027/"),
@@ -411,11 +412,13 @@ get_workset_meta <- function(workset,
 
   if(cache) {
     curl::curl_download(download_url, filename, quiet = FALSE, handle = h)
-    meta <- vroom::vroom(filename, delim = ",")
+    meta <- vroom::vroom(filename, delim = ",",
+                         show_col_types = FALSE, progress = FALSE)
   } else {
     tmp <- tempfile(fileext = ".csv")
     curl::curl_download(download_url, tmp, quiet = FALSE, handle = h)
-    meta <- vroom::vroom(tmp, delim = ",")
+    meta <- vroom::vroom(tmp, delim = ",",
+                         show_col_types = FALSE, progress = FALSE)
   }
 
 
