@@ -404,6 +404,18 @@ id_clean <- function (htid) {
     stringr::str_replace_all("/", "=")
 }
 
+# Pairtree-encode only the local-id portion of an htid, preserving the period
+# that separates the namespace from the local id. Used for building *remote*
+# HTRC paths (the rsync/http tree), which encode `.` -> `,` in the local id.
+# The local cache continues to use `id_clean()` (see `local_loc()`).
+id_encode_local <- function (htid) {
+  splitted <- stringr::str_split(htid, "\\.", n = 2)[[1]]
+  if (length(splitted) == 1) {
+    stop(stringr::str_glue("malformed htid {htid}: Hathi ids should contain a period"))
+  }
+  stringr::str_c(splitted[1], id_encode(splitted[2]), sep = ".")
+}
+
 pairtree <- function (htid) {
   splitted <- stringr::str_split(htid, "\\.", n = 2)[[1]]
   if (length(splitted) == 1) {
@@ -436,13 +448,19 @@ load_json <- function(htid, check_suffixes = c("json", "json.bz2", "json.gz"), d
 }
 
 
-stubbytree <- function(htid) {
+# `encoder` controls how the local id is encoded before the stub directory is
+# derived. The local cache uses `id_clean()` (dot-encoding; the default, which
+# preserves the historical cache layout). Remote HTRC paths must pass
+# `id_encode` so `.` becomes `,` in the stub directory, matching the rsync/http
+# tree. `id_clean()` and `id_encode()` are both 1-to-1 character substitutions,
+# so the stub length (and hence which characters are selected) is identical
+# between the two; only the encoding of the selected characters differs.
+stubbytree <- function(htid, encoder = id_clean) {
   splitted <- stringr::str_split(htid, "\\.", n = 2)[[1]]
   if (length(splitted) == 1) {
     stop(stringr::str_glue("malformed htid {htid}: Hathi ids should contain a period"))
   }
-  splitted[2]
-  cleaned <- splitted[2] %>% id_clean()
+  cleaned <- splitted[2] %>% encoder()
   breaks <- seq(1, by = 3, length.out = nchar(cleaned)/3)
   stubbydir <- stringr::str_sub(cleaned, breaks, breaks) %>% stringr::str_c(collapse = "")
   stringr::str_c(splitted[1], stubbydir, sep = "/")
@@ -453,8 +471,8 @@ download_http <- function(htid, dir) {
   if(file.exists(local_name)) {
     return(local_name)
   } else {
-    tree <- stubbytree(htid)
-    clean <- id_clean(htid)
+    tree <- stubbytree(htid, encoder = id_encode)
+    clean <- id_encode_local(htid)
     url <- stringr::str_glue("http://data.analytics.hathitrust.org/features-2020.03/{tree}/{clean}.json.bz2")
     dir.create(dirname(local_name), showWarnings = FALSE, recursive = TRUE)
     utils::download.file(url = url, destfile = local_name)
@@ -463,8 +481,14 @@ download_http <- function(htid, dir) {
 }
 
 stubby_url_to_rsync <- function(htid) {
-  tree <- stubbytree(htid)
-  clean <- id_clean(htid)
+  # Remote HTRC rsync tree uses full pairtree encoding (`.` -> `,`, `:` -> `+`,
+  # `/` -> `=`) in both the stub directory and the filename's local id. Using
+  # `id_clean()` here (which omits `.` -> `,`) makes every htid with a dotted
+  # local id (e.g. `miun.*`, `miua.*`) 404. The local cache path (`local_loc()`)
+  # keeps the dot-encoded convention, so downloaded files still land where
+  # `find_cached_htids()` looks for them.
+  tree <- stubbytree(htid, encoder = id_encode)
+  clean <- id_encode_local(htid)
   url <- stringr::str_glue("{tree}/{clean}.json.bz2")
   url
 }
