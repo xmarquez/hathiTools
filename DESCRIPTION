@@ -43,5 +43,7 @@ Suggests:
     furrr,
     future
 Config/testthat/edition: 3
-Config/Needs/website: quarto, rmarkdown, pkgdown
+Config/Needs/website: quarto, rmarkdown, pkgdown, tidyverse, tidytext,
+    text2vec, stm, tictoc, tidygraph, ggraph, ggrepel, ggtext, slider,
+    sentencepiece, corrr, here, tokenizers, bmschmidt/wordVectors
 BugReports: https://github.com/xmarquez/hathiTools/issues
