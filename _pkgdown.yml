@@ -1,5 +1,8 @@
 url: https://xmarquez.github.io/hathiTools
 
+template:
+  bootstrap: 5
+
 reference:
 - title: "Connecting to the Hathi Trust Bookworm"
   desc: >
