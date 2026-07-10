@@ -10,3 +10,4 @@ run.R
 run.sh
 /.quarto/
 _targets.R
+libs/

@@ -1,0 +1,589 @@
+---
+title: "Training Simple Word Vector Models using the Hathi Trust Extracted Features files"
+format: gfm
+output-file: simple_word_vector_models_ef.Rmd
+keep-yaml: true
+warning: false
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.path = "images/simple_word_vector_models_ef-", 
+  comment = "#>"
+)
+```
+
+# Training Simple Word Vector Models using the Hathi Trust Extracted Features files
+
+The Hathi Trust digital library makes available "extracted features" files (files with per-page word count and part of speech information, plus volume-level and page-level metadata) for millions of digitized volumes from large research libraries. One attraction of these files is that even though they do not contain the full text of each page, page-level "bags of words" are more than sufficient for a vast variety of tasks in the Digital Humanities, from topic modeling to basic word vector models to predictive models.
+
+This vignette explains how to create basic language models useful in some tasks in Digital Humanities. Since the extracted features files made available by Hathi Trust do not preserve word order, we cannot train many kinds of language models using them; but the page-level context of these files can be used to train useful language models that can capture conceptual change over time. In particular, page-level contexts can help us summarize numerically the average *conceptual* context of a word in a corpus.
+
+## An example: Changing Meanings of Democracy
+
+This example is based on some research in progress I am doing trying to understand the changing meanings of "democracy" over time. The idea is that we sample the corpus at different points in time and construct word vector models for each, and then we compare how what the most similar terms to democracy are. These similarities are conceptual, summarizing not the syntactic context of the word (the context within a few words of the target term) or the semantic concept of the term (the sentence-level context, more or less), but the typical terms used in the same page.
+
+### Selecting the sample
+
+We are going to sample books from the 1750s, the first decade of the 1800s (post French Revolution), the 1920s (post WWI), and the 1990s (post Cold War) that mention the term "democracy" to compare changing contexts across time. `workset_builder()` makes this quite easy.
+
+```{r setup}
+library(hathiTools)
+library(tidyverse)
+```
+
+```{r downloadWorksets, cache = TRUE}
+set.seed(14)
+all_books <- workset_builder(pub_date = 1750, lang = "eng")
+democracy_1750 <- workset_builder("democracy", pub_date = 1750:1760)
+democracy_1800 <- workset_builder("democracy", pub_date = 1800:1810)
+democracy_1920 <- workset_builder("democracy", pub_date = 1920:1930)
+democracy_1990 <- workset_builder("democracy", pub_date = 1990:2000)
+
+democracy <- list(democracy_1750, democracy_1800,
+                  democracy_1920, democracy_1990) %>%
+  set_names(c(1750, 1800, 1920, 1990)) %>% 
+  bind_rows(.id = "decade") 
+
+```
+
+These worksets vary quite widely in size: there are only `r nrow(democracy_1750) %>% format(big.mark = ",")` digitised volumes that mention "democracy" in the 1750s, but `r nrow(democracy_1990) %>% format(big.mark = ",")` volumes that mention democracy in the 1990s. 
+
+```{r popStats}
+democracy %>%
+  group_by(decade) %>%
+  summarise(total_vols = n(), median_mentions = median(n),
+            max_mentions = max(n))
+```
+
+For the purposes of this exercise, we will sample 100 volumes from each decade, which is enough to produce useful results; if this were an academic paper we would have to justify these choices much more carefully. I will also sample preferentially from volumes that mention democracy more frequently.
+
+```{r sampleStats}
+democracy_sample <- democracy %>%
+  group_by(decade) %>%
+  slice_sample(n = 100, weight_by = n)
+
+democracy_sample %>%
+  group_by(decade) %>%
+  summarise(total_vols = n(), median_mentions = median(n),
+            max_mentions = max(n))
+```
+
+### Downloading metadata and extracted features files
+
+We can now download these volumes via `rsync_from_hathi()` and cache them to an appropriate format (in the default directory, given by `getOption("hathiTools.ef.dir")`)
+
+```{r}
+getOption("hathiTools.ef.dir") # EF files will be downloaded and cached to this directory
+```
+
+```{r rsync, results = "hide"}
+rsync_from_hathi(all_books)
+rsync_from_hathi(democracy_sample) # I've hidden the very long output of this command
+```
+
+Since we will be using the fabulous `{text2vec}` package to calculate word vectors, we cache these files to `text2vec.csv`, a csv that makes it easier for text2vec to create document-term and term-co-occurrence matrices. This step will take a while!
+
+```{r caching}
+library(furrr)
+library(tictoc)
+clear_cache(all_books)
+tic()
+cache_htids(all_books, cache_format = c("csv", "text2vec", "parquet"))
+toc()
+clear_cache(all_books)
+plan(multisession)
+tic()
+cache_htids(all_books, cache_format = c("csv", "text2vec", "parquet"), attempt_parallel = TRUE)
+toc()
+
+find_cached_htids(all_books) %>% count(cache_type, cache_format)
+```
+
+### Constructing the term-co-occrrence matrix and estimating a GloVe model
+
+We now construct a term-co-occurence matrix. We can load all the books into memory first (you will need a lot of memory) or try another approach. Let's try the all in memory approach.
+
+```{r}
+library(text2vec)
+library(quanteda)
+library(wordVectors)
+
+all_books_1750 <- read_cached_htids(all_books, cache_type = c("ef", "pagemeta"))
+```
+
+This is a very large data frame! It's about 30,000,000 rows, and takes several gigabytes of memory:
+
+```{r}
+all_books_1750
+```
+
+But we don't need all of it. We can reduce its size if we filter it to eliminate pages not in the body text, and not in English, or with too few sentences detected:
+
+```{r}
+all_books_1750 <- all_books_1750 %>%
+  filter(calculatedLanguage == "en", section == "body",
+         sentenceCount > 2)
+```
+
+This gets rid of about 4 million rows.
+
+We can also eliminate duplicates by looking at the metadata of these books:
+
+```{r}
+all_books_1750_metadata <- read_cached_htids(all_books, cache_type = "meta")
+
+all_books_1750_metadata %>%
+  group_by(title, contributor, enumerationChronology) %>%
+  filter(n() > 1)
+
+```
+There are about 35 duplicated title/author records (with the same volume numbers); we can eliminate one of each duplicated set at random:
+
+```{r}
+duplicated <- all_books_1750_metadata %>%
+  group_by(title, contributor, enumerationChronology) %>%
+  filter(n() > 1) %>%
+  slice_head(n = 1) %>%
+  pull(htid)
+
+all_books_1750 <- all_books_1750 %>%
+  filter(!htid %in% duplicated)
+```
+
+That gets rid of another million pages.
+
+Finally, some books have the same oclc number, which indicates the same item even if titles or contributor names are slightly different:
+
+```{r}
+all_books_1750_metadata %>%
+  filter(!is.na(oclc)) %>%
+  group_by(oclc, enumerationChronology) %>%
+  filter(n() > 1) %>%
+  count(oclc)
+
+duplicated <- all_books_1750_metadata %>%
+  filter(!is.na(oclc)) %>%
+  group_by(oclc, enumerationChronology) %>%
+  filter(n() > 1) %>%
+  slice_head(n = 1) %>%
+  pull(htid)
+
+all_books_1750 <- all_books_1750 %>%
+  filter(!htid %in% duplicated)
+
+```
+
+Still ~26 million records!
+
+We now restrict the parts of speech to only nouns (NN or NNP), adjectives (JJ), or verbs (VB), and words that do not include numbers or punctuation and are more than 2 characters long:
+
+```{r}
+all_books_1750 <- all_books_1750 %>%
+  filter(str_detect(POS, "NN|VB|JJ"),
+         str_length(token) > 2,
+         str_detect(token, "^\\w+$"))
+
+all_books_1750
+```
+This still has 15 million rows. But we're ready to create a document-feature matrix:
+
+```{r}
+library(tidytext)
+dfm <- all_books_1750 %>%
+  mutate(doc_id = paste(htid, page, sep = "_")) %>%
+  cast_dfm(doc_id, token, count)
+
+dfm
+```
+
+This document-feature matrix has a VERY LARGE feature set (nearly 1,000,000 distinct tokens); we are going to restrict it to features with more than 60 occurrences and appearing in more than 60 pages, and we will lowercase the resulting features:
+
+```{r}
+dfm <- dfm %>%
+  dfm_trim(min_termfreq = 60, min_docfreq = 60) %>%
+  dfm_tolower()
+
+dfm
+```
+Though large, this is only around 172MB in memory (due to sparsity).
+
+We can create a term co-occurrence matrix quite easily:
+
+```{r}
+library(Matrix)
+
+tcm <- fcm(dfm) %>%
+  drop0() %>%
+  as.fcm()
+
+tcm
+```
+
+And we can use this TCM to train a GloVe model:
+
+```{r}
+library(wordVectors)
+model <- GloVe$new(rank = 50, x_max = 15, shuffle = TRUE)
+  
+embeddings <- model$fit_transform(tcm)
+  
+embeddings <- embeddings  + t(model$components)
+
+embeddings <- embeddings %>% as.VectorSpaceModel()
+
+embeddings %>%
+  closest_to("democracy")
+
+
+model2 <- GloVe$new(rank = 50, x_max = 1000, shuffle = TRUE)
+  
+embeddings2 <- model2$fit_transform(tcm)
+  
+embeddings2 <- embeddings2  + t(model2$components)
+
+embeddings2 <- embeddings2 %>% as.VectorSpaceModel()
+
+embeddings2 %>%
+  closest_to("democracy", n = 30)
+
+model3 <- GloVe$new(rank = 50, x_max = 10000, shuffle = TRUE)
+  
+embeddings3 <- model3$fit_transform(tcm)
+  
+embeddings3 <- embeddings3  + t(model3$components)
+
+embeddings3 <- embeddings3 %>% as.VectorSpaceModel()
+
+embeddings3 %>%
+  closest_to("democracy", n = 30)
+
+
+list(embeddings, embeddings2, embeddings3) %>%
+  map_df(~closest_to(.x, "democracy", n = Inf, fancy_names = FALSE), .id = "model") %>%
+  pivot_wider(names_from = model, values_from = similarity, id_cols = word) %>%
+  select(2:4) %>%
+  corrr::correlate()
+```
+
+
+What if you don't have enough memory? There's a way to calculate the TCM using less memory using the text2vec package.
+
+```{r}
+text2vec_files <- find_cached_htids(all_books, 
+                                    cache_type = "ef", 
+                                    cache_format = "text2vec") 
+
+files_it <- ifiles_parallel(text2vec_files$local_loc, 
+                            reader = function(x) {
+                              
+                              text <- vroom::vroom(x, col_select = c("htid", "page", "tokens"),
+                                                   show_col_types = FALSE)
+                              
+                              res <- text$tokens
+                              
+                              names(res) <- paste(text$htid, text$page, sep = "_")
+                              
+                              return(res)
+                              
+                              })
+
+iterator <- itoken_parallel(files_it, preprocessor = str_to_lower, 
+                            tokenizer = tokenizers::tokenize_words) 
+
+vocab <- create_vocabulary(iterator)
+
+vocab <- prune_vocabulary(vocab, term_count_min = 60, doc_count_min = 60) %>%
+  filter(str_detect(term, "_nn|_vb_jj"),
+         str_detect(term, "^\\w\\w\\w+_"))
+
+tcm <- create_tcm(iterator, vocab_vectorizer(vocab),
+                  skip_grams_window = 3000, 
+                  weights = rep(1, 3000))
+
+tcm <- as.fcm(tcm)
+
+model4 <- GloVe$new(rank = 50, x_max = 15, shuffle = TRUE)
+  
+embeddings4 <- model4$fit_transform(tcm)
+  
+embeddings4 <- embeddings4  + t(model4$components)
+
+embeddings4 <- embeddings4 %>% as.VectorSpaceModel()
+
+embeddings4 %>%
+  closest_to("democracy_nn")
+
+
+model5 <- GloVe$new(rank = 50, x_max = 1000, shuffle = TRUE)
+  
+embeddings5 <- model5$fit_transform(tcm)
+  
+embeddings5 <- embeddings5  + t(model5$components)
+
+embeddings5 <- embeddings5 %>% as.VectorSpaceModel()
+
+embeddings5 %>%
+  closest_to("democracy_nn", n = 30)
+
+list(embeddings4, embeddings5) %>%
+  map_df(~closest_to(.x, "democracy_nn", n = Inf, fancy_names = FALSE), .id = "model") %>%
+  pivot_wider(names_from = model, values_from = similarity, id_cols = word) %>%
+  select(2:3) 
+```
+
+```{r}
+library(text2vec)
+library(quanteda)
+library(wordVectors)
+
+filter_data <- function(sample, dcd) {
+  read_cached_htids(sample %>% filter(decade == dcd), 
+                                    cache_format = "text2vec", cache_type = c("ef", "pagemeta")) %>%
+  filter(calculatedLanguage == "en", section == "body",
+         sentenceCount > 2)
+}
+
+calculate_vocab <- function(df, term_count_min, doc_count_min) {
+  iterator <- itoken_parallel(df$tokens, ids = paste(df$htid, df$page, sep = "_"), 
+                              preprocessor = str_to_lower)
+
+
+  vocab <- create_vocabulary(iterator)
+
+
+  vocab <- prune_vocabulary(vocab, 
+                            term_count_min = term_count_min, doc_count_min = doc_count_min) %>%
+    filter(str_detect(term, "_nn|_jj|_vb"),
+           str_detect(term, "^[[:alpha:]]+_"))
+  
+  vocab
+
+}
+
+calculate_tcm <- function(df, vocab) {
+  window <- max(df$tokenCount)
+  weights <- rep(1, window)
+  
+  iterator <- itoken_parallel(df$tokens, ids = paste(df$htid, df$page, sep = "_"), 
+                              preprocessor = str_to_lower)
+
+  tcm <- create_tcm(iterator,
+                    vectorizer = vocab_vectorizer(vocab),
+                                 weights = weights,
+                                 skip_grams_window = window)
+  tcm
+  
+}
+
+calculate_dfm <- function(df, vocab) {
+
+  iterator <- itoken_parallel(df$tokens, ids = paste(df$htid, df$page, sep = "_"), 
+                              preprocessor = str_to_lower)
+
+  dfm <- create_dtm(iterator,
+                    vectorizer = vocab_vectorizer(vocab))
+  
+  as.dfm(dfm)
+  
+}
+
+calculate_embeddings <- function(tcm, rank = 50, x_max = 10) {
+  model <- GloVe$new(rank = rank, x_max = x_max, shuffle = TRUE)
+  
+  embeddings <- model$fit_transform(tcm)
+  
+  embeddings <- embeddings  + t(model$components)
+
+  embeddings %>% as.VectorSpaceModel()
+
+}
+
+calculate_embeddings_from_dfm <- function(dfm, rank = 50, x_max = 10) {
+  message("Calculating TCM")
+  
+  tcm <- fcm(dfm) %>%
+    Matrix::drop0() %>%
+    as.fcm()
+  
+  message("Calculating embeddings")
+  model <- GloVe$new(rank = rank, x_max = x_max, shuffle = TRUE)
+  
+  embeddings <- model$fit_transform(tcm)
+  
+  embeddings <- embeddings  + t(model$components)
+
+  embeddings %>% as.VectorSpaceModel()
+
+}
+
+dfs <- democracy_sample$decade %>% 
+  unique() %>%
+  set_names(democracy_sample$decade %>% 
+              unique()) %>%
+  map(~filter_data(democracy_sample, .x))
+
+vocabs <- dfs %>%
+  map(calculate_vocab, 100, 100)
+
+dfms <- map2(dfs, vocabs, calculate_dfm)
+
+embeddings_1750 <- calculate_embeddings_from_dfm(dfms[["1750"]])
+embeddings_1800 <- calculate_embeddings_from_dfm(dfms[["1800"]])
+embeddings_1920 <- calculate_embeddings_from_dfm(dfms[["1920"]])
+embeddings_1990 <- calculate_embeddings_from_dfm(dfms[["1990"]])
+
+embeddings_1750 %>%
+    closest_to(~"democracy_nn" + "democracy_nnp", n = Inf,
+             fancy_names = FALSE) %>%
+  filter(similarity > 0.5)
+
+embeddings_1800 %>%
+    closest_to(~"democracy_nn" + "democracy_nnp", n = Inf,
+             fancy_names = FALSE) %>%
+  filter(similarity > 0.5)
+
+embeddings_1920 %>%
+  closest_to(~"democracy_nn" + "democracy_nnp", n = Inf,
+             fancy_names = FALSE) %>%
+  filter(similarity > 0.5)
+
+embeddings_1990 %>%
+  closest_to(~"democracy_nn" + "democracy_nnp", n = Inf,
+             fancy_names = FALSE) %>%
+  filter(similarity > 0.5)
+
+all_embeddings <- list("1750" = embeddings_1750,
+                       "1800" = embeddings_1800,
+                       "1920" = embeddings_1920,
+                       "1990" = embeddings_1990)
+
+res <- all_embeddings %>%
+  map_df(~closest_to(.x, ~"democracy_nn" + "democracy_nnp", n = Inf,
+                     fancy_names = FALSE),
+         .id = "decade") %>%
+  mutate(decade = as.integer(decade))
+
+res %>%
+  filter(!word %in% c("democracy_nn", "democracy_nnp")) %>%
+  group_by(word) %>%
+  filter(n() == 4) %>%
+  filter(any(similarity > 0.65)) %>%
+  mutate(decade = as.character(decade)) %>%
+  ggplot(aes(x = decade, y = fct_reorder(word, similarity), fill = similarity)) +
+  geom_tile() +
+  scale_fill_gradient2(midpoint = 0.5)
+
+```
+
+First we find the vocabulary for the 1750s, and filter it to contain only nouns, adjectives, and verbs that contain only alphabetic characters and appear at least 100 times in at least 100 documents (pages).
+
+```{r, message=FALSE}
+
+files_iterators <- paths %>%
+  map(~ifiles_parallel(.x, reader = text2vec_reader))
+
+token_iterators <- files_iterators %>%
+  map(~itoken_parallel(.x, preprocessor = str_to_lower))
+
+vocabs <- token_iterators %>%
+  map(~create_vocabulary(.x))
+
+vocabs <- vocabs %>%
+  map(~filter(.x, str_detect(term, "_nn|_jj|_vb"), 
+              str_detect(term, "^[[:alpha:]]+_")) %>%
+        prune_vocabulary(term_count_min = 100,
+                           doc_count_min = 100))
+
+vocabs
+```
+
+We are now ready to create the term-co-occurrence matrix. We can do this as follows: 
+
+
+```{r, eval = FALSE, message = FALSE}
+tcm <- create_tcm(token_iterators[[1]], vectorizer = vocab_vectorizer(vocab),
+                  skip_grams_window = 10000,  weights = rep(1, 10000))
+```
+
+The key here is to set the `skip_grams_window` context to a very large number, since the context for co-occurrence is the page. 
+
+Since we have relatively small vocabularies, it pays to use `{quanteda}` - it will be faster, but will use more memory.
+
+```{r, message = FALSE}
+dtms <- token_iterators %>%
+  map2(vocabs, ~create_dtm(.x, vectorizer = vocab_vectorizer(.y)))
+
+library(quanteda) 
+
+tcms <- dtms %>%
+  map(~fcm(as.dfm(.x)))
+```
+
+We could stop at this point and just select the words that correspond the most with each other, but 
+
+We are now ready to train a [GloVe vector model](http://nlp.stanford.edu/projects/glove/) with 50 dimensions on each of these tcms:
+
+```{r}
+glove_1750 <- GloVe$new(50, x_max = 10) 
+
+embeddings_1750 <- glove_1750$fit_transform(Matrix::drop0(tcms[[1]]), n_threads = parallel::detectCores())
+
+embeddings_1750 <- embeddings_1750 + t(glove_1750$components) # embeddings + context embedings; this gives better results
+```
+
+We can use the excellent package `{wordVectors}` to explore these vector embeddings. Here are what we might call the "contextual similarities" of the noun "democracy" in the 1750s.
+
+```{r}
+library(wordVectors) # remotes::install("bmschmidt/wordVectors")
+embeddings <- as.VectorSpaceModel(embeddings)
+
+embeddings %>% closest_to("democracy_nn") 
+```
+
+We can simplify the process by encapsulating it in a function and applying the function to the list of term-co-occurrence matrices (this will take a while and use a lot of resources, so careful!)
+
+```{r}
+vecs_glove <- function(tcm, rank = 50, x_max = 10, shuffle = TRUE, n_iter = 10) {
+  glove_model <- GloVe$new(rank = rank, x_max = x_max, shuffle = shuffle) 
+
+  embeddings <- glove_model$fit_transform(Matrix::drop0(tcm), 
+                                          n_threads = parallel::detectCores(),
+                                          n_iter = n_iter)
+
+  embeddings + t(glove_model$components)
+}
+
+embeddings <- tcms %>%
+  map(vecs_glove)
+```
+```{r}
+df <- embeddings %>%
+  map(as.VectorSpaceModel) %>%
+  map_df(~closest_to(.x, "democracy_nn", n = Inf, fancy_names = FALSE), .id = "decade") %>%
+  filter(similarity > 0.65)
+
+df %>%
+  filter(word != "democracy_nn") %>%
+  mutate(decade = as.integer(decade)) %>%
+  group_by(decade) %>%
+  mutate(rank = seq_along(decade)) %>%
+  group_by(word) %>%
+  mutate(y = similarity, yend = lead(similarity),
+         x = decade, xend = lead(decade)) %>%
+  ggplot(aes(x = decade, xend = xend, y = y, yend = yend)) +
+  geom_segment(aes(color = word), alpha = 0.3,
+               show.legend = FALSE) +
+  geom_text(aes(label = word, size = similarity),
+               show.legend = FALSE,
+            check_overlap = TRUE) +
+  theme_bw() +
+  theme(panel.grid = element_blank(),
+        panel.border = element_blank()) +
+  labs(y = "Cosine similarity to 'democracy_nn'", size = "Similarity to 'democracy_nn'") +
+  scale_x_continuous(expand = expansion(c(0.1, 0.3)),
+                     breaks = c(1750, 1800, 1920, 1990)) +
+  scale_color_viridis_d()
+```
+

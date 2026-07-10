@@ -95,7 +95,9 @@ Note that actual titles are quite various, including adaptations of Austen's wor
 meta %>%
   left_join(austen_novels) %>%
   count(Novel, title) %>%
-  knitr::kable()
+  mutate(title = str_replace_all(title, "&", " and ") %>%
+           str_remove_all("[\\[\\]]")) %>%
+  knitr::kable() 
 ```
 
 Let's select a subset of these works to model more fully:
@@ -112,7 +114,7 @@ austen_sample <- austen_novels %>%
 
 We now rsync the JSON files of the volumes in this sample from Hathi Trust and cache them locally in fast-loading formats. 
 
-This package has opinionated defaults: if you don't do anything, it will assume you want to rsync and cache all your extracted features files to `getOption("hathiTools.ef.dir")`, which is just `r getOption("hathiTools.ef.dir")`.You can, however, set your options differently, either by specifying `dir` explicitly in `rsync_from_hathi()`, `cache_htids()`, `find_cached_htids()`, and `read_cached_htids()`, or by setting the `hathiTools.ef.dir` option directly (i.e., calling `options(hathiTools.ef.dir = "your_preferred_dir")`). 
+This package has opinionated defaults: if you don't do anything, it will assume you want to rsync and cache all your extracted features files to `getOption("hathiTools.ef.dir")`, which is just `r getOption("hathiTools.ef.dir")` unless you explicitly change it.You can, however, set your options differently, either by specifying `dir` explicitly in functions like `rsync_from_hathi()`, `cache_htids()`, `find_cached_htids()`, and `read_cached_htids()`, or by setting the `hathiTools.ef.dir` option directly (i.e., calling `options(hathiTools.ef.dir = "your_preferred_dir")`). 
 
 We'll use a temporary directory here:
 

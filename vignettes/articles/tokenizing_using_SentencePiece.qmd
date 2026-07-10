@@ -1,0 +1,144 @@
+---
+title: "Sentence Piece Vocab for texts"
+format: html
+editor: source
+---
+
+## Getting a sample
+
+```{r}
+library(hathiTools)
+library(tidyverse)
+library(tidytext)
+library(quanteda)
+
+democracy_sample <- workset_builder("democracy", pub_date = 1700)
+  
+democracy_sample
+```
+
+Now we rsync these and cache them:
+
+```{r}
+rsync_from_hathi(democracy_sample)
+
+cache_htids(democracy_sample, cache_format = "text2vec.csv")
+cache_htids(democracy_sample, cache_format = "feather")
+
+texts <- read_cached_htids(democracy_sample, cache_type = "ef", cache_format = "text2vec.csv")
+
+```
+
+Now we train the sentencePiece model:
+
+```{r}
+library(sentencepiece)
+file <- tempfile()
+writeLines(texts$token, file)
+
+model <- sentencepiece(file, type = "unigram", verbose = TRUE, vocab_size = 20000)
+
+tokenizer_function <- function(txt) {
+  sentencepiece_encode(model, txt)
+}
+
+tokenized <- texts %>%
+  filter(section == "body", str_detect(token, regex("democracy", ignore_case = TRUE))) %>%
+  mutate(doc_id = paste(htid, page, sep = "_"),
+         token = str_replace_all(token, "[0-9[:punct:]]+", "[NUM]")) %>%
+  unnest_tokens(token, token, tokenizer_function) %>%
+  count(doc_id, htid, token)
+
+tokenized %>% filter(str_detect(token, regex("democr", ignore_case = TRUE)))
+
+tokenized
+```
+
+```{r}
+dfm <- tokenized %>%
+  cast_dfm(doc_id, token, n)
+
+library(stm)
+
+tm <- stm(dfm_trim(dfm, 
+                   max_docfreq = 0.2, 
+                   docfreq_type = "prop"), 
+          K = 20)
+```
+
+
+```{r}
+tokenized <- texts %>%
+  filter(section == "body") %>%
+  mutate(doc_id = paste(htid, page, sep = "_"),
+         token = str_replace_all(token, "[0-9[:punct:]]+", "[NUM]")) %>%
+  unnest_tokens(token, token, tokenizer_function) %>%
+  count(doc_id, htid, token)
+
+dfm <- tokenized %>%
+  cast_dfm(doc_id, token, n)
+
+fcm <- fcm(dfm)
+fcm <- fcm %>%
+  Matrix::drop0() %>%
+  as.fcm()
+
+library(text2vec)
+
+glove <- GloVe$new(50, 10, shuffle = TRUE)
+
+wv <- glove$fit_transform(fcm)
+
+wv <- wv + t(glove$components)
+
+library(wordVectors)
+
+wv <- wordVectors::as.VectorSpaceModel(wv)
+
+wv %>% closest_to(sentencepiece_encode(model, "Democracy_NN") %>% unlist() , n = Inf,
+                  fancy_names = FALSE) %>%
+  filter(similarity > 0.6)
+
+wv %>% closest_to(~"▁authority", n = Inf)
+
+
+
+```
+
+```{r}
+vectorized_docs <- dfm %>%
+  dfm_weight(scheme = "prop") 
+
+vectorized_docs <- vectorized_docs %*% wv
+
+subset <- dfm %>% 
+  dfm_subset(dfm_select(dfm, "*democr*") %>%
+               rowSums() > 0) %>%
+  dfm_weight(scheme = "prop")
+
+vectorized_subset <- subset %*% wv
+
+vectorized_subset %>%
+  as.matrix() %>%
+  dist() %>%
+  hclust() %>%
+  plot()
+```
+
+```{r}
+feather <- find_cached_htids(democracy_sample, cache_format = "feather", cache_type = "ef")
+
+library(arrow)
+
+filenames <- feather$local_loc
+
+names(filenames) <- feather$htid
+
+feather_dataset <- open_dataset(filenames, format = "feather")
+
+feather_dataset %>%
+  filter(POS %in% c("NN", "NNP")) %>%
+  head() %>%
+  collect()
+```
+

@@ -38,6 +38,7 @@ reference:
     single Hathi Trust volume.
   contents:
   - matches("_hathi_")
+  - htids_to_dfm
 - title: "Datasets"
   contents:
   - fiction
