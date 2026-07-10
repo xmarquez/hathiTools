@@ -11,3 +11,4 @@ run.sh
 /.quarto/
 _targets.R
 libs/
+vignettes/.quarto/

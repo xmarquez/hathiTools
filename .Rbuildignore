@@ -19,3 +19,6 @@
 ^_targets.R$
 ^.quarto$
 ^libs$
+^vignettes/_quarto\.yaml$
+^vignettes/_freeze$
+^vignettes/\.quarto$

@@ -1,0 +1,14 @@
+project:
+  render:
+    - "*.qmd"
+
+# freeze: true — pkgdown's CI project render uses the committed results in
+# vignettes/_freeze/ instead of executing article code (every article calls
+# workset_builder(), i.e. the HTRC EF solr, plus rsync downloads and heavy
+# model fitting — not viable on a CI runner). To refresh an article, render
+# it individually (quarto render vignettes/articles/<name>.qmd), which always
+# executes and updates _freeze/, then commit the _freeze changes.
+# pkgdown only generates its own ephemeral _quarto.yaml when this file is
+# absent, so this committed config is respected (pkgdown 2.1.3).
+execute:
+  freeze: true
