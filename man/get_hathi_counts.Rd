@@ -23,7 +23,7 @@ be found. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
 local caching of JSON download; only JSON file kept), "rds", "feather" and
-"parquet" (suitable for use with \link{arrow}; needs the \link{arrow} package
+"parquet" (suitable for use with \link[arrow:arrow-package]{arrow::arrow}; needs the \link[arrow:arrow-package]{arrow::arrow} package
 installed), or "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 }
@@ -40,7 +40,7 @@ function uses code authored by Ben Schmidt, from his Hathidy package
 (\url{https://github.com/HumanitiesDataAnalysis/hathidy}).
 }
 \examples{
-\donttest{
+\dontrun{
 # Download the 1863 version of "Democracy in America" by Tocqueville and get
 # its extracted features
 

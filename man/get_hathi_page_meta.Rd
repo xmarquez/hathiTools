@@ -19,7 +19,7 @@ saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 attempt to download it.}
 
 \item{cache_format}{Format of metadata. The default is "rds"; can also
-be "csv.gz", "csv", and "feather" (requires the \link{arrow} package).}
+be "csv.gz", "csv", and "feather" (requires the \link[arrow:arrow-package]{arrow::arrow} package).}
 }
 \value{
 A \link[tibble:tibble]{tibble} with the page-level metadata for the
@@ -91,7 +91,7 @@ Hathi Trust ID at a time, it may be best to download the JSON files for these
 HTIDs first using \link{rsync_from_hathi} and then running this function.
 }
 \examples{
-\donttest{
+\dontrun{
 # Download the 1862 version of "Democracy in America" by Tocqueville and get
 # its page-level metadata
 

@@ -27,7 +27,7 @@ download will have a different name.}
 }
 \value{
 A \link[tibble:tibble]{tibble::tibble} with the Hathi Trust metadata for all the volumes
-in the workset or the vector of htids. #'   This \link{tibble} can contain the
+in the workset or the vector of htids. #'   This \link[tibble:tibble]{tibble::tibble} can contain the
 following fields (taken from
 \url{https://wiki.htrc.illinois.edu/pages/viewpage.action?pageId=79069329}):
 
@@ -135,7 +135,7 @@ thousands of records, you are probably better off using the big hathifile
 (see \link{download_hathifile} and \link{load_raw_hathifile}).
 }
 \examples{
-\donttest{
+\dontrun{
 dir <- tempdir()
 workset <- workset_builder(name = "Tocqueville")
 get_workset_meta(workset[1:5, ], metadata_dir = dir)

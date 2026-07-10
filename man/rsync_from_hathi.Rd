@@ -26,7 +26,7 @@ Hathi Trust. \code{rsync} needs to be installed in your system and accessible vi
 \link{system} or \link{system2}.
 }
 \examples{
-\donttest{
+\dontrun{
 res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 rsync_from_hathi(res$htid[1:10], dir = tempdir())
 }

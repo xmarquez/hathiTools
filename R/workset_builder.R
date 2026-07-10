@@ -57,7 +57,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # All volumes that mention "tylenol" and "paracetamol", not necessarily in the same page
 #' workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 #'
@@ -344,7 +344,7 @@ workset_builder <- function(token, title,
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' dir <- tempdir()
 #' workset <- workset_builder(name = "Tocqueville")
 #' get_workset_meta(workset[1:5, ], metadata_dir = dir)

@@ -20,7 +20,7 @@ saved. Defaults to \code{getOption("hathiTools.ef.dir")}, which is just
 attempt to download it.}
 
 \item{cache_format}{Format of metadata. The default is "rds"; can also
-be "csv.gz", "csv", and "feather" (requires the \link{arrow} package).}
+be "csv.gz", "csv", and "feather" (requires the \link[arrow:arrow-package]{arrow::arrow} package).}
 }
 \value{
 A \link[tibble:tibble]{tibble} with the volume-level metadata for the
@@ -155,7 +155,7 @@ for large numbers of htids by downloading the big hathifile using
 \link{download_hathifile} and then filtering it.
 }
 \examples{
-\donttest{
+\dontrun{
 # Download the 1862 version of "Democracy in America" by Tocqueville and get
 # its metadata
 

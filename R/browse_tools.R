@@ -12,7 +12,7 @@
 #' @importFrom utils browseURL
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' if(interactive()) {
 #'    workset <- workset_builder(name = "Alexis de Tocqueville", pub_date = 1800:1850)
 #'    browse_htids(workset)

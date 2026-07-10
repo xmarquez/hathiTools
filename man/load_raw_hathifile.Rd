@@ -41,7 +41,7 @@ reduced set of columns: \verb{htid, ht_bib_key, description, source, title,}
 \code{NA}. Default is \code{TRUE}.}
 }
 \value{
-A very large \link{tibble}, with over 17 million records, loaded into
+A very large \link[tibble:tibble]{tibble::tibble}, with over 17 million records, loaded into
 memory. The tibble package does some lazy loading to minimize resource use,
 but fully loaded this data frame takes over 5GB in memory.
 }

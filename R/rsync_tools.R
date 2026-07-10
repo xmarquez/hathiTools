@@ -17,7 +17,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' res <- workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 #' rsync_from_hathi(res$htid[1:10], dir = tempdir())
 #' }

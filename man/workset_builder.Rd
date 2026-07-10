@@ -77,7 +77,7 @@ page https://solr2.htrc.illinois.edu/solr-ef20/}
 This is useful to learn how to use the more complex SOLR query syntax.}
 }
 \value{
-A \link{tibble} with volume_ids, number of occurrences of the terms in the
+A \link[tibble:tibble]{tibble::tibble} with volume_ids, number of occurrences of the terms in the
 volume, and if \code{volumes_only} is \code{FALSE} a column for page ids.
 }
 \description{
@@ -87,7 +87,7 @@ This API is experimental, and so this function can fail at any time if the
 API changes.
 }
 \examples{
-\donttest{
+\dontrun{
 # All volumes that mention "tylenol" and "paracetamol", not necessarily in the same page
 workset_builder(c("tylenol", "paracetamol"), volumes_only = FALSE)
 

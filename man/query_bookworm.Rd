@@ -66,7 +66,7 @@ It is possible to combine some of these - e.g., counttype = c("TextCount",
 \verb{Word-} counts in this version of the API.}
 
 \item{method}{Type of results to return. Can be \code{data} (the default -
-automatically converted to a proper \link{tibble} when possible; the JSON is
+automatically converted to a proper \link[tibble:tibble]{tibble::tibble} when possible; the JSON is
 structured as "nested dicts for each grouping in \code{groups} pointing to an
 array consisting of the results for each count in \code{counttype}", according
 to the \href{https://bookworm-project.github.io/Docs/query_structure.html}{API documentation}.),
@@ -101,7 +101,7 @@ is most useful with \code{counttype = "WordsRatio"}; this compares the relative
 frequency of two words.}
 
 \item{as_json}{Whether to return the raw json. Useful for complex queries
-where the function does not know how to return a \link{tibble}, or when you want
+where the function does not know how to return a \link[tibble:tibble]{tibble::tibble}, or when you want
 to use the raw json to produce a different data structure.}
 
 \item{verbose}{If \code{TRUE}, shows the JSON query once built.}
@@ -126,7 +126,7 @@ anything, but a search with \code{mainauthor = "Tocqueville, Alexis de 1805-1859
 \code{options("hathiTools.bookworm.fields")}}
 }
 \value{
-A tidy \link{tibble} whenever possible, with columns for each grouping
+A tidy \link[tibble:tibble]{tibble::tibble} whenever possible, with columns for each grouping
 parameter, the word (if any), and the counts and counttypes. For \code{method = "search_result"}, a workset that can be used in \link{browse_htids} and
 \link{get_workset_meta}.
 }
@@ -138,7 +138,7 @@ that same metadata. It uses code authored by Ben Schmidt (from
 \url{https://github.com/bmschmidt/edinburgh/}).
 }
 \examples{
-\donttest{
+\dontrun{
 query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000),
   counttype = c("WordsPerMillion", "WordCount"))
 

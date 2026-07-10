@@ -28,7 +28,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Download the 1863 version of "Democracy in America" by Tocqueville and get
 #' # its extracted features
 #'
@@ -213,7 +213,7 @@ get_hathi_counts <- function(htid,
 #'@export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Download the 1862 version of "Democracy in America" by Tocqueville and get
 #' # its metadata
 #'
@@ -328,7 +328,7 @@ get_hathi_meta <- function (htid, dir = getOption("hathiTools.ef.dir"),
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' # Download the 1862 version of "Democracy in America" by Tocqueville and get
 #' # its page-level metadata
 #'

@@ -36,7 +36,7 @@ metadata or page metadata).}
 Defaults to \code{getOption("hathiTools.cacheformat")}, which is "csv.gz" on
 load. Allowed cache types are: compressed csv (the default), "none" (no
 local caching of JSON download; only JSON file kept), "rds", "feather" and
-"parquet" (suitable for use with \link{arrow}; needs the \link{arrow} package
+"parquet" (suitable for use with \link[arrow:arrow-package]{arrow::arrow}; needs the \link[arrow:arrow-package]{arrow::arrow} package
 installed), or "text2vec.csv" (a csv suitable for use with the package
 \href{https://cran.r-project.org/package=text2vec}{text2vec}).}
 
@@ -54,7 +54,7 @@ to call \code{future::plan()} beforehand to determine the specific parallel
 strategy to be used; \code{plan(multisession)} usually works fine.}
 }
 \value{
-A \link{tibble} with the paths of the cached files and an indicator of
+A \link[tibble:tibble]{tibble::tibble} with the paths of the cached files and an indicator of
 whether each htid was successfully cached.
 }
 \description{
@@ -68,7 +68,7 @@ Features files to a faster-loading format using \link{cache_htids}, and then usi
 \link{read_cached_htids} to read them into a single data frame or \link[arrow:Dataset]{arrow Dataset} for further work.
 }
 \examples{
-\donttest{
+\dontrun{
 htids <- c("mdp.39015008706338", "mdp.39015058109706")
 dir <- tempdir()
 

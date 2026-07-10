@@ -116,7 +116,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' query_bookworm(word = c("democracy", "monarchy"), lims = c(1760, 2000),
 #'   counttype = c("WordsPerMillion", "WordCount"))
 #'

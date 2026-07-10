@@ -49,7 +49,7 @@ Warning! This function does not double-check that you want to delete your
 cache. It will go ahead and do it.
 }
 \examples{
-\donttest{
+\dontrun{
 dir <- tempdir()
 
 htids <- c("mdp.39015008706338", "mdp.39015058109706")

@@ -38,7 +38,7 @@
 #'
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' htids <- c("mdp.39015008706338", "mdp.39015058109706")
 #' dir <- tempdir()
 #'
@@ -159,7 +159,7 @@ cache_htids <- function(htids,
 #'
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' htids <- c("mdp.39015008706338", "mdp.39015058109706")
 #' dir <- tempdir()
 #'
@@ -252,7 +252,7 @@ find_cached_file <- function(cache_type, cache_format, htids, suffix, dir) {
 #'
 #' @export
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' dir <- tempdir()
 #'
 #' htids <- c("mdp.39015008706338", "mdp.39015058109706")
@@ -331,7 +331,7 @@ clear_cache <- function(htids,
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' htids <- c("mdp.39015008706338", "mdp.39015058109706")
 #' dir <- tempdir()
 #'
