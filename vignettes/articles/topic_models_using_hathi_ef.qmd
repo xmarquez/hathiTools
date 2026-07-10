@@ -1,8 +1,6 @@
 ---
 title: "Topic Modeling using the Hathi Trust Extracted Features Files"
-format: gfm
-output-file: topic_models_using_hathi_ef.Rmd
-keep-yaml: true
+format: html
 warning: false
 ---
 

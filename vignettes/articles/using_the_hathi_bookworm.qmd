@@ -1,8 +1,6 @@
 ---
 title: "Using the Hathi Trust Bookworm Tool"
-format: gfm
-output-file: using_the_hathi_bookworm.Rmd
-keep-yaml: true
+format: html
 warning: false
 ---
 

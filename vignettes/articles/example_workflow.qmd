@@ -1,8 +1,6 @@
 ---
 title: "An Example Workflow"
-format: gfm
-output-file: example_workflow.Rmd
-keep-yaml: true
+format: html
 warning: false
 ---
 
