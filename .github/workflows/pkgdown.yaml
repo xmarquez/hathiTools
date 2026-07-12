@@ -6,6 +6,13 @@ on:
   pull_request:
   release:
     types: [published]
+  # Daily retry while the HTRC EF solr outage lasts (down since ~2026-07-09):
+  # the articles execute workset_builder() at render time, so the site can
+  # only build when that backend answers. The probe job below makes scheduled
+  # runs skip quietly (green) while it is down; the day it recovers, the site
+  # builds and deploys automatically. Safe to remove once the site is green.
+  schedule:
+    - cron: '43 20 * * *'
   workflow_dispatch:
 
 name: pkgdown.yaml
@@ -13,7 +20,31 @@ name: pkgdown.yaml
 permissions: read-all
 
 jobs:
+  # Gate for scheduled runs only: skip the build (successfully) while the
+  # HTRC EF solr backend is down. Push/PR/dispatch runs build unconditionally.
+  probe:
+    runs-on: ubuntu-latest
+    outputs:
+      htrc_up: ${{ steps.probe.outputs.up }}
+    steps:
+      - id: probe
+        run: |
+          if [ "${{ github.event_name }}" != "schedule" ]; then
+            echo "up=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          code=$(curl -sk -o /dev/null -w "%{http_code}" --max-time 30 \
+            "https://solr2.htrc.illinois.edu/robust-solr8/solr345678-faceted-htrc-full-ef2-shards24x2/admin/ping" || echo 000)
+          echo "HTRC EF solr admin/ping: $code"
+          if [ "$code" = "200" ]; then
+            echo "up=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "up=false" >> "$GITHUB_OUTPUT"
+          fi
+
   pkgdown:
+    needs: probe
+    if: needs.probe.outputs.htrc_up == 'true'
     runs-on: ubuntu-latest
     # Only restrict concurrency for non-PR jobs
     concurrency:
