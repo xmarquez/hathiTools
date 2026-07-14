@@ -38,8 +38,10 @@ jobs:
           echo "HTRC EF solr admin/ping: $code"
           if [ "$code" = "200" ]; then
             echo "up=true" >> "$GITHUB_OUTPUT"
+            echo "✅ HTRC EF solr is UP (ping $code) — building and deploying the site." >> "$GITHUB_STEP_SUMMARY"
           else
             echo "up=false" >> "$GITHUB_OUTPUT"
+            echo "⏭️ HTRC EF solr still down (ping $code) — site build skipped. Green here means 'nothing to do', NOT a successful build; a real build takes minutes, not seconds." >> "$GITHUB_STEP_SUMMARY"
           fi
 
   pkgdown:
